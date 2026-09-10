@@ -1,0 +1,24 @@
+# Normaliza quebra de linha: sem isso, Windows e Linux geram diff em arquivo
+# que ninguem tocou, e o merge vira um inferno.
+* text=auto eol=lf
+
+*.gd     text eol=lf
+*.tscn   text eol=lf
+*.tres   text eol=lf
+*.godot  text eol=lf
+*.import text eol=lf
+*.cfg    text eol=lf
+*.md     text eol=lf
+*.yml    text eol=lf
+
+# Binarios: o git nao deve tentar "consertar" nada aqui dentro.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.svg  text eol=lf
+*.ogg  binary
+*.wav  binary
+*.mp3  binary
+*.ttf  binary
+*.otf  binary

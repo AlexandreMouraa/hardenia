@@ -1,0 +1,25 @@
+# Cache do Godot. NUNCA versionar - e a maior fonte de conflito em equipe.
+.godot/
+/android/
+
+# Builds e exports
+/build/
+/export/
+*.exe
+*.pck
+*.zip
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+*:Zone.Identifier
+
+# Editores
+.vscode/
+.idea/
+*.swp
+*~
+
+# ATENCAO: arquivos *.import SAO versionados de proposito.
+# Sem eles o Godot reimporta tudo e cada um recebe um ID diferente.

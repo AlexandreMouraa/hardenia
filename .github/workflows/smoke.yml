@@ -1,0 +1,32 @@
+name: smoke test
+
+# Roda o teste de fumaca a cada push e a cada Pull Request.
+# Objetivo: ninguem descobre que a main quebrou na semana da entrega.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  teste:
+    runs-on: ubuntu-latest
+    env:
+      GODOT_VERSAO: 4.7.2
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Baixar Godot
+        run: |
+          curl -sL -o godot.zip \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSAO}-stable/Godot_v${GODOT_VERSAO}-stable_linux.x86_64.zip"
+          unzip -q godot.zip
+          mv "Godot_v${GODOT_VERSAO}-stable_linux.x86_64" godot
+          chmod +x godot
+
+      - name: Importar o projeto
+        run: ./godot --headless --path . --import
+
+      - name: Rodar o smoke test
+        run: ./godot --headless --path . res://tools/smoke_test.tscn

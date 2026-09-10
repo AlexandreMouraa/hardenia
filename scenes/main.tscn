@@ -1,0 +1,19 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/salas/sala_teste.tscn" id="2_sala"]
+[ext_resource type="PackedScene" path="res://scenes/jogador/jogador.tscn" id="3_jogador"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="4_hud"]
+[ext_resource type="PackedScene" path="res://scenes/ui/tela_morte.tscn" id="5_morte"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="SalaTeste" parent="." instance=ExtResource("2_sala")]
+
+[node name="Jogador" parent="." instance=ExtResource("3_jogador")]
+position = Vector2(70, 300)
+
+[node name="HUD" parent="." instance=ExtResource("4_hud")]
+
+[node name="TelaMorte" parent="." instance=ExtResource("5_morte")]

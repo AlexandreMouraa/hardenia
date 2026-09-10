@@ -1,0 +1,80 @@
+; Hardenia - O Ultimo Guerreiro
+; Configuracao do projeto. Mexa aqui so se souber o que esta fazendo:
+; qualquer alteracao neste arquivo afeta os 4 integrantes.
+
+config_version=5
+
+[application]
+
+config/name="Hardenia"
+config/description="Hardenia - O Ultimo Guerreiro. Roguelike de acao 2D lateral."
+run/main_scene="res://scenes/main.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+config/icon="res://icon.svg"
+
+[autoload]
+
+Paleta="*res://scripts/autoload/paleta.gd"
+Jogo="*res://scripts/autoload/jogo.gd"
+
+[display]
+
+window/size/viewport_width=640
+window/size/viewport_height=360
+window/size/window_width_override=1280
+window/size/window_height_override=720
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep"
+
+[input]
+
+mover_esquerda={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"physical_keycode":65,"pressed":false,"script":null)
+, Object(InputEventKey,"physical_keycode":4194319,"pressed":false,"script":null)
+]
+}
+mover_direita={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"physical_keycode":68,"pressed":false,"script":null)
+, Object(InputEventKey,"physical_keycode":4194321,"pressed":false,"script":null)
+]
+}
+pular={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"physical_keycode":32,"pressed":false,"script":null)
+, Object(InputEventKey,"physical_keycode":87,"pressed":false,"script":null)
+]
+}
+atacar={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"physical_keycode":74,"pressed":false,"script":null)
+, Object(InputEventMouseButton,"button_index":1,"pressed":false,"script":null)
+]
+}
+dash={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"physical_keycode":75,"pressed":false,"script":null)
+, Object(InputEventKey,"physical_keycode":4194325,"pressed":false,"script":null)
+]
+}
+reiniciar={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"physical_keycode":82,"pressed":false,"script":null)
+]
+}
+
+[layer_names]
+
+2d_physics/layer_1="mundo"
+2d_physics/layer_2="jogador"
+2d_physics/layer_3="inimigo"
+2d_physics/layer_4="golpe_jogador"
+2d_physics/layer_5="golpe_inimigo"
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/canvas_textures/default_texture_filter=0
+environment/defaults/default_clear_color=Color(0.039216, 0.043137, 0.050980, 1)
