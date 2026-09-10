@@ -1,0 +1,290 @@
+==========================================================================
+  HARDENIA - O ULTIMO GUERREIRO
+  ATA 01  |  Jogos Digitais  |  UFG
+==========================================================================
+
+  Dez decisoes para sair da reuniao com o jogo comecado. Onze semanas.
+
+  Data e hora:     ____________________________________________
+  Presentes:       ____________________________________________
+  Onde:            ____________________________________________
+
+--------------------------------------------------------------------------
+  ONDE ESTAMOS
+--------------------------------------------------------------------------
+
+  [PRAZO]
+      11 semanas ate a entrega. Ate hoje, nenhuma linha de codigo tinha
+      sido escrita.
+
+  [FECHADO]
+      O pitch ja foi apresentado ao professor: roguelike de acao,
+      dificuldade como identidade, zero progressao permanente. Isso nao
+      muda.
+
+  [JA EXISTE]
+      Biblia visual (paleta, logo, tom), o texto do Ultimo Guerreiro, e um
+      esqueleto jogavel em Godot - movimento, pulo, dash com
+      invencibilidade, ataque, inimigo de patrulha, camera, HUD e tela de
+      morte. Repositorio no ar com teste automatico a cada push.
+
+  [OBJETIVO]
+      Sair desta reuniao com as 10 linhas abaixo preenchidas e cada pessoa
+      sabendo o que entrega na semana 3.
+
+--------------------------------------------------------------------------
+  PARA VALIDAR
+--------------------------------------------------------------------------
+
+  Ja tem resposta tecnica e um esqueleto rodando. A reuniao so
+  confirma.
+
+  V1. Engine: Godot 4.7.2 com GDScript   [ JA TESTADO ]
+
+      Cena do Godot e arquivo de texto, entao merge no git funciona
+      normal - cena de Unity da conflito binario, que e o jeito n1 de
+      equipe de faculdade perder trabalho. GDScript e tambem a unica
+      opcao do Godot que exporta para navegador. O esqueleto ja esta
+      rodando e passou em 32 checagens automatizadas.
+
+      (   ) A. Godot 4.7.2 + GDScript   <- sugestao
+            Leve, roda em maquina fraca, MIT, sem royalty.
+      (   ) B. Unity + C#
+            Varios GB, conflito de cena, e joga fora o que ja esta
+            pronto.
+      (   ) C. Outra
+            Custa semanas de curva que nao temos.
+
+      Decisao registrada: ______________________________________________
+
+  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+  V2. Perspectiva: 2D lateral   [ VEM DA ARTE ]
+
+      A biblia visual ja mostra lateral nos paineis de exploracao e
+      combate. Lateral tambem e mais barato de arte: uma direcao
+      espelhada, contra as quatro direcoes que top-down exigiria de cada
+      animacao.
+
+      (   ) A. 2D lateral, arenas de combate   <- sugestao
+            Sem pulo duplo, sem wall-jump, sem salto de precisao: o
+            desafio e o inimigo, nao o chao.
+      (   ) B. Top-down
+            Contradiz a arte ja aprovada e dobra o trabalho de sprite.
+      (   ) C. 3D
+            Inviavel em 11 semanas.
+
+      Decisao registrada: ______________________________________________
+
+  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+  V3. Repositorio: GitHub privado, branch e Pull Request   [ PRONTO ]
+
+      A main tem que estar sempre jogavel - e dela que sai a build da
+      apresentacao. O repo ja esta montado com .gitignore,
+      .gitattributes, guia de contribuicao e teste automatico a cada
+      push.
+
+      (   ) A. Privado, branch + PR obrigatorio   <- sugestao
+            Ninguem commita direto na main.
+      (   ) B. Privado, push direto na main
+            Mais rapido hoje, quebrado na semana 9.
+      (   ) C. Publico desde ja
+            Decidir so depois de falar com o professor.
+
+      Decisao registrada: ______________________________________________
+
+  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+--------------------------------------------------------------------------
+  PARA DECIDIR
+--------------------------------------------------------------------------
+
+  Aqui a equipe escolhe. Tres itens sao contradicoes reais entre o
+  pitch e a arte.
+
+  D1. A fogueira fica ou sai?   [ CONFLITO ]
+
+      A biblia visual traz um icone FOGUEIRA (CHECKPOINT). O slide 2 diz
+      literalmente 'sem checkpoints de progresso permanente' e o slide 4
+      vende 'sem atalhos permanentes' como O diferencial. E a primeira
+      pergunta que o professor vai fazer - precisamos da resposta
+      pronta.
+
+      (   ) A. Sai. Sem fogueira, sem checkpoint.   <- sugestao
+            Coerencia total com o que foi apresentado.
+      (   ) B. Fica, mas so cura dentro da run
+            Nao carrega absolutamente nada entre runs. Defensavel.
+      (   ) C. Fica como checkpoint de verdade
+            Entao o pitch precisa ser reescrito antes da entrega.
+
+      Decisao registrada: ______________________________________________
+
+  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+  D2. O que e 'Tentativas: 3'?   [ AMBIGUO ]
+
+      Esse numero aparece na HUD da biblia visual e pode significar duas
+      coisas muito diferentes. Precisa ser decisao, nao um numero que
+      apareceu por acaso na arte.
+
+      (   ) A. Contador de runs   <- sugestao
+            So mostra quantas vezes voce ja tentou. Nao da bonus
+            nenhum - e a persistencia virando numero na tela.
+      (   ) B. 3 vidas dentro da mesma run
+            Suaviza a dificuldade. Precisa ser escolha consciente.
+      (   ) C. 3 tentativas e o jogo acaba
+            Punitivo demais para um jogo que ensina por repeticao.
+
+      Decisao registrada: ______________________________________________
+
+  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+  D3. 'Nivel 2-1': fases fixas ou salas sorteadas?   [ ARQUITETURA ]
+
+      Define o codigo e o custo de level design. Geracao procedural de
+      verdade come umas 3 semanas e costuma produzir nivel pior que sala
+      feita a mao. 'Desafios diferentes a cada partida' ja se cumpre
+      sorteando salas prontas.
+
+      (   ) A. Salas a mao, sorteadas a cada run   <- sugestao
+            Cumpre o pitch, cabe no prazo, e sala e a unidade que
+            deixa 4 pessoas trabalharem em paralelo.
+      (   ) B. Fases fixas numeradas
+            Mais barato ainda e mais facil de balancear - mas mata a
+            rejogabilidade.
+      (   ) C. Geracao procedural de verdade
+            So se sobrar tempo na semana 9. Nao e meta.
+
+      Decisao registrada: ______________________________________________
+
+  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+  D4. Escopo alvo das 11 semanas   [ PRAZO ]
+
+      O erro classico e mirar no jogo completo e entregar um menu.
+      Melhor uma fatia curta e polida do que um jogo inteiro pela
+      metade. Se sobrar tempo, a gente adiciona mais salas - nao mais
+      sistemas.
+
+      (   ) A. 3 inimigos + 1 boss / 10-12 salas / 1 arma / run de 8-10 min   <- sugestao
+            Realista para 4 pessoas que comecam agora.
+      (   ) B. Mais conteudo, menos polimento
+            Costuma virar nota menor: o que se percebe e o acabamento.
+      (   ) C. Decidir o corte so na semana 6
+            Tarde demais para cortar sem perder trabalho.
+
+      Decisao registrada: ______________________________________________
+
+  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+  D5. Onde o jogo e entregue   [ ENTREGA ]
+
+      O professor abrir um link e jogar, sem instalar nada, separa a
+      gente dos grupos que mandam um .zip. Da para automatizar o deploy
+      a cada push e ainda medir onde os jogadores morrem, para balancear
+      a dificuldade com dado em vez de achismo.
+
+      (   ) A. Navegador + landing page, deploy automatico   <- sugestao
+            Joga no celular, no PC, em qualquer lugar. Vira argumento
+            na apresentacao.
+      (   ) B. Executavel .zip para Windows
+            Mais simples, menos impacto.
+      (   ) C. Os dois
+            Web como principal, .zip como reserva.
+
+      Decisao registrada: ______________________________________________
+
+  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+  D6. Arte: quem desenha, e o que fazer com a imagem gerada por IA   [ AUTORIA ]
+
+      Os 5 frames do personagem na biblia visual nao sao o mesmo
+      personagem - cabelo, roupa e proporcao mudam entre eles, entao nao
+      da para animar a partir dali. E o professor deixou claro que o
+      direito autoral da obra e da equipe: no Brasil a protecao autoral
+      parte de criacao humana, o que faz de arte gerada por IA o elo
+      mais fragil dessa cadeia.
+
+      (   ) A. Biblia visual vira concept art; sprites desenhados pela equipe   <- sugestao
+            Ela e excelente nesse papel - guia de cor, clima e
+            composicao. A autoria fica limpa.
+      (   ) B. Base CC0 recolorida na paleta, tudo creditado
+            Kenney, OpenGameArt. Rapido e legalmente seguro, com
+            CREDITS.md preenchido.
+      (   ) C. Usar a arte de IA como esta
+            Fragiliza justamente a autoria que o professor atribuiu a
+            equipe.
+
+      Decisao registrada: ______________________________________________
+
+  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+  D7. Ritual da equipe   [ PROCESSO ]
+
+      Sem ritmo fixo, 4 pessoas viram 1 pessoa trabalhando. A semana 3 e
+      o teste de fogo: se nao tiver um boneco que anda, pula, da dash e
+      mata um inimigo, o escopo cai na hora - nao na semana 9.
+
+      (   ) A. Reuniao fixa de 30 min por semana + PR obrigatorio   <- sugestao
+            Curta, com pauta, sempre no mesmo dia e horario.
+      (   ) B. So o grupo no WhatsApp
+            Funciona ate a primeira semana dificil.
+
+      Decisao registrada: ______________________________________________
+
+  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+--------------------------------------------------------------------------
+  QUEM FAZ O QUE
+--------------------------------------------------------------------------
+
+  Sistemas do jogador
+      Movimento, combate, dano, estado da run. E o nucleo e o mais
+      dificil.
+      Quem: ______________________   Semana 3: ______________________
+
+  Inimigos e boss
+      Cada inimigo e um script pequeno e isolado, a partir de um
+      template pronto.
+      Quem: ______________________   Semana 3: ______________________
+
+  Level design
+      Monta as salas no editor visual e ajusta a dificuldade. Nao
+      escreve codigo.
+      Quem: ______________________   Semana 3: ______________________
+
+  Arte, UI e audio
+      Sprites na paleta, telas de menu e morte, som, tela de creditos.
+      Quem: ______________________   Semana 3: ______________________
+
+--------------------------------------------------------------------------
+  PERGUNTAR AO PROFESSOR
+--------------------------------------------------------------------------
+
+  (   ) Tem entrega parcial ao longo das 11 semanas ou so a final?
+  (   ) Quais sao os criterios de nota? Existe rubrica escrita?
+  (   ) A entrega final e build, codigo, documento, apresentacao - ou tudo junto?
+  (   ) Podemos publicar o jogo em link publico na web?
+  (   ) Precisa registrar a autoria formalmente na UFG, ou basta constar no trabalho?
+  (   ) Usar assets CC0 de terceiros (creditados) afeta a avaliacao?
+
+--------------------------------------------------------------------------
+  ENCAMINHAMENTOS
+--------------------------------------------------------------------------
+
+  Instalar o Godot 4.7.2 e rodar o projeto ate ver o boneco andar
+      Quem: todos                  Quando: antes da proxima reuniao
+
+  Preencher a tabela de responsabilidades acima
+      Quem: todos                  Quando: nesta reuniao
+
+  Mandar as perguntas para o professor
+      Quem: ______________         Quando: ______________
+
+  Marco da semana 3: andar, pular, dash e matar um inimigo
+      Quem: sistemas               Quando: semana 3
+
+==========================================================================
+  "Nao e o personagem que fica mais forte. E o jogador."
+==========================================================================
