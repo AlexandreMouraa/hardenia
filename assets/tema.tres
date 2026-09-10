@@ -1,0 +1,90 @@
+[gd_resource type="Theme" load_steps=8 format=3]
+
+[sub_resource type="StyleBoxFlat" id="botao_normal"]
+content_margin_left = 22.0
+content_margin_top = 10.0
+content_margin_right = 22.0
+content_margin_bottom = 10.0
+bg_color = Color(0.082353, 0.105882, 0.133333, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.137255, 0.168627, 0.207843, 1)
+
+[sub_resource type="StyleBoxFlat" id="botao_hover"]
+content_margin_left = 22.0
+content_margin_top = 10.0
+content_margin_right = 22.0
+content_margin_bottom = 10.0
+bg_color = Color(0.101961, 0.129412, 0.160784, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.384314, 0.384314, 0.411765, 1)
+
+[sub_resource type="StyleBoxFlat" id="botao_pressionado"]
+content_margin_left = 22.0
+content_margin_top = 10.0
+content_margin_right = 22.0
+content_margin_bottom = 10.0
+bg_color = Color(0.101961, 0.070588, 0.078431, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.564706, 0.105882, 0.113725, 1)
+
+[sub_resource type="StyleBoxFlat" id="botao_foco"]
+content_margin_left = 22.0
+content_margin_top = 10.0
+content_margin_right = 22.0
+content_margin_bottom = 10.0
+bg_color = Color(0.101961, 0.129412, 0.160784, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.784314, 0.282353, 0.298039, 1)
+
+[sub_resource type="StyleBoxFlat" id="painel"]
+content_margin_left = 30.0
+content_margin_top = 26.0
+content_margin_right = 30.0
+content_margin_bottom = 26.0
+bg_color = Color(0.062745, 0.078431, 0.098039, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.196078, 0.235294, 0.286275, 1)
+
+[sub_resource type="StyleBoxFlat" id="trilho"]
+content_margin_top = 3.0
+content_margin_bottom = 3.0
+bg_color = Color(0.105882, 0.12549, 0.152941, 1)
+
+[sub_resource type="StyleBoxFlat" id="preenchido"]
+content_margin_top = 3.0
+content_margin_bottom = 3.0
+bg_color = Color(0.564706, 0.105882, 0.113725, 1)
+
+[resource]
+Button/colors/font_color = Color(0.662745, 0.596078, 0.556863, 1)
+Button/colors/font_disabled_color = Color(0.384314, 0.384314, 0.411765, 1)
+Button/colors/font_focus_color = Color(0.909804, 0.870588, 0.85098, 1)
+Button/colors/font_hover_color = Color(0.909804, 0.870588, 0.85098, 1)
+Button/colors/font_pressed_color = Color(0.909804, 0.870588, 0.85098, 1)
+Button/font_sizes/font_size = 15
+Button/styles/disabled = SubResource("botao_normal")
+Button/styles/focus = SubResource("botao_foco")
+Button/styles/hover = SubResource("botao_hover")
+Button/styles/normal = SubResource("botao_normal")
+Button/styles/pressed = SubResource("botao_pressionado")
+HSlider/styles/grabber_area = SubResource("preenchido")
+HSlider/styles/grabber_area_highlight = SubResource("preenchido")
+HSlider/styles/slider = SubResource("trilho")
+Label/colors/font_color = Color(0.909804, 0.870588, 0.85098, 1)
+Label/font_sizes/font_size = 15
+PanelContainer/styles/panel = SubResource("painel")

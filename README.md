@@ -29,9 +29,10 @@ diff em arquivo que ninguém tocou.
 |---|---|
 | Mover | `A` / `D` ou setas |
 | Pular | `Espaço` ou `W` |
-| Atacar | `J` ou botão esquerdo do mouse |
+| Atacar | **botão esquerdo do mouse** ou `J` |
 | Dash | `K` ou `Shift` |
-| Reiniciar | `R` |
+| Pausar | `Esc` |
+| Reiniciar (após morrer) | `R` |
 
 O dash tem **invencibilidade** durante o impulso — é ferramenta de defesa, não
 só de mobilidade. É a mecânica central de "aprender o padrão".
@@ -68,6 +69,22 @@ parecer o mesmo jogo.
 | sangue | `#901b1d` | **acento** — perigo, vida, capa |
 | branco | `#e8ded9` | texto |
 
+## Menus e opções
+
+O jogo abre no **menu principal**. `Esc` durante a partida abre a pausa — que
+congela a árvore inteira **e o cronômetro da run**, então parar para pensar não
+dá vantagem nenhuma.
+
+As opções (volume, tela cheia, sincronização vertical, mostrar o tempo na HUD)
+são as mesmas nos dois menus, vindas de uma cena só: `scenes/ui/painel_opcoes.tscn`.
+Ficam salvas em `user://config.cfg` — no Windows, em
+`%APPDATA%\Godot\app_userdata\Hardenia\`.
+
+Nenhuma opção mexe na dificuldade. Em Hardenia não existe modo fácil, existe treino.
+
+A aparência de todos os botões, painéis e sliders vem de `assets/tema.tres`.
+Para mudar o visual da interface inteira, mexa lá — não em cada botão.
+
 ## Testes
 
 ```bash
@@ -86,6 +103,7 @@ Rode antes de abrir um Pull Request.
 - [x] Inimigo de patrulha que não cai da plataforma
 - [x] Câmera travada nos limites da sala
 - [x] HUD e tela de morte
+- [x] Menu principal, menu de pausa (`Esc`) e opções
 - [ ] Arte definitiva (hoje são placeholders gerados por código)
 - [ ] Mais 2 tipos de inimigo + boss
 - [ ] Salas de verdade e sorteio da run

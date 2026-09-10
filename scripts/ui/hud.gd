@@ -13,6 +13,8 @@ var _jogador: Jogador
 
 func _ready() -> void:
 	_tentativa.text = "TENTATIVA %d" % Jogo.tentativa
+	_tempo.visible = Config.mostrar_tempo
+	Config.alterado.connect(func() -> void: _tempo.visible = Config.mostrar_tempo)
 
 
 func conectar(jogador: Jogador) -> void:
@@ -22,7 +24,8 @@ func conectar(jogador: Jogador) -> void:
 
 
 func _process(_delta: float) -> void:
-	_tempo.text = Jogo.tempo_formatado()
+	if _tempo.visible:
+		_tempo.text = Jogo.tempo_formatado()
 
 
 func _desenhar_vida(atual: int, maxima: int) -> void:

@@ -1,0 +1,138 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/painel_opcoes.gd" id="1_script"]
+[ext_resource type="Theme" path="res://assets/tema.tres" id="2_tema"]
+
+[node name="PainelOpcoes" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_tema")
+script = ExtResource("1_script")
+
+[node name="Escurecer" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.039216, 0.043137, 0.05098, 0.9)
+
+[node name="Centro" type="CenterContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Painel" type="PanelContainer" parent="Centro"]
+layout_mode = 2
+
+[node name="Coluna" type="VBoxContainer" parent="Centro/Painel"]
+custom_minimum_size = Vector2(370, 0)
+layout_mode = 2
+theme_override_constants/separation = 13
+
+[node name="Titulo" type="Label" parent="Centro/Painel/Coluna"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.784314, 0.282353, 0.298039, 1)
+theme_override_font_sizes/font_size = 13
+text = "OPÇÕES"
+horizontal_alignment = 1
+
+[node name="LinhaVolume" type="HBoxContainer" parent="Centro/Painel/Coluna"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Rotulo" type="Label" parent="Centro/Painel/Coluna/LinhaVolume"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+text = "Volume geral"
+
+[node name="Volume" type="HSlider" parent="Centro/Painel/Coluna/LinhaVolume"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="VolumeValor" type="Label" parent="Centro/Painel/Coluna/LinhaVolume"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(46, 0)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0.662745, 0.596078, 0.556863, 1)
+text = "80%"
+horizontal_alignment = 2
+
+[node name="LinhaTelaCheia" type="HBoxContainer" parent="Centro/Painel/Coluna"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Rotulo" type="Label" parent="Centro/Painel/Coluna/LinhaTelaCheia"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+text = "Tela cheia"
+
+[node name="TelaCheia" type="Button" parent="Centro/Painel/Coluna/LinhaTelaCheia"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(118, 0)
+layout_mode = 2
+toggle_mode = true
+text = "desligado"
+
+[node name="LinhaVsync" type="HBoxContainer" parent="Centro/Painel/Coluna"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Rotulo" type="Label" parent="Centro/Painel/Coluna/LinhaVsync"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+text = "Sincronização vertical"
+
+[node name="Vsync" type="Button" parent="Centro/Painel/Coluna/LinhaVsync"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(118, 0)
+layout_mode = 2
+toggle_mode = true
+text = "ligado"
+
+[node name="LinhaTempo" type="HBoxContainer" parent="Centro/Painel/Coluna"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Rotulo" type="Label" parent="Centro/Painel/Coluna/LinhaTempo"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+text = "Mostrar o tempo na HUD"
+
+[node name="Tempo" type="Button" parent="Centro/Painel/Coluna/LinhaTempo"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(118, 0)
+layout_mode = 2
+toggle_mode = true
+text = "ligado"
+
+[node name="Separador" type="HSeparator" parent="Centro/Painel/Coluna"]
+layout_mode = 2
+
+[node name="Rodape" type="HBoxContainer" parent="Centro/Painel/Coluna"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Padroes" type="Button" parent="Centro/Painel/Coluna/Rodape"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Restaurar padrões"
+
+[node name="Voltar" type="Button" parent="Centro/Painel/Coluna/Rodape"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Voltar"

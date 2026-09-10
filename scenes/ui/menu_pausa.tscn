@@ -1,0 +1,79 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/menu_pausa.gd" id="1_script"]
+[ext_resource type="Theme" path="res://assets/tema.tres" id="2_tema"]
+[ext_resource type="PackedScene" path="res://scenes/ui/painel_opcoes.tscn" id="3_opcoes"]
+
+[node name="MenuPausa" type="CanvasLayer"]
+process_mode = 3
+layer = 5
+script = ExtResource("1_script")
+
+[node name="Raiz" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_tema")
+
+[node name="Escurecer" type="ColorRect" parent="Raiz"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.039216, 0.043137, 0.05098, 0.86)
+
+[node name="Centro" type="CenterContainer" parent="Raiz"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Coluna" type="VBoxContainer" parent="Raiz/Centro"]
+layout_mode = 2
+theme_override_constants/separation = 9
+
+[node name="Titulo" type="Label" parent="Raiz/Centro/Coluna"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.784314, 0.282353, 0.298039, 1)
+theme_override_font_sizes/font_size = 24
+text = "PAUSA"
+horizontal_alignment = 1
+
+[node name="Dica" type="Label" parent="Raiz/Centro/Coluna"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.384314, 0.384314, 0.411765, 1)
+theme_override_font_sizes/font_size = 11
+text = "o cronômetro da run também parou"
+horizontal_alignment = 1
+
+[node name="Espaco" type="Control" parent="Raiz/Centro/Coluna"]
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+
+[node name="Continuar" type="Button" parent="Raiz/Centro/Coluna"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+text = "Continuar"
+
+[node name="Opcoes" type="Button" parent="Raiz/Centro/Coluna"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+text = "Opções"
+
+[node name="Menu" type="Button" parent="Raiz/Centro/Coluna"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+text = "Voltar ao menu"
+
+[node name="PainelOpcoes" parent="." instance=ExtResource("3_opcoes")]
+unique_name_in_owner = true
+visible = false

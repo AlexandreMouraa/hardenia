@@ -39,7 +39,16 @@ func terminar_run(vitoria: bool) -> void:
 	run_terminada.emit(vitoria)
 
 
+## Comeca uma sessao nova a partir do menu: o contador de tentativas volta a 1.
+func nova_sessao() -> void:
+	tentativa = 1
+	tempo_run = 0.0
+	em_run = false
+
+
 func reiniciar() -> void:
+	## Reiniciar com o jogo pausado deixaria a cena nova congelada.
+	get_tree().paused = false
 	terminar_run(false)
 	get_tree().reload_current_scene()
 

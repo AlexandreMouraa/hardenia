@@ -16,11 +16,16 @@ var _passou := 0
 
 func _ready() -> void:
 	_testar_input_map()
+	_testar_ataque_no_mouse()
+	_testar_pausa_no_esc()
 	_testar_paleta()
 	_testar_cena_jogador()
 	_testar_fisica_do_pulo()
 	_testar_cena_inimigo()
 	_testar_cena_principal()
+	_testar_config()
+	_testar_menus()
+	_testar_pausa()
 	_relatar()
 
 
@@ -32,13 +37,79 @@ func _checar(condicao: bool, descricao: String) -> void:
 
 
 func _testar_input_map() -> void:
-	for acao in ["mover_esquerda", "mover_direita", "pular", "atacar", "dash", "reiniciar"]:
+	for acao in ["mover_esquerda", "mover_direita", "pular", "atacar", "dash", "reiniciar", "pausar"]:
 		_checar(InputMap.has_action(acao), "acao de input ausente: %s" % acao)
 		if InputMap.has_action(acao):
 			_checar(
 				InputMap.action_get_events(acao).size() > 0,
 				"acao '%s' existe mas nao tem nenhuma tecla" % acao
 			)
+
+
+## O ataque tem que estar no botao esquerdo do mouse, nao so na tecla J.
+func _testar_ataque_no_mouse() -> void:
+	var tem_mouse := false
+	for e in InputMap.action_get_events("atacar"):
+		if e is InputEventMouseButton and e.button_index == MOUSE_BUTTON_LEFT:
+			tem_mouse = true
+	_checar(tem_mouse, "atacar nao esta no botao esquerdo do mouse")
+
+
+func _testar_pausa_no_esc() -> void:
+	var tem_esc := false
+	for e in InputMap.action_get_events("pausar"):
+		if e is InputEventKey and e.physical_keycode == KEY_ESCAPE:
+			tem_esc = true
+	_checar(tem_esc, "pausar nao esta no Esc")
+
+
+func _testar_config() -> void:
+	_checar(Config != null, "autoload Config ausente")
+	_checar(Config.volume_geral >= 0.0 and Config.volume_geral <= 1.0, "volume fora de 0..1")
+	_checar(Config.has_method("salvar"), "Config nao sabe salvar")
+	_checar(Config.has_method("restaurar_padroes"), "Config nao sabe restaurar padroes")
+
+
+func _testar_menus() -> void:
+	var tema := load("res://assets/tema.tres")
+	_checar(tema is Theme, "tema.tres nao carregou como Theme")
+
+	for caminho in [
+		"res://scenes/ui/menu_principal.tscn",
+		"res://scenes/ui/painel_opcoes.tscn",
+		"res://scenes/ui/menu_pausa.tscn",
+	]:
+		_checar(ResourceLoader.exists(caminho), "cena de UI ausente: " + caminho)
+
+	var menu := (load("res://scenes/ui/menu_principal.tscn") as PackedScene).instantiate()
+	add_child(menu)
+	_checar(menu.has_node("%Jogar"), "menu principal sem botao Jogar")
+	_checar(menu.has_node("%Opcoes"), "menu principal sem botao Opcoes")
+	_checar(menu.has_node("%PainelOpcoes"), "menu principal sem painel de opcoes")
+	menu.queue_free()
+
+	var painel := (load("res://scenes/ui/painel_opcoes.tscn") as PackedScene).instantiate()
+	add_child(painel)
+	for nome in ["%Volume", "%TelaCheia", "%Vsync", "%Tempo", "%Padroes", "%Voltar"]:
+		_checar(painel.has_node(nome), "painel de opcoes sem o controle " + nome)
+	_checar(not painel.visible, "painel de opcoes nasce visivel")
+	painel.queue_free()
+
+
+## Pausar tem que congelar a arvore E o cronometro da run.
+func _testar_pausa() -> void:
+	var pausa := (load("res://scenes/ui/menu_pausa.tscn") as PackedScene).instantiate()
+	add_child(pausa)
+	_checar(
+		pausa.process_mode == Node.PROCESS_MODE_ALWAYS,
+		"menu de pausa nao roda durante a pausa - o Esc nao vai despausar"
+	)
+	_checar(not get_tree().paused, "a arvore ja comeca pausada")
+	pausa.pausar()
+	_checar(get_tree().paused, "pausar() nao pausou a arvore")
+	pausa.retomar()
+	_checar(not get_tree().paused, "retomar() nao despausou a arvore")
+	pausa.queue_free()
 
 
 func _testar_paleta() -> void:
