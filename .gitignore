@@ -1,0 +1,15 @@
+# GameMaker
+.vs/
+.idea/
+*.ini
+*.gmz
+*.gmez
+tmp/
+cache/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Editor
+*.swp
