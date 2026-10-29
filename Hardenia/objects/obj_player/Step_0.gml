@@ -1,4 +1,8 @@
 if (global.game_paused) {
+    if (keyboard_check_pressed(ord("M"))) {
+        global.game_paused = false;
+        room_goto(Room_Menu);
+    }
     exit;
 }
 
@@ -78,15 +82,18 @@ var _move_x = 0;
 var _move_y = 0;
 
 if (is_dashing) {
-    _move_x = face_h * dash_speed;
-    _move_y = face_v * dash_speed;
+    // diagonal com o mesmo alcance da reta (sem isso o dash diagonal vai 41% mais longe)
+    var _norm_dash = (face_h != 0 && face_v != 0) ? 0.7071 : 1;
+    _move_x = face_h * dash_speed * _norm_dash;
+    _move_y = face_v * dash_speed * _norm_dash;
     dash_timer -= 1;
     if (dash_timer <= 0) {
         is_dashing = false;
     }
 } else {
-    _move_x = _h * move_speed;
-    _move_y = _v * move_speed;
+    var _norm = (_h != 0 && _v != 0) ? 0.7071 : 1;
+    _move_x = _h * move_speed * _norm;
+    _move_y = _v * move_speed * _norm;
 }
 
 if (!place_meeting(x + _move_x, y, obj_wall)) {

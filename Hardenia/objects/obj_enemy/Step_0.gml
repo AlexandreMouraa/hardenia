@@ -96,6 +96,23 @@ switch (state) {
         break;
 }
 
+// inimigos encostados se afastam devagar, para nao virarem um bolo so; fora do
+// ataque, senao a zona do golpe andaria durante o aviso
+if (state == 0) {
+    var _outro = instance_place(x, y, obj_enemy);
+    if (_outro != noone) {
+        var _afasta = (_outro.x == x && _outro.y == y) ? random(360) : point_direction(_outro.x, _outro.y, x, y);
+        var _ox = lengthdir_x(1, _afasta);
+        var _oy = lengthdir_y(1, _afasta);
+        if (!place_meeting(x + _ox, y, obj_wall)) {
+            x += _ox;
+        }
+        if (!place_meeting(x, y + _oy, obj_wall)) {
+            y += _oy;
+        }
+    }
+}
+
 if (_is_moving) {
     anim_timer += 1;
     if (anim_timer >= anim_speed) {
