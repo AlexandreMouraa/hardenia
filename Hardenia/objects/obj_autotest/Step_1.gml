@@ -9,11 +9,20 @@ bot_h = 0;
 bot_v = 0;
 bot_dash = false;
 bot_enter = false;
+bot_clique = false;
 
 // trava de seguranca: 40 min de jogo
 if (frame > 60 * 60 * 40) {
     log("FALHA_limite_de_tempo", "");
     encerrar(1);
+    exit;
+}
+
+// mapa da proxima fase (obj_mapa): passa sozinho; print na primeira run
+if (instance_exists(obj_mapa)) {
+    if (run_atual <= 1 && obj_mapa.tempo == 90) {
+        pedir_print("mapa");
+    }
     exit;
 }
 
@@ -24,7 +33,7 @@ if (room == Room_Menu) {
     }
     if (espera == 40) {
         if (runs_feitas >= runs_total) {
-            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes));
+            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes) + " combos=" + string(combos));
             encerrar(0);
             exit;
         }
@@ -71,6 +80,24 @@ if (run_atual == 1 && sala_limpa_logada && tempo_sala == limpa_desde + 45) {
 if (run_atual == 1 && tempo_sala == 30) {
     pedir_print("inicio");
 }
+if (run_atual == 1 && dash_prints == 0 && _p.is_dashing && _p.dash_timer == 5) {
+    dash_prints = 1;
+    pedir_print("dash_meio");
+} else if (run_atual == 1 && dash_prints == 1 && !_p.is_dashing) {
+    dash_prints = 2;
+    pedir_print("dash_fim");
+}
+// combos completos: conta quando o terceiro golpe comeca
+var _forte_agora = _p.is_attacking && _p.golpe_atual == 3;
+if (_forte_agora && !forte_antes) {
+    combos += 1;
+}
+forte_antes = _forte_agora;
+// terceiro golpe do combo, com o arco largo no meio da varrida
+if (run_atual == 1 && !viu_combo && _p.is_attacking && _p.golpe_atual == 3 && _p.attack_anim_timer == 9) {
+    viu_combo = true;
+    pedir_print("combo_3");
+}
 
 if (_p.is_dead) {
     if (!estava_morto) {
@@ -104,10 +131,24 @@ if (_p.venceu) {
             pedir_print("vitoria");
         }
     }
+    // com rede (-api) a vitoria pede nome: digita antes do primeiro Enter
+    if (espera == 40 && _p.vitoria_estado == "nome") {
+        keyboard_string = nome_robo;
+    }
     if (espera == 60) {
         runs_feitas += 1;
         log("run_fim", "vitoria tentativas=" + string(global.tentativas));
         bot_enter = true;
+    }
+    // ranking: Enter de novo a cada segundo ate voltar ao menu (espera a resposta)
+    if (espera > 60 && espera mod 60 == 0) {
+        log("ranking", _p.vitoria_estado + " posicao=" + string(_p.vitoria_posicao) + "/" + string(_p.vitoria_total) + " top=" + string(array_length(_p.vitoria_ranking)));
+        if (espera == 120 && vitorias <= 2) {
+            pedir_print("vitoria_ranking");
+        }
+        if (espera >= 180) {
+            bot_enter = true;
+        }
     }
     exit;
 }
@@ -294,13 +335,46 @@ if (_alvo != noone && !_ameacado && !_quer_morrer) {
     }
     var _ax = _p.x + _fh * 32;
     var _ay = _p.y + _fv * 32;
+    if (usar_mouse) {
+        // mesma conta do golpe com mira (obj_player, golpear): alcance de 32
+        // nas retas, ate 45 nas diagonais
+        var _ang = point_direction(_p.x, _p.y, _alvo.x, _alvo.y);
+        var _cx = lengthdir_x(1, _ang);
+        var _cy = lengthdir_y(1, _ang);
+        var _k = 32 / max(abs(_cx), abs(_cy));
+        _ax = _p.x + _cx * _k;
+        _ay = _p.y + _cy * _k;
+    }
     if (rectangle_in_rectangle(_alvo.bbox_left, _alvo.bbox_top, _alvo.bbox_right, _alvo.bbox_bottom, _ax - 32, _ay - 32, _ax + 32, _ay + 32) > 0) {
-        if (_p.face_h == _fh && _p.face_v == _fv) {
+        if (usar_mouse || (_p.face_h == _fh && _p.face_v == _fv)) {
             _mh = 0;
             _mv = 0;
             if (_p.attack_cooldown <= 0) {
-                with (_p) {
-                    event_perform(ev_keypress, ord("J"));
+                // golpe que nao tira vida: alvo do outro lado de uma parede, no
+                // limite do alcance (a conta acima tem 1 px a mais que a hitbox
+                // real). Depois de 5 seguidos, sai dali como se tivesse travado
+                if (_alvo.id == alvo_golpeado && _alvo.hp == hp_golpeado) {
+                    golpes_vazios += 1;
+                } else {
+                    golpes_vazios = 0;
+                }
+                alvo_golpeado = _alvo.id;
+                hp_golpeado = _alvo.hp;
+                if (golpes_vazios >= 5) {
+                    log("travado", "golpes no vazio x=" + string(round(_p.x)) + " y=" + string(round(_p.y)));
+                    golpes_vazios = 0;
+                    desvio_frames = 20;
+                    desvio_h = choose(-1, 1);
+                    desvio_v = choose(-1, 0, 1);
+                    forcar_caminho = 120;
+                } else if (usar_mouse) {
+                    bot_clique = true;
+                    bot_mira_x = _alvo.x;
+                    bot_mira_y = _alvo.y;
+                } else {
+                    with (_p) {
+                        event_perform(ev_keypress, ord("J"));
+                    }
                 }
             }
         } else {
@@ -382,7 +456,7 @@ if (diag && tempo_sala mod 60 == 0) {
     log("DIAG", "p=" + string(round(_p.x)) + "," + string(round(_p.y)) + " alvo=" + ((_alvo != noone) ? object_get_name(_alvo.object_index) + "@" + string(round(_alvo.x)) + "," + string(round(_alvo.y)) + " st=" + string(_alvo.state) : "saida")
         + " w=" + string(round(_wx)) + "," + string(round(_wy)) + " m=" + string(_mh) + "," + string(_mv) + " face=" + string(_p.face_h) + "," + string(_p.face_v)
         + " amea=" + string(_ameacado) + " zonas=" + string(array_length(_zonas)) + " cd=" + string(_p.attack_cooldown)
-        + " pausa=" + string(global.game_paused) + " dash=" + string(_p.is_dashing) + "/" + string(_p.dash_timer) + " nplayer=" + string(instance_number(obj_player))
+        + " pausa=" + string(global.game_paused) + " hitstop=" + string(global.hitstop) + " runf=" + string(global.run_frames) + " tsala=" + string(_p.tempo_na_sala) + " fx=" + string(instance_number(obj_fx)) + " dash=" + string(_p.is_dashing) + "/" + string(_p.dash_timer) + " nplayer=" + string(instance_number(obj_player))
         + " morto=" + string(_p.is_dead) + " venceu=" + string(_p.venceu) + " hp=" + string(_p.hp) + " atk=" + string(_p.is_attacking) + "/" + string(_p.attack_anim_timer));
     if (tempo_sala mod 600 == 0) {
         pedir_print("diag");

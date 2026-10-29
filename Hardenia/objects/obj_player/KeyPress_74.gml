@@ -1,13 +1,9 @@
-if (global.game_paused || is_dead || venceu) {
+if (global.game_paused || is_dead || venceu || instance_exists(obj_mapa)) {
     exit;
 }
 
-if (attack_cooldown <= 0) {
-    var _spawn_x = x + face_h * 32;
-    var _spawn_y = y + face_v * 32;
-    instance_create_layer(_spawn_x, _spawn_y, "Instances", obj_attack);
-    attack_cooldown = attack_cooldown_max;
-    is_attacking = true;
-    attack_anim_timer = attack_anim_duration;
-    audio_play_sound(snd_attack, 1, false);
-}
+// o golpe sai no Step (golpear, no Create): apertar durante a recarga ou a
+// micro-pausa fica guardado e emenda o proximo golpe do combo. Com J, o golpe
+// vai para onde o jogador esta virado (com o clique, para o mouse)
+global.mira_mouse = false;
+ataque_buffer = ataque_buffer_max;

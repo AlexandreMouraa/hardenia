@@ -12,6 +12,9 @@ attack_dir = 0;
 attack_reach = 40;
 
 hit_flash = 0;
+// empurrao do terceiro golpe do combo (obj_attack): desliza e freia a cada frame
+empurrao_x = 0;
+empurrao_y = 0;
 
 alert_range = 150;
 home_x = x;

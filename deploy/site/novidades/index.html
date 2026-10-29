@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Novidades — Hardenia</title>
+<meta name="description" content="O que mudou em cada versão de Hardenia.">
+<meta property="og:title" content="Novidades — Hardenia">
+<meta property="og:image" content="__SITE__/capa-og.jpg">
+<meta name="theme-color" content="#0b0607">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0607;
+    --panel: #150c0d;
+    --line: #3a1d1f;
+    --text: #e9e2d6;
+    --muted: #a8998c;
+    --red: #c4161c;
+    --red-hi: #e0262c;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); }
+  body { font: 17px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 32px 16px 64px; }
+  a { color: var(--red-hi); text-decoration: none; font-weight: 600; }
+  a:hover { text-decoration: underline; }
+  h1 { font: 700 32px/1.2 Cinzel, serif; letter-spacing: .06em; margin: 16px 0 8px; }
+  .intro { color: var(--muted); margin: 0 0 32px; }
+  article { border-top: 1px solid var(--line); padding-top: 24px; margin-bottom: 40px; }
+  .versao { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+  h2 { font: 700 22px/1.2 Cinzel, serif; letter-spacing: .06em; margin: 0; }
+  .selo { font: 700 13px/1 system-ui, sans-serif; color: #fff; background: var(--red); border-radius: 3px; padding: 4px 7px; }
+  .data { color: var(--muted); font-size: 14px; }
+  h3 { font: 700 15px/1.2 Cinzel, serif; letter-spacing: .1em; text-transform: uppercase; color: var(--red-hi); margin: 24px 0 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  th { text-align: left; color: var(--muted); font-weight: 600; padding: 6px 12px 6px 0; border-bottom: 1px solid var(--line); }
+  td { padding: 9px 12px 9px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  td:first-child { font-weight: 600; white-space: nowrap; }
+  td.antes { color: var(--muted); }
+  ul { margin: 0; padding-left: 20px; }
+  li { margin-bottom: 6px; }
+  .jogar { display: inline-block; margin: 8px 0 32px; font: 700 15px/1 Cinzel, serif; letter-spacing: .08em; text-transform: uppercase; background: var(--red); color: #fff; padding: 14px 22px; border-radius: 4px; }
+  .jogar:hover { background: var(--red-hi); text-decoration: none; }
+  .futuro { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 20px 20px 8px; margin-bottom: 40px; }
+  .futuro h2 { margin-bottom: 4px; }
+  .futuro > p { color: var(--muted); margin: 0 0 16px; }
+  .futuro ol { margin: 0; padding-left: 22px; }
+  .futuro li { margin-bottom: 14px; }
+  .estado { display: inline-block; font: 600 12px/1 system-ui, sans-serif; border-radius: 3px; padding: 3px 6px; margin-left: 6px; vertical-align: 2px; border: 1px solid var(--line); color: var(--muted); }
+  .estado.andamento { color: #fff; background: var(--red); border-color: var(--red); }
+  @media (max-width: 560px) {
+    thead { display: none; }
+    td { display: block; padding: 2px 0; border: 0; }
+    td:first-child { padding-top: 10px; }
+    td:last-child { padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+    td.antes::before { content: "Antes: "; }
+    td.agora::before { content: "Agora: "; color: var(--muted); }
+  }
+</style>
+</head>
+<body>
+<main>
+  <a href="../">&larr; Hardenia</a>
+  <h1>Novidades</h1>
+  <p class="intro">O que mudou em cada versão. O jogo fica no ar 24 horas: jogue quando quiser e, se achar um bug, conte pelo <a href="../#opiniao">formulário do site</a>. A versão aparece no canto do menu do jogo.</p>
+  <a class="jogar" href="../jogar/">Jogar a versão __VERSAO__</a>
+
+  <section class="futuro" id="proximas">
+    <h2>O que vem por aí</h2>
+    <p>Direção do jogo, não promessa com data. Vai mudando conforme as opiniões e o mapa de mortes.</p>
+    <ol>
+      <li><strong>Mapas com túneis e caminhos</strong><span class="estado andamento">em andamento</span><br>
+        Hoje as fases são arenas abertas. As próximas vão ter corredores, túneis e caminhos, e os mapas novos entram aos poucos, conforme chegam. Junto, os inimigos aprendem a contornar paredes: hoje eles perseguem em linha reta e travariam nas quinas de um túnel.</li>
+      <li><strong>Mais fases até o final</strong><span class="estado">planejado</span><br>
+        O caminho que aparece entre as fases vai crescendo a cada mapa novo.</li>
+      <li><strong>O Trono: o chefe final</strong><span class="estado">planejado</span><br>
+        Já aparece trancado no mapa do jogo como "em breve". Quem destruiu o reino?</li>
+      <li><strong>Armas, golpes novos, melhorias e mais vida</strong><span class="estado">em estudo</span><br>
+        O combo (0.4) e a mira no mouse (0.5) são os primeiros passos, inspirados no ritmo de Hades. Próximos: golpe carregado, golpe especial no clique direito e golpe saindo do dash. A regra é ajudar o jogador sem deixar o jogo fácil.</li>
+    </ol>
+    <p>Tem uma ideia? Mande pelo <a href="../#opiniao">formulário do site</a>.</p>
+  </section>
+
+  <article>
+    <div class="versao"><h2>Versão 0.5</h2><span class="selo">atual</span><span class="data">29/10/2026</span></div>
+    <p>Mira e ataque pelo mouse.</p>
+
+    <h3>Antes → agora</h3>
+    <table>
+      <thead><tr><th></th><th>Antes</th><th>Agora</th></tr></thead>
+      <tbody>
+        <tr><td>Mira</td><td class="antes">O golpe ia só para onde você andava, em 8 direções</td><td class="agora">Clicando, o golpe vai para onde o mouse aponta, em qualquer ângulo, com o mesmo alcance. O J continua igual a antes</td></tr>
+        <tr><td>Cursor</td><td class="antes">A seta do sistema</td><td class="agora">Uma mira vermelha; uma setinha junto do personagem mostra para onde o golpe vai</td></tr>
+        <tr><td>Menu e mapa</td><td class="antes">Só Enter</td><td class="agora">O clique também começa e pula o mapa entre as fases</td></tr>
+        <tr><td>Clique direito</td><td class="antes">Abria o menu do navegador em cima do jogo</td><td class="agora">Não abre mais (vai virar o golpe especial)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>O que ainda pode dar errado</h3>
+    <ul>
+      <li>Com mouse o jogo fica mais fácil que no teclado: não precisa virar para bater. Estamos medindo; conte o que achou.</li>
+      <li>O jogo usa o último jeito com que você atacou: clicou, mira no mouse; apertou J, volta a mirar para onde você anda.</li>
+      <li>Os problemas das versões abaixo continuam valendo.</li>
+    </ul>
+  </article>
+
+  <article>
+    <div class="versao"><h2>Versão 0.4</h2><span class="data">29/10/2026</span></div>
+    <p>Combo de 3 golpes e o mapa do caminho até o final.</p>
+
+    <h3>Antes → agora</h3>
+    <table>
+      <thead><tr><th></th><th>Antes</th><th>Agora</th></tr></thead>
+      <tbody>
+        <tr><td>Ataque</td><td class="antes">O mesmo golpe sempre</td><td class="agora">Combo: aperte J três vezes seguidas. O 2º golpe corta no sentido contrário; o 3º é largo, dourado, vale 2 e joga o inimigo para longe, mas demora mais para você atacar de novo</td></tr>
+        <tr><td>Aperto do J</td><td class="antes">Apertar durante a recarga não fazia nada</td><td class="agora">O aperto fica guardado e emenda o próximo golpe na hora certa</td></tr>
+        <tr><td>Entre fases</td><td class="antes">Trocava de sala direto</td><td class="agora">Um mapa mostra para qual fase você está indo e o caminho até o final</td></tr>
+        <tr><td>Pausa</td><td class="antes">Só os controles</td><td class="agora">Mostra também onde você está no caminho</td></tr>
+      </tbody>
+    </table>
+
+    <h3>O que ainda pode dar errado</h3>
+    <ul>
+      <li>O combo não mata o inimigo comum mais rápido: o ritmo é o mesmo do ataque antigo, e o ganho está no 3º golpe. Foi de propósito, para o jogo continuar difícil.</li>
+      <li>O mapa entre as fases dura 2,5 segundos; Enter, espaço ou J pulam. Ele não aparece quando você morre, só ao entrar numa fase nova.</li>
+      <li>Os nomes das fases ainda são provisórios.</li>
+      <li>Os problemas das versões abaixo continuam valendo.</li>
+    </ul>
+  </article>
+
+  <article>
+    <div class="versao"><h2>Versão 0.3</h2><span class="data">29/10/2026</span></div>
+    <p>Dash novo: mais liso e com mais efeito. Mesmo alcance e mesma invencibilidade de antes.</p>
+
+    <h3>Antes → agora</h3>
+    <table>
+      <thead><tr><th></th><th>Antes</th><th>Agora</th></tr></thead>
+      <tbody>
+        <tr><td>Movimento do dash</td><td class="antes">Velocidade fixa e parada seca</td><td class="agora">Arranca forte e freia suave até o passo normal</td></tr>
+        <tr><td>Aperto do dash</td><td class="antes">Apertar no fim do dash ou na pausa do golpe não fazia nada</td><td class="agora">O aperto fica guardado por um instante: dá para emendar dois dashes</td></tr>
+        <tr><td>Direção</td><td class="antes">Dava para entortar o dash no meio</td><td class="agora">O dash vai reto para onde você estava virado</td></tr>
+        <tr><td>Parede</td><td class="antes">Parava antes da parede, com um vão; batendo de raspão numa quina, travava</td><td class="agora">Encosta na parede e escorrega pela quina</td></tr>
+        <tr><td>Efeitos</td><td class="antes">Rastro vermelho simples</td><td class="agora">Rastro em brasa, linhas de velocidade, poeira e anel no chão; o personagem estica e brilha</td></tr>
+        <tr><td>Barra do dash</td><td class="antes">Cheia ou vazia</td><td class="agora">Enche aos poucos, pisca quando a carga volta e treme vermelha se não tiver carga</td></tr>
+        <tr><td>Câmera</td><td class="antes">Grudada no personagem</td><td class="agora">Acompanha com um leve atraso, o que deixa o movimento mais suave</td></tr>
+      </tbody>
+    </table>
+
+    <h3>O que ainda pode dar errado</h3>
+    <ul>
+      <li>Quem estava acostumado a entortar o dash no meio vai estranhar: agora ele vai reto.</li>
+      <li>O escorregão nas quinas também vale andando; se ele empurrar para o lado em algum lugar estranho, conte qual sala.</li>
+      <li>Em PC fraco ou monitor de 144 Hz o navegador pode engasgar; o download para Windows é mais estável.</li>
+      <li>Os problemas da versão 0.2 abaixo continuam valendo.</li>
+    </ul>
+  </article>
+
+  <article>
+    <div class="versao"><h2>Versão 0.2</h2><span class="data">29/10/2026</span></div>
+    <p>Ranking, mapa de mortes e golpes com impacto.</p>
+
+    <h3>Antes → agora</h3>
+    <table>
+      <thead><tr><th></th><th>Antes</th><th>Agora</th></tr></thead>
+      <tbody>
+        <tr><td>Vitória</td><td class="antes">Mostrava só as tentativas</td><td class="agora">Pede seu nome, mostra o tempo, sua posição no ranking e o top 5</td></tr>
+        <tr><td>Ataque</td><td class="antes">Só a animação do personagem; o golpe era invisível</td><td class="agora">Arco de corte da espada, faíscas, micro-pausa e tremor de tela ao matar</td></tr>
+        <tr><td>Dash</td><td class="antes">Nada mostrava que você estava invencível</td><td class="agora">Rastro vermelho enquanto dura a invencibilidade</td></tr>
+        <tr><td>Morte</td><td class="antes">Tela vermelha</td><td class="agora">Impacto mais forte antes da tela de morte</td></tr>
+        <tr><td>Carregamento</td><td class="antes">Tela preta com barra cinza</td><td class="agora">Arte do jogo com barra de progresso</td></tr>
+        <tr><td>Site</td><td class="antes">Jogar e baixar</td><td class="agora">Ranking ao vivo, números da comunidade, <a href="../mapa/">mapa de mortes</a>, opinião e reporte de bug</td></tr>
+        <tr><td>Windows</td><td class="antes">Build original</td><td class="agora">Build novo, com tudo acima</td></tr>
+      </tbody>
+    </table>
+
+    <h3>O que ainda pode dar errado</h3>
+    <ul>
+      <li>Nome no ranking sem acento: a fonte do jogo não tem esses caracteres (digite "Joao", não "João").</li>
+      <li>Inimigos podem ficar presos atrás de pilares, porque perseguem em linha reta.</li>
+      <li>O ranking é moderado à mão: nomes ofensivos ou resultados impossíveis são removidos.</li>
+      <li>Celular não funciona: o jogo precisa de teclado.</li>
+    </ul>
+  </article>
+
+  <article>
+    <div class="versao"><h2>Versão 0.1</h2><span class="data">29/10/2026</span></div>
+    <p>Hardenia no navegador.</p>
+
+    <h3>Antes → agora</h3>
+    <table>
+      <thead><tr><th></th><th>Antes</th><th>Agora</th></tr></thead>
+      <tbody>
+        <tr><td>Onde jogar</td><td class="antes">Só baixando o .exe, no Windows</td><td class="agora">Direto no navegador, sem instalar, ou baixando para Windows</td></tr>
+        <tr><td>Endereço</td><td class="antes">Arquivo passado de mão em mão</td><td class="agora">Site próprio com HTTPS, no ar 24 horas</td></tr>
+        <tr><td>Tela</td><td class="antes">Tela cheia forçada ao abrir</td><td class="agora">No navegador, se encaixa em qualquer janela; F11 para tela cheia</td></tr>
+      </tbody>
+    </table>
+  </article>
+</main>
+</body>
+</html>

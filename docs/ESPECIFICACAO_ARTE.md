@@ -75,10 +75,25 @@ Hoje o efeito do jogador é invisível (a animação de ataque do próprio perso
 
 ## Mapas / Cenários
 
-- **Resolução por fase**: sem tamanho fixo obrigatório, mas a Fase 1 atual é **960 x 640 px**. Fases futuras podem ter outro tamanho, só me avisar as dimensões exatas de cada uma antes de configurar a sala no jogo.
+- **Resolução por fase**: sem tamanho fixo obrigatório. As 3 fases atuais são salas de **1536 x 1024 px** e a câmera mostra **1152 x 648** em volta do jogador. Fases futuras podem ter outro tamanho (maiores também: a câmera segue o jogador), só me avisar as dimensões exatas de cada uma antes de configurar a sala no jogo.
 - Pode ser entregue como **uma imagem única pré-renderizada** (como foi a Fase 1) — não precisa ser feito em tileset/grade de tiles, o jogo não depende disso.
-- Elementos de colisão (paredes, pilares, obstáculos) não precisam ser marcados separadamente pela arte — isso é resolvido no código a partir da imagem.
+- Colisão (paredes, pilares, obstáculos): hoje é montada à mão com blocos invisíveis (a Fase 1 tem 294). Para os mapas novos, mandar junto uma **máscara de colisão** (ver abaixo) deixa isso rápido e exato.
 - Portões/entradas de fase (como o portão de cima e de baixo da Fase 1) devem ficar visualmente claros na arte, já que vão virar pontos de transição entre fases.
+
+### Próximos mapas: túneis e caminhos
+
+A direção agora é sair das arenas abertas e ir para corredores, túneis e caminhos. Para o combate continuar justo:
+
+| Item | Medida | Por quê |
+|---|---:|---|
+| Largura normal de corredor | **160 px ou mais** (2,5 blocos de 64) | O golpe do inimigo marca uma área de 64 x 64 px; o jogador precisa de espaço para sair dela andando |
+| Corredor apertado (de propósito) | 96 a 128 px | A área do golpe tapa quase tudo e só o dash (78 px, invencível) salva. Usar em poucos pontos, como desafio |
+| Câmaras de combate | 400 x 400 px ou mais | Onde ficam os grupos de inimigos; alternar com os corredores |
+| Recortes nas paredes | evitar dentes menores que 32 px | Contorno liso evita prender jogador e inimigo; o jogo já escorrega o jogador em quinas de até 6 px |
+
+- **Máscara de colisão**: uma segunda imagem do mesmo tamanho do mapa, com o que é parede pintado de **preto** e o chão de **branco**. Com ela as paredes entram no jogo automaticamente, sem posicionar bloco por bloco.
+- Os inimigos hoje perseguem em linha reta; em túnel eles vão precisar contornar parede (mudança no código, já prevista no roteiro). Não precisa ajustar nada na arte por causa disso.
+- Cada fase nova também entra no **mapa de progresso** do jogo (a tela entre as fases): mandar o nome da fase junto.
 
 ## Arte de menu / tela de título
 

@@ -9,11 +9,14 @@ if (!instance_exists(obj_autotest)) {
 }
 
 // tela cheia so ao abrir o jogo: quem trocou para janela (Alt+Enter) e voltou
-// ao menu continua em janela
-if (!instance_exists(obj_autotest) && !variable_global_exists("tela_cheia_aplicada")) {
+// ao menu continua em janela. No navegador quem decide e o jogador (F11)
+if (!instance_exists(obj_autotest) && !variable_global_exists("tela_cheia_aplicada") && os_browser == browser_not_a_browser) {
     global.tela_cheia_aplicada = true;
     window_set_fullscreen(true);
 }
+
+// no menu o cursor do sistema volta (no jogo quem aparece e a mira)
+window_set_cursor(cr_default);
 
 // cada morte conta uma tentativa; a run inteira comeca aqui
 global.tentativas = 1;

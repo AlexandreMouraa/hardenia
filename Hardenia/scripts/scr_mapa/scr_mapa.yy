@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_mapa",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_mapa",
+  "parent":{
+    "name":"Hardenia",
+    "path":"Hardenia.yyp",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
