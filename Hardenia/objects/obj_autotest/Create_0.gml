@@ -1,7 +1,8 @@
 // Robo de teste automatico. So existe quando o jogo abre com -autotest
 // (quem cria e o obj_menu). Joga a run inteira sozinho, sem som e em janela,
 // e grava log + prints na pasta de save: %LOCALAPPDATA%\Hardenia\autotest\
-// Parametros: -runs N (padrao 3)  -speed FPS (padrao 240)
+// Parametros: -runs N (padrao 3)  -speed FPS (padrao 240)  -morrer
+// -desatento N  -diag  -appsurface. Para rodar: tools\autotest.ps1
 runs_total = 3;
 velocidade = 240;
 diag = false;
