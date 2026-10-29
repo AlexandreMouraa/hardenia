@@ -48,6 +48,10 @@ tempo_sala += 1;
 var _n = instance_number(obj_enemy);
 if (_n < inimigos_antes) {
     log("inimigo_morto", "restam=" + string(_n));
+    if (run_atual == 1 && !viu_fx_morte) {
+        viu_fx_morte = true;
+        pedir_print("fx_morte");
+    }
 }
 inimigos_antes = _n;
 

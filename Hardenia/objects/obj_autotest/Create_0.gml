@@ -179,6 +179,7 @@ sala_limpa_logada = false;
 limpa_desde = 0;
 sem_caminho_logado = false;
 ja_viu_aviso = false;
+viu_fx_morte = false;
 testou_pausa = false;
 
 audio_master_gain(0);
