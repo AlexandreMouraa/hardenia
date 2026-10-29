@@ -20,6 +20,7 @@
   "name":"Hardenia",
   "resources":[
     {"id":{"name":"obj_attack","path":"objects/obj_attack/obj_attack.yy",},},
+    {"id":{"name":"obj_autotest","path":"objects/obj_autotest/obj_autotest.yy",},},
     {"id":{"name":"obj_enemy_attack","path":"objects/obj_enemy_attack/obj_enemy_attack.yy",},},
     {"id":{"name":"obj_enemy_ghoul","path":"objects/obj_enemy_ghoul/obj_enemy_ghoul.yy",},},
     {"id":{"name":"obj_enemy_wight","path":"objects/obj_enemy_wight/obj_enemy_wight.yy",},},

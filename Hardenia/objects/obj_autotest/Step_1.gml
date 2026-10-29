@@ -1,0 +1,381 @@
+// Begin Step: roda antes do Step do jogador, entao o que o robo decide aqui
+// vale neste mesmo frame.
+if (encerrando) {
+    exit;
+}
+
+frame += 1;
+bot_h = 0;
+bot_v = 0;
+bot_dash = false;
+bot_enter = false;
+
+// trava de seguranca: 40 min de jogo
+if (frame > 60 * 60 * 40) {
+    log("FALHA_limite_de_tempo", "");
+    encerrar(1);
+    exit;
+}
+
+if (room == Room_Menu) {
+    espera += 1;
+    if (espera == 20 && run_atual == 0) {
+        pedir_print("menu");
+    }
+    if (espera == 40) {
+        if (runs_feitas >= runs_total) {
+            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes));
+            encerrar(0);
+            exit;
+        }
+        run_atual += 1;
+        log("run_inicio", "");
+        with (obj_menu) {
+            event_perform(ev_keypress, vk_enter);
+        }
+    }
+    exit;
+}
+
+if (!instance_exists(obj_player)) {
+    exit;
+}
+
+var _p = instance_find(obj_player, 0);
+tempo_sala += 1;
+
+// ---------- eventos para o log ----------
+var _n = instance_number(obj_enemy);
+if (_n < inimigos_antes) {
+    log("inimigo_morto", "restam=" + string(_n));
+}
+inimigos_antes = _n;
+
+if (_n == 0 && !sala_limpa_logada) {
+    sala_limpa_logada = true;
+    log("sala_limpa", "segundos=" + string(round(tempo_sala / 60)));
+    if (run_atual == 1) {
+        pedir_print("sala_limpa");
+    }
+}
+
+if (run_atual == 1 && tempo_sala == 30) {
+    pedir_print("inicio");
+}
+
+if (_p.is_dead) {
+    if (!estava_morto) {
+        estava_morto = true;
+        mortes_total += 1;
+        mortes_sala += 1;
+        var _perto = instance_nearest(_p.x, _p.y, obj_enemy);
+        var _quem = "?";
+        if (_perto != noone) {
+            _quem = object_get_name(_perto.object_index) + " a " + string(round(point_distance(_p.x, _p.y, _perto.x, _perto.y))) + "px";
+        }
+        log("morte", "x=" + string(round(_p.x)) + " y=" + string(round(_p.y)) + " perto=" + _quem + " mortes_na_sala=" + string(mortes_sala));
+        if (mortes_total <= 6) {
+            pedir_print("morte");
+        }
+        if (mortes_sala >= 25) {
+            log("FALHA_desistiu", "25 mortes na mesma sala");
+            terminar_run("desistiu");
+        }
+    }
+    exit;
+}
+estava_morto = false;
+
+if (_p.venceu) {
+    espera += 1;
+    if (espera == 30) {
+        vitorias += 1;
+        log("vitoria", "tentativas=" + string(global.tentativas));
+        if (vitorias <= 2) {
+            pedir_print("vitoria");
+        }
+    }
+    if (espera == 60) {
+        runs_feitas += 1;
+        log("run_fim", "vitoria tentativas=" + string(global.tentativas));
+        bot_enter = true;
+    }
+    exit;
+}
+
+if (tempo_sala > 60 * 150) {
+    log("FALHA_timeout_sala", "150s sem sair da sala");
+    pedir_print("timeout");
+    terminar_run("timeout");
+    exit;
+}
+
+// pausa: abre, tira print e fecha, uma vez na primeira sala
+if (!testou_pausa && room == Room1 && tempo_sala >= 90) {
+    if (tempo_sala == 90 || tempo_sala == 120) {
+        with (_p) {
+            event_perform(ev_keypress, vk_escape);
+        }
+    }
+    if (tempo_sala == 105) {
+        if (!global.game_paused) {
+            log("FALHA_pausa", "Esc nao pausou");
+        }
+        pedir_print("pausa");
+    }
+    if (tempo_sala == 125) {
+        testou_pausa = true;
+        if (global.game_paused) {
+            log("FALHA_pausa", "Esc nao saiu da pausa");
+        }
+    }
+    exit;
+}
+
+// ---------- zonas de golpe ativas ----------
+var _quer_morrer = morrer && run_atual == 1 && mortes_sala == 0;
+var _zonas = [];
+with (obj_enemy) {
+    if (state == 1 || state == 2) {
+        var _zx = x + lengthdir_x(attack_reach, attack_dir);
+        var _zy = y + lengthdir_y(attack_reach, attack_dir);
+        // golpe saiu agora (o inimigo entrou no estado 2 no frame anterior)
+        if (state == 2 && state_timer == attack_time) {
+            other.golpes += 1;
+            other.log("golpe_inimigo", object_get_name(object_index) + " dentro=" + string(other.zona_toca([_zx, _zy], _p.x, _p.y, 0)) + " dash=" + string(_p.is_dashing));
+        }
+        // cada aviso novo sorteia se o robo percebe ou nao (-desatento)
+        var _k = string(id);
+        if (!variable_struct_exists(other.percebeu, _k) || (state == 1 && state_timer == windup_time)) {
+            variable_struct_set(other.percebeu, _k, random(100) >= other.desatento);
+        }
+        if (variable_struct_get(other.percebeu, _k) && !_quer_morrer) {
+            array_push(_zonas, [_zx, _zy, state, state_timer]);
+        }
+    }
+}
+if (!ja_viu_aviso && array_length(_zonas) > 0 && run_atual == 1) {
+    ja_viu_aviso = true;
+    pedir_print("aviso");
+}
+
+var _ameacado = false;
+var _urgente = false;
+var _zona_perto = -1;
+for (var _i = 0; _i < array_length(_zonas); _i++) {
+    if (zona_toca(_zonas[_i], _p.x, _p.y, 8)) {
+        _ameacado = true;
+        _zona_perto = _i;
+        if (_zonas[_i][2] == 2 || _zonas[_i][3] <= 6) {
+            _urgente = true;
+        }
+    }
+}
+
+// ---------- objetivo: inimigo mais perto, ou o portao adiante ----------
+var _alvo = instance_nearest(_p.x, _p.y, obj_enemy);
+var _gx = _p.x;
+var _gy = _p.y;
+if (_alvo != noone) {
+    _gx = _alvo.x;
+    _gy = _alvo.y;
+} else {
+    var _s = saida_adiante();
+    if (_s != noone) {
+        _gx = (_s.bbox_left + _s.bbox_right) / 2;
+        _gy = (_s.bbox_top + _s.bbox_bottom) / 2;
+    }
+}
+
+// parede no meio (ou travou ha pouco): segue o caminho da grade
+var _wx = _gx;
+var _wy = _gy;
+if (forcar_caminho > 0) {
+    forcar_caminho -= 1;
+}
+if (forcar_caminho > 0 || collision_line(_p.x, _p.y, _gx, _gy, obj_wall, false, true) != noone) {
+    if (tempo_sala mod 10 == 0 || proximo_x < 0 || point_distance(_p.x, _p.y, proximo_x, proximo_y) < 6) {
+        proximo_x = -1;
+        if (tem_caminho(_p.x, _p.y, _gx, _gy)) {
+            for (var _k = 1; _k < path_get_number(caminho); _k++) {
+                var _cx = path_get_point_x(caminho, _k);
+                var _cy = path_get_point_y(caminho, _k);
+                if (point_distance(_p.x, _p.y, _cx, _cy) > 20 || _k == path_get_number(caminho) - 1) {
+                    proximo_x = _cx;
+                    proximo_y = _cy;
+                    break;
+                }
+            }
+        } else if (!sem_caminho_logado) {
+            sem_caminho_logado = true;
+            log("ALERTA_sem_caminho", "de " + string(round(_p.x)) + "," + string(round(_p.y)) + " para " + string(round(_gx)) + "," + string(round(_gy)));
+        }
+    }
+    if (proximo_x >= 0) {
+        _wx = proximo_x;
+        _wy = proximo_y;
+    }
+} else {
+    proximo_x = -1;
+}
+
+// ---------- movimento: a direcao mais alinhada com o objetivo, sem parede e
+// sem zona de golpe (olhando 1 e 6 frames a frente) ----------
+var _dir_alvo = point_direction(_p.x, _p.y, _wx, _wy);
+var _perto_do_ponto = point_distance(_p.x, _p.y, _wx, _wy) < 4;
+var _mh = 0;
+var _mv = 0;
+var _melhor = 1000000000;
+for (var _dh = -1; _dh <= 1; _dh++) {
+    for (var _dv = -1; _dv <= 1; _dv++) {
+        var _custo = 0;
+        if (_dh == 0 && _dv == 0) {
+            _custo = _perto_do_ponto ? 0 : 200;
+        } else {
+            _custo = abs(angle_difference(point_direction(0, 0, _dh, _dv), _dir_alvo));
+            var _bloq_h = false;
+            var _bloq_v = false;
+            with (_p) {
+                _bloq_h = (_dh != 0) && place_meeting(x + _dh * 3, y, obj_wall);
+                _bloq_v = (_dv != 0) && place_meeting(x, y + _dv * 3, obj_wall);
+            }
+            if ((_dh == 0 || _bloq_h) && (_dv == 0 || _bloq_v)) {
+                _custo += 5000;
+            } else if (_bloq_h || _bloq_v) {
+                _custo += 40;
+            }
+            // inercia: manter a direcao custa menos, inverter custa mais (sem isso
+            // o robo fica indo e voltando 3px quando duas opcoes empatam)
+            if (_dh == mov_h && _dv == mov_v) {
+                _custo -= 15;
+            } else if (_dh == -mov_h && _dv == -mov_v) {
+                _custo += 25;
+            }
+        }
+        for (var _i = 0; _i < array_length(_zonas); _i++) {
+            if (zona_toca(_zonas[_i], _p.x + _dh * 3, _p.y + _dv * 3, 4)) {
+                _custo += 600;
+            }
+            if (zona_toca(_zonas[_i], _p.x + _dh * 18, _p.y + _dv * 18, 10)) {
+                _custo += 1000;
+            }
+        }
+        if (_custo < _melhor) {
+            _melhor = _custo;
+            _mh = _dh;
+            _mv = _dv;
+        }
+    }
+}
+
+// -morrer: chega perto e espera o golpe, sem atacar
+if (_quer_morrer && _alvo != noone && point_distance(_p.x, _p.y, _alvo.x, _alvo.y) < 36) {
+    _mh = 0;
+    _mv = 0;
+}
+
+// ---------- ataque: vira para o alvo e bate quando ele esta no alcance ----------
+if (_alvo != noone && !_ameacado && !_quer_morrer) {
+    var _dx = _alvo.x - _p.x;
+    var _dy = _alvo.y - _p.y;
+    var _fh = (abs(_dx) > 16) ? sign(_dx) : 0;
+    var _fv = (abs(_dy) > 16) ? sign(_dy) : 0;
+    if (_fh == 0 && _fv == 0) {
+        _fv = 1;
+    }
+    var _ax = _p.x + _fh * 32;
+    var _ay = _p.y + _fv * 32;
+    if (rectangle_in_rectangle(_alvo.bbox_left, _alvo.bbox_top, _alvo.bbox_right, _alvo.bbox_bottom, _ax - 32, _ay - 32, _ax + 32, _ay + 32) > 0) {
+        if (_p.face_h == _fh && _p.face_v == _fv) {
+            _mh = 0;
+            _mv = 0;
+            if (_p.attack_cooldown <= 0) {
+                with (_p) {
+                    event_perform(ev_keypress, ord("J"));
+                }
+            }
+        } else {
+            _mh = _fh;
+            _mv = _fv;
+        }
+    }
+}
+
+// ---------- dash: o golpe vai cair agora e ainda estou dentro ----------
+if (_urgente && _p.dash_charges > 0 && !_p.is_dashing) {
+    if (_mh == 0 && _mv == 0) {
+        var _fuga = point_direction(_zonas[_zona_perto][0], _zonas[_zona_perto][1], _p.x, _p.y);
+        _mh = round(lengthdir_x(1, _fuga));
+        _mv = round(lengthdir_y(1, _fuga));
+    }
+    bot_dash = true;
+}
+
+// ---------- travado: quer andar e nao sai do lugar ----------
+if (desvio_frames > 0) {
+    desvio_frames -= 1;
+    _mh = desvio_h;
+    _mv = desvio_v;
+}
+var _travou = false;
+if ((_mh != 0 || _mv != 0) && point_distance(_p.x, _p.y, ultimo_x, ultimo_y) < 0.5) {
+    quieto += 1;
+} else {
+    quieto = 0;
+}
+ultimo_x = _p.x;
+ultimo_y = _p.y;
+if (quieto >= 45) {
+    _travou = true;
+}
+// vai e volta: andou quase o segundo todo e o deslocamento liquido foi minimo
+if (_mh != 0 || _mv != 0) {
+    andou_frames += 1;
+}
+if (tempo_sala mod 60 == 0) {
+    if (andou_frames >= 40 && point_distance(_p.x, _p.y, janela_x, janela_y) < 8) {
+        _travou = true;
+    }
+    janela_x = _p.x;
+    janela_y = _p.y;
+    andou_frames = 0;
+}
+if (_travou) {
+    quieto = 0;
+    travado += 1;
+    log("travado", "x=" + string(round(_p.x)) + " y=" + string(round(_p.y)) + " vezes=" + string(travado));
+    if (travado <= 3) {
+        pedir_print("travado");
+    }
+    desvio_frames = 20;
+    desvio_h = choose(-1, 0, 1);
+    desvio_v = choose(-1, 1);
+    forcar_caminho = 120;
+}
+
+// parado sem atacar com inimigo vivo: bug do robo, nao do jogo
+if (_mh == 0 && _mv == 0 && _alvo != noone && _p.attack_cooldown <= 0 && !_ameacado) {
+    ocioso += 1;
+    if (ocioso == 180) {
+        log("ALERTA_robo_ocioso", "x=" + string(round(_p.x)) + " y=" + string(round(_p.y)));
+        pedir_print("ocioso");
+    }
+} else {
+    ocioso = 0;
+}
+
+bot_h = _mh;
+bot_v = _mv;
+mov_h = _mh;
+mov_v = _mv;
+
+if (diag && tempo_sala mod 60 == 0) {
+    log("DIAG", "p=" + string(round(_p.x)) + "," + string(round(_p.y)) + " alvo=" + ((_alvo != noone) ? object_get_name(_alvo.object_index) + "@" + string(round(_alvo.x)) + "," + string(round(_alvo.y)) + " st=" + string(_alvo.state) : "saida")
+        + " w=" + string(round(_wx)) + "," + string(round(_wy)) + " m=" + string(_mh) + "," + string(_mv) + " face=" + string(_p.face_h) + "," + string(_p.face_v)
+        + " amea=" + string(_ameacado) + " zonas=" + string(array_length(_zonas)) + " cd=" + string(_p.attack_cooldown)
+        + " pausa=" + string(global.game_paused) + " dash=" + string(_p.is_dashing) + "/" + string(_p.dash_timer) + " nplayer=" + string(instance_number(obj_player))
+        + " morto=" + string(_p.is_dead) + " venceu=" + string(_p.venceu) + " hp=" + string(_p.hp) + " atk=" + string(_p.is_attacking) + "/" + string(_p.attack_anim_timer));
+    if (tempo_sala mod 600 == 0) {
+        pedir_print("diag");
+    }
+}

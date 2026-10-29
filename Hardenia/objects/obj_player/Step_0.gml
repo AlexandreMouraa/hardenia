@@ -19,15 +19,25 @@ if (!venceu && room == room_last && instance_number(obj_enemy) == 0) {
     image_alpha = 1;
 }
 
+var _h = (keyboard_check(vk_right) || keyboard_check(ord("D"))) - (keyboard_check(vk_left) || keyboard_check(ord("A")));
+var _v = (keyboard_check(vk_down) || keyboard_check(ord("S"))) - (keyboard_check(vk_up) || keyboard_check(ord("W")));
+var _dash_apertado = keyboard_check_pressed(vk_space);
+var _enter_apertado = keyboard_check_pressed(vk_enter);
+
+// no modo -autotest quem "aperta" e o robo (obj_autotest), pelas mesmas variaveis
+if (instance_exists(obj_autotest)) {
+    _h = obj_autotest.bot_h;
+    _v = obj_autotest.bot_v;
+    _dash_apertado = obj_autotest.bot_dash;
+    _enter_apertado = obj_autotest.bot_enter;
+}
+
 if (venceu) {
-    if (keyboard_check_pressed(vk_enter)) {
+    if (_enter_apertado) {
         room_goto(Room_Menu);
     }
     exit;
 }
-
-var _h = (keyboard_check(vk_right) || keyboard_check(ord("D"))) - (keyboard_check(vk_left) || keyboard_check(ord("A")));
-var _v = (keyboard_check(vk_down) || keyboard_check(ord("S"))) - (keyboard_check(vk_up) || keyboard_check(ord("W")));
 
 if (_h != 0 || _v != 0) {
     face_h = _h;
@@ -54,7 +64,7 @@ if (attack_cooldown > 0) {
     attack_cooldown -= 1;
 }
 
-if (keyboard_check_pressed(vk_space) && !is_dashing && dash_charges > 0) {
+if (_dash_apertado && !is_dashing && dash_charges > 0) {
     is_dashing = true;
     dash_timer = dash_duration;
     dash_charges -= 1;
