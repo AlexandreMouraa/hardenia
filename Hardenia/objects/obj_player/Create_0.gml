@@ -29,6 +29,9 @@ venceu = false;
 // escurecido que some ao entrar na sala (troca de sala e reinicio apos morrer)
 fade = 1;
 
+// frames jogados nesta sala (para a dica do objetivo na primeira sala)
+tempo_na_sala = 0;
+
 // se a sala for aberta direto pela IDE, sem passar pelo menu
 if (!variable_global_exists("tentativas")) {
     global.tentativas = 1;

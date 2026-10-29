@@ -17,6 +17,24 @@ for (var _i = 0; _i < dash_charges_max; _i++) {
     draw_set_color(_i < dash_charges ? c_white : c_dkgray);
     draw_rectangle(_px, _py, _px + 12 * _esc, _py + 6 * _esc, false);
 }
+draw_set_color(c_ltgray);
+draw_text_transformed(16 * _esc + dash_charges_max * 16 * _esc + 4 * _esc, 33 * _esc, "DASH", _esc * 0.7, _esc * 0.7, 0);
+
+// HUD: fase atual, contando as salas depois do menu na ordem do projeto
+var _fase = 0;
+var _total = 0;
+var _r = room_next(room_first);
+while (_r != -1) {
+    _total += 1;
+    if (_r == room) {
+        _fase = _total;
+    }
+    _r = room_next(_r);
+}
+draw_set_halign(fa_center);
+draw_set_color(c_white);
+draw_text_transformed(_w / 2, 12 * _esc, "FASE " + string(_fase) + " / " + string(_total), _esc, _esc, 0);
+draw_set_halign(fa_left);
 
 // HUD: inimigos restantes ou portao aberto
 draw_set_halign(fa_right);
@@ -74,6 +92,16 @@ if (_inimigos == 0 && room != room_last && !is_dead && !venceu) {
 
 draw_set_halign(fa_center);
 draw_set_valign(fa_middle);
+
+// dica do objetivo nos primeiros segundos da primeira sala, so na 1a tentativa
+if (room == room_next(room_first) && global.tentativas == 1 && tempo_na_sala < 300 && !is_dead) {
+    draw_set_alpha(min(1, (300 - tempo_na_sala) / 60));
+    draw_set_color(c_white);
+    draw_text_transformed(_w / 2, _h * 0.2, "DERROTE TODOS OS INIMIGOS PARA ABRIR O PORTAO", _esc, _esc, 0);
+    draw_set_color(c_ltgray);
+    draw_text_transformed(_w / 2, _h * 0.2 + 24 * _esc, "Saia da area vermelha antes do golpe.   ESC: pausa e controles", _esc * 0.8, _esc * 0.8, 0);
+    draw_set_alpha(1);
+}
 
 if (is_dead) {
     draw_set_alpha(0.6);

@@ -68,6 +68,8 @@ if (attack_cooldown > 0) {
     attack_cooldown -= 1;
 }
 
+tempo_na_sala += 1;
+
 if (_dash_apertado && !is_dashing && dash_charges > 0) {
     is_dashing = true;
     dash_timer = dash_duration;
