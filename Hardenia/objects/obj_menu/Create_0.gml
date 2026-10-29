@@ -8,7 +8,10 @@ if (!instance_exists(obj_autotest)) {
     }
 }
 
-if (!instance_exists(obj_autotest)) {
+// tela cheia so ao abrir o jogo: quem trocou para janela (Alt+Enter) e voltou
+// ao menu continua em janela
+if (!instance_exists(obj_autotest) && !variable_global_exists("tela_cheia_aplicada")) {
+    global.tela_cheia_aplicada = true;
     window_set_fullscreen(true);
 }
 
