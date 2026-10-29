@@ -1,9 +1,29 @@
-if (global.game_paused) {
+if (global.game_paused || global.hitstop > 0) {
     exit;
 }
 
 if (hit_flash > 0) {
     hit_flash -= 1;
+}
+
+// empurrao do terceiro golpe: de 1 em 1 px para encostar na parede sem atravessar
+if (abs(empurrao_x) + abs(empurrao_y) > 0.1) {
+    var _passos = ceil(max(abs(empurrao_x), abs(empurrao_y)));
+    var _ex = empurrao_x / _passos;
+    var _ey = empurrao_y / _passos;
+    repeat (_passos) {
+        if (!place_meeting(x + _ex, y, obj_wall)) {
+            x += _ex;
+        }
+        if (!place_meeting(x, y + _ey, obj_wall)) {
+            y += _ey;
+        }
+    }
+    empurrao_x *= 0.65;
+    empurrao_y *= 0.65;
+} else {
+    empurrao_x = 0;
+    empurrao_y = 0;
 }
 
 var _is_moving = false;

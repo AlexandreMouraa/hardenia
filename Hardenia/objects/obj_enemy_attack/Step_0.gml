@@ -1,4 +1,4 @@
-if (global.game_paused) {
+if (global.game_paused || global.hitstop > 0) {
     exit;
 }
 

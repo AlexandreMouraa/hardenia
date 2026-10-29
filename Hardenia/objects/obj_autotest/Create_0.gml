@@ -2,7 +2,10 @@
 // (quem cria e o obj_menu). Joga a run inteira sozinho, sem som e em janela,
 // e grava log + prints na pasta de save: %LOCALAPPDATA%\Hardenia\autotest\
 // Parametros: -runs N (padrao 3)  -speed FPS (padrao 240)  -morrer
-// -desatento N  -diag  -appsurface. Para rodar: tools\autotest.ps1
+// -desatento N  -diag  -appsurface  -mouse. Para rodar: tools\autotest.ps1
+// Rede: por padrao o robo nao manda nada ao site. Com -api URL ele manda os
+// eventos para essa API (teste local), e com -nome X digita X na vitoria e
+// envia ao ranking dela.
 runs_total = 3;
 velocidade = 240;
 diag = false;
@@ -13,13 +16,24 @@ percebeu = {};
 // -morrer: na primeira run o robo morre uma vez em cada sala, de proposito,
 // para testar a tela de morte, o reinicio da sala e o contador de tentativas
 morrer = false;
+// -mouse: ataca com o clique, mirando no inimigo (sem precisar virar), como
+// quem joga com mouse. Sem ela, ataca com J, para onde esta virado
+usar_mouse = false;
 golpes = 0;
+nome_robo = "";
+// golpes seguidos que nao tiraram vida do alvo (ver Step_1, ataque)
+golpes_vazios = 0;
+alvo_golpeado = noone;
+hp_golpeado = 0;
 for (var _i = 1; _i <= parameter_count(); _i++) {
     if (parameter_string(_i) == "-diag") {
         diag = true;
     }
     if (parameter_string(_i) == "-morrer") {
         morrer = true;
+    }
+    if (parameter_string(_i) == "-mouse") {
+        usar_mouse = true;
     }
 }
 for (var _i = 1; _i < parameter_count(); _i++) {
@@ -31,6 +45,9 @@ for (var _i = 1; _i < parameter_count(); _i++) {
     }
     if (parameter_string(_i) == "-desatento") {
         desatento = real(parameter_string(_i + 1));
+    }
+    if (parameter_string(_i) == "-nome") {
+        nome_robo = parameter_string(_i + 1);
     }
 }
 
@@ -77,11 +94,15 @@ exception_unhandled_handler(function(_ex) {
 // Entrada do robo. Teclas simuladas (keyboard_key_press) nao funcionam com a
 // janela sem foco, entao: movimento, dash e Enter da vitoria o obj_player le
 // destas variaveis; ataque, pausa e Enter do menu sao os proprios eventos de
-// tecla, chamados com event_perform.
+// tecla, chamados com event_perform. O clique (-mouse) tambem e variavel: o
+// ponto da mira vai em bot_mira_x/y, na sala
 bot_h = 0;
 bot_v = 0;
 bot_dash = false;
 bot_enter = false;
+bot_clique = false;
+bot_mira_x = 0;
+bot_mira_y = 0;
 
 encerrar = function(_codigo) {
     if (encerrando) {
@@ -181,6 +202,11 @@ limpa_desde = 0;
 sem_caminho_logado = false;
 ja_viu_aviso = false;
 viu_fx_morte = false;
+// prints do primeiro dash da run 1: no meio (rastro e riscos) e logo depois
+dash_prints = 0;
+viu_combo = false;
+combos = 0;
+forte_antes = false;
 testou_pausa = false;
 
 audio_master_gain(0);
