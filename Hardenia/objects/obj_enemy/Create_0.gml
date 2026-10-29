@@ -8,6 +8,10 @@ windup_time = 45;
 attack_time = 20;
 cooldown_time = 40;
 attack_damage_dealt = false;
+attack_dir = 0;
+attack_reach = 40;
+
+hit_flash = 0;
 
 alert_range = 150;
 home_x = x;

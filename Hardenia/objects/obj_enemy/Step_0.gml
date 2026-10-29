@@ -2,6 +2,10 @@ if (global.game_paused) {
     exit;
 }
 
+if (hit_flash > 0) {
+    hit_flash -= 1;
+}
+
 var _is_moving = false;
 
 switch (state) {
@@ -18,6 +22,15 @@ switch (state) {
         if (_dist <= attack_range) {
             state = 1;
             state_timer = windup_time;
+            // a direcao trava no inicio do aviso: o jogador ve onde o golpe cai e tem tempo de sair
+            attack_dir = point_direction(x, y, obj_player.x, obj_player.y);
+            var _ax = lengthdir_x(1, attack_dir);
+            var _ay = lengthdir_y(1, attack_dir);
+            if (abs(_ax) > abs(_ay)) {
+                facing_dir = (_ax < 0) ? 1 : 2;
+            } else {
+                facing_dir = (_ay < 0) ? 3 : 0;
+            }
         } else if (_dist <= alert_range) {
             var _dir = point_direction(x, y, obj_player.x, obj_player.y);
             var _move_x = lengthdir_x(move_speed, _dir);
@@ -55,13 +68,14 @@ switch (state) {
 
     case 1: // aviso (telegraph)
         state_timer -= 1;
+        image_blend = ((state_timer div 6) mod 2 == 0) ? c_white : c_red;
         if (state_timer <= 0) {
             state = 2;
             state_timer = attack_time;
+            image_blend = c_red;
 
-            var _dir = point_direction(x, y, obj_player.x, obj_player.y);
-            var _spawn_x = x + lengthdir_x(40, _dir);
-            var _spawn_y = y + lengthdir_y(40, _dir);
+            var _spawn_x = x + lengthdir_x(attack_reach, attack_dir);
+            var _spawn_y = y + lengthdir_y(attack_reach, attack_dir);
             instance_create_layer(_spawn_x, _spawn_y, "Instances", obj_enemy_attack);
         }
         break;
