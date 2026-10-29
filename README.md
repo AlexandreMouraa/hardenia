@@ -17,15 +17,34 @@ Mais detalhes em [docs/GDD.md](docs/GDD.md).
 
 ## Engine
 
-GameMaker (versão gratuita, uso não-comercial, export Windows).
+GameMaker **LTS 2026** (versão gratuita, uso não-comercial, export Windows). O
+projeto está salvo na IDE **2026.0.0.16**.
 
-O projeto foi salvo pela IDE **2026.0.0.16** — use essa versão ou mais nova.
+Use essa mesma versão em todos os computadores. Abrir o projeto num GameMaker
+mais novo (a versão mensal, sem "LTS") converte os arquivos, e quem estiver na
+LTS 2026 pode não conseguir mais abrir nem compilar.
 
 ## Como abrir o projeto
 
-1. Instale o GameMaker: https://gamemaker.io/en/download
-2. No GameMaker, **Open** → `Hardenia/Hardenia.yyp`.
-3. Aperte **F5** para rodar.
+1. Instale o **GameMaker LTS 2026** (https://gamemaker.io/en/download), abra a
+   IDE uma vez e faça login com sua conta.
+2. Clone o repositório. Ele é privado, então entre no Git ou no GitHub Desktop
+   com uma conta que tenha acesso:
+   `git clone https://github.com/Woly1/hardenia.git`
+3. No GameMaker, **Open** → `Hardenia/Hardenia.yyp`.
+4. Aperte **F5** para rodar.
+
+## Trabalhando em mais de um computador
+
+O GitHub é a cópia oficial do projeto.
+
+- **Antes de mexer:** feche o projeto na IDE e só então faça `git pull`. Com o
+  projeto aberto, a IDE pode salvar por cima do que chegou.
+- **Ao terminar:** rode o robô (seção abaixo) e, se der `OK`, faça commit e
+  `git push`. Não troque de computador deixando mudança sem subir.
+- **Duas pessoas ao mesmo tempo:** combinem quem mexe em qual sala ou objeto.
+  Criar ou apagar um recurso altera o `Hardenia.yyp`, e esse arquivo entra em
+  conflito fácil.
 
 ## Controles
 
