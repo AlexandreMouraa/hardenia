@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mapa de mortes — Hardenia</title>
+<meta name="description" content="Onde os jogadores morrem em cada sala de Hardenia.">
+<meta property="og:title" content="Mapa de mortes — Hardenia">
+<meta property="og:image" content="__SITE__/capa-og.jpg">
+<meta name="theme-color" content="#0b0607">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0607;
+    --panel: #150c0d;
+    --line: #3a1d1f;
+    --text: #e9e2d6;
+    --muted: #a8998c;
+    --red: #c4161c;
+    --red-hi: #e0262c;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); }
+  body { font: 17px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 960px; margin: 0 auto; padding: 32px 16px 64px; }
+  a { color: var(--red-hi); text-decoration: none; font-weight: 600; }
+  a:hover { text-decoration: underline; }
+  h1 { font: 700 32px/1.2 Cinzel, serif; letter-spacing: .06em; margin: 16px 0 8px; }
+  h2 { font: 700 20px/1.2 Cinzel, serif; letter-spacing: .1em; text-transform: uppercase; color: var(--red-hi); margin: 0; }
+  .intro { color: var(--muted); margin: 0 0 32px; }
+  section { margin: 0 0 40px; }
+  .cabeca { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; margin-bottom: 10px; }
+  .dados { color: var(--muted); font-size: 15px; font-variant-numeric: tabular-nums; }
+  .dados b { color: var(--text); }
+  canvas { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; border: 1px solid var(--line); border-radius: 4px; background: var(--panel); }
+  .legenda { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 14px; margin: 0 0 32px; }
+  .escala { width: 120px; height: 10px; border-radius: 5px; background: linear-gradient(90deg, rgba(255,40,20,.15), #ff2814, #ffd24a); }
+</style>
+</head>
+<body>
+<main>
+  <a href="../">&larr; Hardenia</a>
+  <h1>Mapa de mortes</h1>
+  <p class="intro">Cada mancha é um lugar onde um jogador morreu. Quanto mais clara, mais gente caiu ali. Serve para ver quais pontos de cada sala estão difíceis demais, ou fáceis demais.</p>
+  <div class="legenda"><span>poucas</span><span class="escala"></span><span>muitas mortes</span></div>
+  <div id="salas"></div>
+</main>
+
+<script>
+  // tamanho das salas no GameMaker: as coordenadas das mortes vem nessa escala
+  var SALA_L = 1536, SALA_A = 1024;
+  var SALAS = [
+    { codigo: "Room1", imagem: "sala1.jpg" },
+    { codigo: "Room2", imagem: "sala2.jpg" },
+    { codigo: "Room3", imagem: "sala3.jpg" }
+  ];
+  var raiz = document.getElementById("salas");
+
+  SALAS.forEach(function (s) {
+    var sec = document.createElement("section");
+    sec.innerHTML = '<div class="cabeca"><h2></h2><span class="dados"></span></div><canvas width="1152" height="768"></canvas>';
+    raiz.appendChild(sec);
+    s.titulo = sec.querySelector("h2");
+    s.dados = sec.querySelector(".dados");
+    s.canvas = sec.querySelector("canvas");
+    s.canvas.setAttribute("role", "img");
+    s.img = new Image();
+    s.img.src = s.imagem;
+    s.img.onload = function () { desenhar(s); };
+    s.pontos = [];
+  });
+
+  function desenhar(s) {
+    var c = s.canvas, ctx = c.getContext("2d");
+    var ex = c.width / SALA_L, ey = c.height / SALA_A;
+    ctx.globalCompositeOperation = "source-over";
+    if (s.img.complete) ctx.drawImage(s.img, 0, 0, c.width, c.height);
+    ctx.fillStyle = "rgba(0,0,0,.35)";
+    ctx.fillRect(0, 0, c.width, c.height);
+    // manchas somam a luz: onde muita gente morreu fica amarelo
+    ctx.globalCompositeOperation = "lighter";
+    var r = 34;
+    s.pontos.forEach(function (p) {
+      var x = p[0] * ex, y = p[1] * ey;
+      var g = ctx.createRadialGradient(x, y, 0, x, y, r);
+      g.addColorStop(0, "rgba(255,60,20,.55)");
+      g.addColorStop(1, "rgba(255,40,20,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(x - r, y - r, r * 2, r * 2);
+    });
+    ctx.globalCompositeOperation = "source-over";
+  }
+
+  function atualizar() {
+    fetch("../api/estatisticas", { cache: "no-store" }).then(function (r) { return r.json(); }).then(function (e) {
+      e.salas.forEach(function (info) {
+        var s = SALAS.find(function (x) { return x.codigo === info.sala; });
+        if (!s) return;
+        s.titulo.textContent = info.nome;
+        var media = info.vezes_limpa ? (info.mortes / info.vezes_limpa).toFixed(1).replace(".", ",") : "–";
+        s.dados.innerHTML = "<b>" + info.mortes + "</b> mortes · limpa <b>" + info.vezes_limpa + "</b> vezes · em média <b>" + media + "</b> mortes até limpar";
+        s.canvas.setAttribute("aria-label", "Mapa de mortes de " + info.nome + ": " + info.mortes + " mortes");
+      });
+    }).catch(function () {});
+    SALAS.forEach(function (s) {
+      fetch("../api/mortes?sala=" + s.codigo, { cache: "no-store" }).then(function (r) { return r.json(); }).then(function (d) {
+        s.pontos = d.pontos;
+        desenhar(s);
+      }).catch(function () {});
+    });
+  }
+  atualizar();
+  setInterval(atualizar, 30000);
+</script>
+</body>
+</html>

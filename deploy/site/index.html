@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hardenia — O Último Guerreiro</title>
+<meta name="description" content="Roguelike 2D hardcore. Um golpe mata. Cada morte é uma tentativa de aprender a vencer.">
+<meta property="og:title" content="Hardenia — O Último Guerreiro">
+<meta property="og:description" content="Um golpe mata. Cada morte é uma tentativa de aprender a vencer.">
+<!-- __SITE__ vira o endereco completo no deploy: WhatsApp so mostra a previa com URL absoluta -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="__SITE__/">
+<meta property="og:image" content="__SITE__/capa-og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="675">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0b0607">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0607;
+    --panel: #150c0d;
+    --line: #3a1d1f;
+    --text: #e9e2d6;
+    --muted: #a8998c;
+    --red: #c4161c;
+    --red-hi: #e0262c;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); }
+  body { font: 17px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .capa { position: relative; }
+  .capa img { display: block; width: 100%; height: auto; max-height: 88vh; object-fit: cover; object-position: center top; }
+  .capa::after { content: ""; position: absolute; inset: auto 0 0 0; height: 30%; background: linear-gradient(transparent, var(--bg)); }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  main { max-width: 760px; margin: -48px auto 0; padding: 0 16px 64px; position: relative; z-index: 1; }
+  .acoes { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+  .botao {
+    font: 700 16px/1 Cinzel, serif; letter-spacing: .08em; text-transform: uppercase; text-decoration: none;
+    display: inline-flex; flex-direction: column; align-items: center; gap: 6px;
+    padding: 18px 28px; border-radius: 4px; border: 1px solid var(--red); min-width: 260px;
+  }
+  .botao small { font: 13px/1 system-ui, sans-serif; letter-spacing: 0; text-transform: none; opacity: .8; }
+  .principal { background: var(--red); color: #fff; }
+  .principal:hover { background: var(--red-hi); }
+  .secundario { color: var(--text); background: transparent; }
+  .secundario:hover { background: var(--panel); }
+  .botao[aria-disabled="true"] { background: transparent; color: var(--muted); border-color: var(--line); pointer-events: none; }
+  .aviso { text-align: center; color: var(--muted); font-size: 14px; margin: 14px 0 0; }
+  .aviso a { color: var(--text); }
+  h2 { font: 700 20px/1.2 Cinzel, serif; letter-spacing: .1em; text-transform: uppercase; color: var(--red-hi); margin: 48px 0 12px; }
+  p { margin: 0 0 12px; }
+  table { width: 100%; border-collapse: collapse; }
+  td { padding: 9px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  td:last-child { text-align: right; white-space: nowrap; padding-left: 16px; }
+  kbd { font: 600 13px/1 ui-monospace, Consolas, monospace; background: var(--panel); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 3px 7px; }
+  ul { margin: 0; padding-left: 20px; }
+  li { margin-bottom: 6px; }
+  .numeros { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 0 0 16px; }
+  .numero { background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 12px; text-align: center; }
+  .numero b { display: block; font: 700 26px/1.1 Cinzel, serif; color: var(--text); }
+  .numero span { font-size: 13px; color: var(--muted); }
+  .ranking td:first-child { width: 2.5em; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .ranking td.dir { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .ranking tr.ouro td { color: #f0c75e; }
+  .vazio { color: var(--muted); font-style: italic; }
+  .mais { display: inline-block; margin-top: 12px; color: var(--red-hi); text-decoration: none; font-weight: 600; }
+  .mais:hover { text-decoration: underline; }
+  form { display: grid; gap: 10px; }
+  .notas { display: flex; gap: 6px; flex-wrap: wrap; }
+  .notas label { cursor: pointer; }
+  .notas input { position: absolute; opacity: 0; }
+  .notas span { display: inline-block; padding: 8px 12px; border: 1px solid var(--line); border-radius: 4px; background: var(--panel); }
+  .notas input:checked + span { border-color: var(--red); background: var(--red); color: #fff; }
+  .notas input:focus-visible + span { outline: 2px solid var(--text); }
+  textarea { font: inherit; color: var(--text); background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 10px; min-height: 96px; resize: vertical; }
+  button { font: 700 14px/1 Cinzel, serif; letter-spacing: .08em; text-transform: uppercase; justify-self: start; padding: 12px 20px; border-radius: 4px; border: 1px solid var(--red); background: var(--red); color: #fff; cursor: pointer; }
+  button:disabled { opacity: .6; cursor: default; }
+  .status { color: var(--muted); font-size: 14px; min-height: 1.4em; margin: 0; }
+  @media (max-width: 560px) {
+    .numeros { grid-template-columns: repeat(2, 1fr); }
+    .botao { min-width: 100%; }
+    td { display: block; padding: 8px 0 2px; border: 0; }
+    td:last-child { text-align: left; white-space: normal; padding: 0 0 8px; border-bottom: 1px solid var(--line); }
+  }
+  footer { text-align: center; color: var(--muted); font-size: 13px; padding: 24px 16px 40px; border-top: 1px solid var(--line); }
+</style>
+</head>
+<body>
+<header class="capa">
+  <img src="capa.jpg" width="1672" height="941" alt="Um guerreiro de capa vermelha observa um reino em ruínas sob uma lua de sangue. Hardenia — O Último Guerreiro.">
+  <h1 class="sr">Hardenia — O Último Guerreiro</h1>
+</header>
+
+<main>
+  <div class="acoes">
+    <a class="botao principal" id="jogar" href="jogar/" aria-disabled="true">Jogar no navegador<small id="jogar-sub">versão web em breve</small></a>
+    <a class="botao secundario" href="download/Hardenia-windows.zip" download>Baixar para Windows<small>.zip · 13 MB</small></a>
+  </div>
+  <p class="aviso">Precisa de teclado: no celular não dá para jogar.<br>Versão __VERSAO__ · <a href="novidades/">o que mudou</a> · <a href="novidades/#proximas">o que vem por aí</a></p>
+
+  <h2>Ranking</h2>
+  <p>Quem venceu com menos tentativas. Empate decide pelo tempo. Ao vencer, o jogo pede seu nome.</p>
+  <div class="numeros" aria-live="polite">
+    <div class="numero"><b id="n-partidas">–</b><span>partidas</span></div>
+    <div class="numero"><b id="n-vitorias">–</b><span>vitórias</span></div>
+    <div class="numero"><b id="n-mortes">–</b><span>mortes</span></div>
+    <div class="numero"><b id="n-letal">–</b><span>sala mais letal</span></div>
+  </div>
+  <table class="ranking"><tbody id="ranking"><tr><td colspan="4" class="vazio">Carregando…</td></tr></tbody></table>
+  <a class="mais" href="mapa/">Ver o mapa de mortes &rarr;</a>
+
+  <h2>A história</h2>
+  <p>Hardenia está em guerra há anos. Todos os guerreiros enviados para derrotar o responsável pela destruição do reino morreram. Você é o último, considerado o mais fraco de todos: sem poderes, sem armadura lendária, sem armas mágicas. Só uma coisa: persistência.</p>
+  <p>Um golpe mata. Cada morte é uma tentativa de descobrir como vencer. Não é o personagem que fica mais forte, é o jogador.</p>
+
+  <h2>Controles</h2>
+  <table>
+    <tr><td>Mover</td><td><kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> ou setas</td></tr>
+    <tr><td>Atacar (3 seguidos: combo)</td><td>Clique esquerdo, mirando com o mouse · ou <kbd>J</kbd>, para onde você anda</td></tr>
+    <tr><td>Dash (2 cargas, invencível durante o impulso)</td><td><kbd>Espaço</kbd></td></tr>
+    <tr><td>Pausar / continuar</td><td><kbd>Esc</kbd></td></tr>
+    <tr><td>Voltar ao menu (na pausa)</td><td><kbd>M</kbd></td></tr>
+    <tr><td>Começar</td><td><kbd>Enter</kbd> ou clique</td></tr>
+    <tr><td>Voltar ao menu (na vitória)</td><td><kbd>Enter</kbd></td></tr>
+    <tr><td>Tela cheia</td><td><kbd>F11</kbd> no navegador · <kbd>Alt</kbd>+<kbd>Enter</kbd> no Windows</td></tr>
+  </table>
+
+  <h2>Como sobreviver</h2>
+  <ul>
+    <li>Três arenas em sequência: Ruínas, Pátio e Cemitério. O portão só abre quando a sala está limpa.</li>
+    <li>Todo inimigo avisa antes de atacar: pisca, mostra <strong>!</strong> e marca no chão onde o golpe vai cair. Saia da zona ou atravesse com o dash.</li>
+    <li>Combo: o 3º golpe vale 2 e joga o inimigo para longe, mas você fica mais tempo sem atacar. Feche o combo quando tiver espaço.</li>
+    <li>Ao morrer, a sala recomeça e o contador de tentativas sobe. Termine o Cemitério para ver quantas você precisou.</li>
+  </ul>
+
+  <h2>Opinião ou bug</h2>
+  <p>Achou um bug? Conte o que aconteceu, em qual sala e o que você estava fazendo. Chega direto para a equipe.</p>
+  <form id="opiniao">
+    <div class="notas" role="radiogroup" aria-label="Tipo de mensagem">
+      <label><input type="radio" name="tipo" value="opiniao" checked><span>Opinião</span></label>
+      <label><input type="radio" name="tipo" value="bug"><span>Encontrei um bug</span></label>
+    </div>
+    <div class="notas" role="radiogroup" aria-label="Nota de 1 a 5 (opcional)">
+      <label><input type="radio" name="nota" value="1"><span>1</span></label>
+      <label><input type="radio" name="nota" value="2"><span>2</span></label>
+      <label><input type="radio" name="nota" value="3"><span>3</span></label>
+      <label><input type="radio" name="nota" value="4"><span>4</span></label>
+      <label><input type="radio" name="nota" value="5"><span>5</span></label>
+    </div>
+    <textarea name="texto" maxlength="1000" required placeholder="Conte o que gostou, o que foi difícil demais, onde travou…" aria-label="Sua opinião"></textarea>
+    <button type="submit">Enviar</button>
+    <p class="status" id="opiniao-status" role="status"></p>
+  </form>
+
+  <h2>Instalando no Windows</h2>
+  <p>Descompacte o .zip e abra o <strong>Hardenia.exe</strong>. Se o Windows mostrar "O Windows protegeu o computador", clique em <strong>Mais informações</strong> e depois em <strong>Executar assim mesmo</strong>. O aviso aparece porque o jogo não tem assinatura digital paga.</p>
+</main>
+
+<footer>Hardenia é um projeto acadêmico, feito no GameMaker.</footer>
+
+<script>
+  // o botao so acende quando a versao web estiver publicada no servidor
+  fetch("jogar/index.html", { method: "HEAD", cache: "no-store" }).then(function (r) {
+    if (!r.ok) return;
+    document.getElementById("jogar").removeAttribute("aria-disabled");
+    document.getElementById("jogar-sub").textContent = "Chrome, Edge ou Firefox";
+  }).catch(function () {});
+
+  function tempo(ms) {
+    var s = Math.floor(ms / 1000);
+    return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+  }
+  function celula(linha, texto, classe) {
+    var td = linha.insertCell();
+    td.textContent = texto;
+    if (classe) td.className = classe;
+  }
+
+  // ranking e numeros; atualiza sozinho (da para deixar projetado num evento)
+  function atualizar() {
+    fetch("api/ranking?limite=10", { cache: "no-store" }).then(function (r) { return r.json(); }).then(function (d) {
+      var corpo = document.getElementById("ranking");
+      corpo.textContent = "";
+      if (!d.ranking.length) {
+        var vazio = corpo.insertRow();
+        celula(vazio, "Ninguém venceu ainda. Seja o primeiro.", "vazio");
+        vazio.cells[0].colSpan = 4;
+        return;
+      }
+      d.ranking.forEach(function (j, i) {
+        var linha = corpo.insertRow();
+        if (i === 0) linha.className = "ouro";
+        celula(linha, (i + 1) + "º");
+        celula(linha, j.nome);
+        celula(linha, j.tentativas + (j.tentativas === 1 ? " tentativa" : " tentativas"), "dir");
+        celula(linha, tempo(j.tempo_ms), "dir");
+      });
+    }).catch(function () {
+      document.getElementById("ranking").innerHTML = '<tr><td class="vazio">Ranking indisponível agora.</td></tr>';
+    });
+
+    fetch("api/estatisticas", { cache: "no-store" }).then(function (r) { return r.json(); }).then(function (e) {
+      document.getElementById("n-partidas").textContent = e.partidas;
+      document.getElementById("n-vitorias").textContent = e.vitorias;
+      document.getElementById("n-mortes").textContent = e.mortes;
+      var letal = e.salas.slice().sort(function (a, b) { return b.mortes - a.mortes; })[0];
+      document.getElementById("n-letal").textContent = letal && letal.mortes ? letal.nome : "–";
+    }).catch(function () {});
+  }
+  atualizar();
+  setInterval(atualizar, 30000);
+
+  var formOpiniao = document.getElementById("opiniao");
+  var dicas = {
+    opiniao: "Conte o que gostou, o que foi difícil demais, onde travou…",
+    bug: "O que aconteceu? Em qual sala? O que você estava fazendo? Navegador ou Windows?"
+  };
+  formOpiniao.addEventListener("change", function (ev) {
+    if (ev.target.name === "tipo") formOpiniao.texto.placeholder = dicas[ev.target.value];
+  });
+
+  formOpiniao.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var form = ev.target;
+    var status = document.getElementById("opiniao-status");
+    var nota = form.querySelector("input[name=nota]:checked");
+    var tipo = form.querySelector("input[name=tipo]:checked").value;
+    form.querySelector("button").disabled = true;
+    status.textContent = "Enviando…";
+    fetch("api/opiniao", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tipo: tipo, nota: nota ? Number(nota.value) : null, texto: form.texto.value, versao: "__VERSAO__" })
+    }).then(function (r) {
+      if (!r.ok) throw new Error(r.status);
+      form.reset();
+      form.texto.placeholder = dicas.opiniao;
+      status.textContent = tipo === "bug" ? "Valeu! O bug foi enviado para a equipe." : "Obrigado! Sua opinião foi registrada.";
+    }).catch(function () {
+      status.textContent = "Não deu para enviar agora. Tente de novo em instantes.";
+    }).finally(function () {
+      form.querySelector("button").disabled = false;
+    });
+  });
+</script>
+</body>
+</html>
