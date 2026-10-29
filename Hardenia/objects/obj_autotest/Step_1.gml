@@ -53,10 +53,15 @@ inimigos_antes = _n;
 
 if (_n == 0 && !sala_limpa_logada) {
     sala_limpa_logada = true;
+    limpa_desde = tempo_sala;
     log("sala_limpa", "segundos=" + string(round(tempo_sala / 60)));
     if (run_atual == 1) {
         pedir_print("sala_limpa");
     }
+}
+// um pouco depois de limpar: seta para o portao, se ele estiver fora da tela
+if (run_atual == 1 && sala_limpa_logada && tempo_sala == limpa_desde + 45) {
+    pedir_print("indo_ao_portao");
 }
 
 if (run_atual == 1 && tempo_sala == 30) {

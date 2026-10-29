@@ -176,13 +176,23 @@ desvio_v = 0;
 proximo_x = -1;
 proximo_y = -1;
 sala_limpa_logada = false;
+limpa_desde = 0;
 sem_caminho_logado = false;
 ja_viu_aviso = false;
 testou_pausa = false;
 
 audio_master_gain(0);
 game_set_speed(velocidade, gamespeed_fps);
-// sem a application surface o screen_save pega a janela inteira, com o HUD
-application_surface_enable(false);
+// sem a application surface o screen_save pega a janela inteira, com o HUD.
+// -appsurface mantem a renderizacao normal (o print sai sem o HUD)
+var _manter_surface = false;
+for (var _i = 1; _i <= parameter_count(); _i++) {
+    if (parameter_string(_i) == "-appsurface") {
+        _manter_surface = true;
+    }
+}
+if (!_manter_surface) {
+    application_surface_enable(false);
+}
 
 log("inicio", "runs=" + string(runs_total) + " speed=" + string(velocidade) + " save=" + game_save_id);
