@@ -30,13 +30,15 @@ LTS 2026 pode não conseguir mais abrir nem compilar.
    IDE uma vez e faça login com sua conta.
 2. Clone o repositório. Ele é privado, então entre no Git ou no GitHub Desktop
    com uma conta que tenha acesso:
-   `git clone https://github.com/Woly1/hardenia.git`
+   `git clone https://github.com/AlexandreMouraa/hardenia.git`
 3. No GameMaker, **Open** → `Hardenia/Hardenia.yyp`.
 4. Aperte **F5** para rodar.
 
-## Trabalhando em mais de um computador
+## Trabalhando em equipe
 
-O GitHub é a cópia oficial do projeto.
+O GitHub é a cópia oficial do projeto. O passo a passo de uma tarefa (branch,
+robô, pull request), o que dá conflito no GameMaker e as regras do código
+estão no [CONTRIBUTING.md](CONTRIBUTING.md).
 
 - **Antes de mexer:** feche o projeto na IDE e só então faça `git pull`. Com o
   projeto aberto, a IDE pode salvar por cima do que chegou.
@@ -51,11 +53,12 @@ O GitHub é a cópia oficial do projeto.
 | Ação | Tecla |
 |---|---|
 | Mover | `WASD` ou setas |
-| Atacar | `J` |
+| Atacar (3 seguidos: combo) | Clique esquerdo (mira no mouse) ou `J` (para onde anda) |
 | Dash (2 cargas, invencível durante o impulso) | `Espaço` |
 | Pausar / continuar | `Esc` |
 | Voltar ao menu (na pausa) | `M` |
-| Começar / voltar ao menu (na vitória) | `Enter` |
+| Começar (no menu) | `Enter` ou clique |
+| Voltar ao menu (na vitória) | `Enter` |
 | Sair do jogo (no menu) | `Esc` |
 | Tela cheia / janela | `Alt+Enter` |
 
@@ -69,7 +72,47 @@ O GitHub é a cópia oficial do projeto.
 - Um golpe mata. Ao morrer, a sala recomeça e o contador de **tentativas** sobe.
 - Todo inimigo avisa antes de atacar: pisca, mostra `!` e desenha no chão a
   zona onde o golpe vai cair. Saia da zona ou atravesse com o dash.
-- Limpar o Cemitério encerra a run com a tela de vitória e o total de tentativas.
+- Limpar o Cemitério encerra a run com a tela de vitória, o total de tentativas
+  e o tempo. O jogo pede um nome e manda o resultado para o ranking do site.
+
+## Ranking, mapa de mortes e efeitos
+
+- **Rede** (`scripts/scr_rede`): o jogo avisa o site quando uma partida começa,
+  quando o jogador morre (sala e posição) e quando uma sala é limpa. Na vitória
+  envia nome, tentativas e tempo, e mostra a posição e o top 5. No navegador a
+  API fica no mesmo site (`/api/...`); o build de Windows usa o endereço público.
+  Sem internet o jogo funciona igual, só a tela de vitória avisa que não
+  conectou. O único dado pessoal possível é o nome que o jogador escolhe
+  digitar; o IP não é gravado.
+- **Tempo da run:** contado em frames na velocidade do jogo (60), sem a pausa,
+  então é o mesmo em PC rápido ou lento.
+- **Game feel** (`scripts/scr_efeitos`, `obj_fx`): arco de corte no ataque,
+  faíscas, micro-pausa de alguns frames e tremor de câmera ao acertar e ao
+  morrer. A micro-pausa congela jogador, inimigos e golpes juntos, então não
+  muda a justiça do combate.
+- **Dash** (`obj_player`): arranca forte e freia suave (tabela `dash_perfil`,
+  mesmos 78 px e 10 frames de invencibilidade de antes), direção travada,
+  aperto guardado por 8 frames (vale apertar no fim do dash anterior ou na
+  micro-pausa) e rastro brilhante, linhas de velocidade, poeira e anel na
+  arrancada. O movimento encosta nas paredes e escorrega em quinas de até 6 px
+  (`mover_eixo`).
+- **Combo** (`obj_player`, `golpear`): três ataques seguidos. O 2º golpe varre
+  ao contrário; o 3º é mais largo, vale 2, empurra o inimigo deslizando
+  (`obj_enemy`, `empurrao_x/y`) e tem recarga maior (36 frames). Os dois
+  primeiros mantêm a recarga do ataque antigo (20 frames), então um inimigo
+  comum morre no mesmo tempo de antes. Apertar J na recarga fica guardado.
+- **Mira no mouse** (`obj_player`, `golpear` e `mira_alvo`): atacando com o
+  clique, o golpe vai para o mouse em qualquer ângulo, com o mesmo alcance do
+  teclado; com `J`, para onde o jogador anda (vale o último usado,
+  `global.mira_mouse`). O cursor do sistema some e o jogo desenha uma mira. No
+  teclado a conta do golpe é a mesma de antes, bit a bit (ver o comentário em
+  `golpear`). O robô tem `-mouse` para jogar mirando.
+- **Mapa de progresso** (`scripts/scr_mapa`, `obj_mapa`): ao entrar numa fase
+  nova, o guerreiro anda no mapa até ela (2,5 s, Enter ou clique pula); a pausa mostra
+  onde você está. As fases ficam em `global.mapa_fases` (fase nova: acrescentar
+  lá); o último ponto, o chefe final, aparece como "em breve".
+- **Câmera:** agora em código (`obj_player`, End Step), centrada e presa nas
+  bordas, seguindo com um leve atraso, mais o tremor.
 
 ## Teste automático (robô)
 
@@ -89,8 +132,11 @@ roda 3 runs em velocidade acelerada, sem som e em janela, e termina com `OK` ou
 | Opção (`-Extra "..."`) | O que faz |
 |---|---|
 | `-morrer` | morre uma vez em cada sala na 1ª run (testa morte e reinício) |
+| `-mouse` | ataca com o clique, mirando no inimigo (testa a mira no mouse) |
 | `-desatento 40` | ignora 40% dos avisos, como um jogador distraído |
 | `-diag` | registra as decisões do robô a cada segundo |
+| `-api URL` | liga a rede e manda os eventos para essa API (teste local; sem isso o robô não envia nada) |
+| `-nome X` | com `-api`, digita X na vitória e envia ao ranking |
 
 Na primeira run o robô também confere o level design de cada sala: inimigo
 nascendo dentro de parede, inimigo ou portão sem caminho até o jogador.
@@ -105,5 +151,22 @@ teclado preenche (`obj_player`, Step) e dispara os eventos reais de ataque e pau
 **Create Executable** (ícone de caixa) e escolha **Package as Zip**. Quem
 recebe só descompacta e abre o `Hardenia.exe`.
 
-**Navegador (link):** escolha a plataforma **GX.games** e use **Create
-Executable** para publicar — gera um link que abre direto no navegador.
+**Pela linha de comando** (sem abrir a IDE, precisa do login feito uma vez):
+
+```
+powershell -ExecutionPolicy Bypass -File tools\build-windows.ps1   # zip de Windows
+powershell -ExecutionPolicy Bypass -File tools\build-web.ps1       # versão HTML5
+```
+
+**Navegador (link):** a versão HTML5 (`tools\build-web.ps1`, ou plataforma
+**HTML5** na IDE) gera uma pasta estática que roda em qualquer servidor. É a
+que está publicada no site do jogo. Na IDE, o módulo HTML5 é baixado pelo
+Target Manager na primeira vez.
+
+## Site e servidor
+
+O site do jogo fica em `deploy/`: página inicial com ranking ao vivo, mapa de
+mortes (`site/mapa/`), novidades de cada versão (`site/novidades/`) e a API que
+guarda ranking, eventos e opiniões (`api/hardenia_api.py`, Python sem
+dependências, banco SQLite). O `deploy/deploy.sh` monta o site com os builds e
+publica no servidor; só roda com a chave de acesso, que fica com o Alexandre.
