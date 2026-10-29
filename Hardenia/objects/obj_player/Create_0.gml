@@ -26,6 +26,9 @@ death_timer_max = 90;
 
 venceu = false;
 
+// escurecido que some ao entrar na sala (troca de sala e reinicio apos morrer)
+fade = 1;
+
 // se a sala for aberta direto pela IDE, sem passar pelo menu
 if (!variable_global_exists("tentativas")) {
     global.tentativas = 1;

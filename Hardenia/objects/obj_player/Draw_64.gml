@@ -110,6 +110,14 @@ if (global.game_paused) {
     draw_text_transformed(_w / 2, _h / 2 + 32 * _esc, "ESC: CONTINUAR    M: VOLTAR AO MENU", _esc, _esc, 0);
 }
 
+if (fade > 0) {
+    draw_set_alpha(fade);
+    draw_set_color(c_black);
+    draw_rectangle(0, 0, _w, _h, false);
+    draw_set_alpha(1);
+    fade = max(0, fade - 0.05);
+}
+
 draw_set_color(c_white);
 draw_set_halign(fa_left);
 draw_set_valign(fa_top);

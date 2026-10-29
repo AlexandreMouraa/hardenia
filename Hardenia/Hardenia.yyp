@@ -28,6 +28,7 @@
     {"id":{"name":"obj_exit_to_room1","path":"objects/obj_exit_to_room1/obj_exit_to_room1.yy",},},
     {"id":{"name":"obj_exit_to_room2","path":"objects/obj_exit_to_room2/obj_exit_to_room2.yy",},},
     {"id":{"name":"obj_exit_to_room3","path":"objects/obj_exit_to_room3/obj_exit_to_room3.yy",},},
+    {"id":{"name":"obj_fx_morte","path":"objects/obj_fx_morte/obj_fx_morte.yy",},},
     {"id":{"name":"obj_menu","path":"objects/obj_menu/obj_menu.yy",},},
     {"id":{"name":"obj_player","path":"objects/obj_player/obj_player.yy",},},
     {"id":{"name":"obj_wall","path":"objects/obj_wall/obj_wall.yy",},},

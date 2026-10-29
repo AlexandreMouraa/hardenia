@@ -13,6 +13,10 @@ if (_enemy != noone) {
     _enemy.hp -= damage;
     _enemy.hit_flash = 8;
     if (_enemy.hp <= 0) {
+        with (instance_create_layer(_enemy.x, _enemy.y, "Instances", obj_fx_morte)) {
+            sprite_index = _enemy.sprite_index;
+            image_index = _enemy.image_index;
+        }
         instance_destroy(_enemy);
     } else if (instance_exists(obj_player)) {
         // empurrao curto para longe do jogador, sem atravessar parede
