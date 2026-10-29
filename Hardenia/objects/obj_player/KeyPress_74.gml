@@ -1,3 +1,7 @@
+if (global.game_paused || is_dead || venceu) {
+    exit;
+}
+
 if (attack_cooldown <= 0) {
     var _spawn_x = x + face_h * 32;
     var _spawn_y = y + face_v * 32;

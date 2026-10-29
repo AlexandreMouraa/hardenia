@@ -5,7 +5,23 @@ if (global.game_paused) {
 if (is_dead) {
     death_timer -= 1;
     if (death_timer <= 0) {
+        global.tentativas += 1;
         room_restart();
+    }
+    exit;
+}
+
+// ultima sala limpa = fim da run
+if (!venceu && room == room_last && instance_number(obj_enemy) == 0) {
+    venceu = true;
+    sprite_index = spr_player_idle;
+    image_index = facing_dir * idle_frames;
+    image_alpha = 1;
+}
+
+if (venceu) {
+    if (keyboard_check_pressed(vk_enter)) {
+        room_goto(Room_Menu);
     }
     exit;
 }
@@ -112,7 +128,7 @@ if (invuln_timer > 0) {
 
 if (hp <= 0) {
     is_dead = true;
-    death_timer = 45;
+    death_timer = death_timer_max;
     image_alpha = 1;
     image_blend = c_red;
 }
