@@ -58,6 +58,9 @@ ataque_buffer = 0;
 ataque_buffer_max = 12;
 ataque_impulso = 0;     // passo curto para a frente no terceiro golpe
 ataque_dir = 270;       // angulo do ultimo golpe
+// golpear tem custo: anda mais devagar durante a animacao do golpe. Com mouse o
+// robo fazia a run sem levar golpe; 50% e a sugestao da issue #6, ajustar jogando
+golpe_lentidao = 0.5;
 
 // golpe carregado: o toque continua igual, com o golpe normal saindo ao apertar.
 // Continuar segurando depois dele enche a carga; soltar com ela cheia solta um
