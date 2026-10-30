@@ -42,6 +42,10 @@ if (_dash_apertado) {
     dash_buffer = dash_buffer_max;
 }
 
+// a reacao do HUD anda mesmo com o mundo parado
+hud_dano = max(0, hud_dano - 1);
+hud_cura = max(0, hud_cura - 1);
+
 // micro-pausa do impacto: o mundo congela uns frames (inimigos e golpes param
 // junto, ver scr_efeitos)
 if (global.hitstop > 0) {
@@ -52,8 +56,15 @@ if (global.hitstop > 0) {
 if (is_dead) {
     death_timer -= 1;
     if (death_timer <= 0) {
+        // a morte recomeca a run. Fora do caminho (sala de teste) recomeca a sala
         global.tentativas += 1;
-        room_restart();
+        run_zerar();
+        var _primeira = global.mapa_fases[0].sala;
+        if (room == _primeira || mapa_indice(room) < 0) {
+            room_restart();
+        } else {
+            room_goto(_primeira);
+        }
     }
     exit;
 }
@@ -77,6 +88,18 @@ if (!venceu && room == room_last && instance_number(obj_enemy) == 0) {
 if (!sala_limpa_enviada && instance_number(obj_enemy) == 0) {
     sala_limpa_enviada = true;
     rede_evento("sala", { tentativa: global.tentativas, tempo_ms: frames_para_ms(tempo_na_sala) });
+    // limpar uma fase pela primeira vez na run devolve 1 de vida. Voltar a uma fase
+    // e limpar de novo nao cura, senao ir e voltar enche a barra. hp > 0: o golpe que
+    // matou pode ter pegado no mesmo frame do ultimo inimigo morrer
+    var _fase = mapa_indice(room);
+    if (_fase > global.fase_curada) {
+        global.fase_curada = _fase;
+        if (hp > 0 && hp < hp_max) {
+            hp += 1;
+            global.vida = hp;
+            hud_cura = hud_cura_max;
+        }
+    }
 }
 
 var _h = (keyboard_check(vk_right) || keyboard_check(ord("D"))) - (keyboard_check(vk_left) || keyboard_check(ord("A")));

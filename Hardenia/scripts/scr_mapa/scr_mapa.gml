@@ -9,6 +9,19 @@ global.mapa_fases = [
 // o ultimo ponto ainda nao existe no jogo (o chefe final): aparece trancado
 global.mapa_final = "O TRONO";
 
+// golpes que o jogador aguenta (decisao de 30/10: com 1, horda seria morte certa;
+// ajustar jogando)
+#macro VIDA_MAX 5
+
+// a vida passa de uma sala para a outra (o obj_player nasce de novo em cada uma).
+// fase_curada: ate onde limpar a fase ja devolveu vida nesta run
+function run_zerar() {
+    global.vida = VIDA_MAX;
+    global.fase_curada = -1;
+}
+// no codigo solto: a sala aberta direto pela IDE, sem passar pelo menu, tambem funciona
+run_zerar();
+
 // posicao da sala no caminho; -1 fora dele (menu)
 function mapa_indice(_sala) {
     for (var _i = 0; _i < array_length(global.mapa_fases); _i++) {

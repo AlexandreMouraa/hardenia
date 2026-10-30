@@ -17,8 +17,7 @@ if (lifetime <= 0) {
 
 if (instance_exists(obj_player) && obj_player.invuln_timer <= 0 && !obj_player.is_dashing) {
     if (zona_acerta_jogador(zona)) {
-        obj_player.hp -= 1;
-        obj_player.invuln_timer = 45;
+        obj_player.levar_dano(1);
         instance_destroy();
     }
 }

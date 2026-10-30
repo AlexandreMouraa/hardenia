@@ -36,7 +36,10 @@ if (room == Room_Menu) {
     }
     if (espera == 40) {
         if (runs_feitas >= runs_total) {
-            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes) + " combos=" + string(combos) + (carregar ? " carregados=" + string(carregados) : "") + (usar_especial ? " especiais=" + string(especiais) : "") + (usar_estocada ? " estocadas=" + string(estocadas) : "") + (testar_formas ? " formas=" + string(variable_struct_names_count(formas_vistas)) : ""));
+            if (morrer && curas == 0) {
+                log("FALHA_vida", "-morrer nao viu a cura");
+            }
+            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes) + " danos=" + string(danos) + " combos=" + string(combos) + (carregar ? " carregados=" + string(carregados) : "") + (usar_especial ? " especiais=" + string(especiais) : "") + (usar_estocada ? " estocadas=" + string(estocadas) : "") + (testar_formas ? " formas=" + string(variable_struct_names_count(formas_vistas)) : ""));
             encerrar(0);
             exit;
         }
@@ -57,6 +60,18 @@ var _p = instance_find(obj_player, 0);
 tempo_sala += 1;
 
 // ---------- eventos para o log ----------
+if (_p.hp < vida_antes) {
+    danos += vida_antes - _p.hp;
+    log("dano", "hp=" + string(_p.hp));
+    if (danos == 1) {
+        pedir_print("dano");
+    }
+} else if (_p.hp > vida_antes) {
+    curas += 1;
+    log("cura", "hp=" + string(_p.hp));
+}
+vida_antes = _p.hp;
+
 var _n = instance_number(obj_enemy);
 if (_n < inimigos_antes) {
     log("inimigo_morto", "restam=" + string(_n));
@@ -164,7 +179,9 @@ if (_p.is_dead) {
     if (!estava_morto) {
         estava_morto = true;
         mortes_total += 1;
+        mortes_run += 1;
         mortes_sala += 1;
+        variable_struct_set(salas_morreu, room_get_name(room), true);
         var _perto = instance_nearest(_p.x, _p.y, obj_enemy);
         var _quem = "?";
         if (_perto != noone) {
@@ -174,8 +191,8 @@ if (_p.is_dead) {
         if (mortes_total <= 6) {
             pedir_print("morte");
         }
-        if (mortes_sala >= 25) {
-            log("FALHA_desistiu", "25 mortes na mesma sala");
+        if (mortes_run >= 25) {
+            log("FALHA_desistiu", "25 mortes na mesma run");
             terminar_run("desistiu");
         }
     }
@@ -244,7 +261,12 @@ if (!testou_pausa && room == Room1 && tempo_sala >= 90) {
 }
 
 // ---------- zonas de golpe ativas ----------
-var _quer_morrer = morrer && run_atual == 1 && mortes_sala == 0;
+var _quer_morrer = morrer && run_atual == 1 && !variable_struct_exists(salas_morreu, room_get_name(room));
+// -morrer, segunda run: apanha ate ficar com 3 de vida, sem morrer, para o log mostrar
+// a vida passando de uma sala para a outra e a cura de limpar a fase
+if (morrer && run_atual == 2 && _p.hp > 3) {
+    _quer_morrer = true;
+}
 var _zonas = [];
 with (obj_enemy) {
     if (state == 1 || state == 2) {
@@ -525,7 +547,7 @@ if (_travou) {
 }
 
 // parado sem atacar com inimigo vivo: bug do robo, nao do jogo
-if (_mh == 0 && _mv == 0 && _alvo != noone && _p.attack_cooldown <= 0 && !_ameacado) {
+if (_mh == 0 && _mv == 0 && _alvo != noone && _p.attack_cooldown <= 0 && !_ameacado && !_quer_morrer) {
     ocioso += 1;
     if (ocioso == 180) {
         log("ALERTA_robo_ocioso", "x=" + string(round(_p.x)) + " y=" + string(round(_p.y)));
