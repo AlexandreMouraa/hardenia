@@ -2,6 +2,21 @@ if (global.game_paused || global.hitstop > 0) {
     exit;
 }
 
+// especial: acerta quem estiver em volta neste frame e acaba
+if (especial) {
+    var _lista = ds_list_create();
+    var _n = instance_place_list(x, y, obj_enemy, _lista, false);
+    for (var _i = 0; _i < _n; _i++) {
+        acertar(_lista[| _i]);
+    }
+    ds_list_destroy(_lista);
+    if (instance_exists(obj_player)) {
+        obj_player.especial_acertos = _n;
+    }
+    instance_destroy();
+    exit;
+}
+
 lifetime -= 1;
 if (lifetime <= 0) {
     instance_destroy();
@@ -10,46 +25,6 @@ if (lifetime <= 0) {
 
 var _enemy = instance_place(x, y, obj_enemy);
 if (_enemy != noone) {
-    _enemy.hp -= damage;
-    _enemy.hit_flash = 8;
-    var _dir_golpe = instance_exists(obj_player) ? point_direction(obj_player.x, obj_player.y, _enemy.x, _enemy.y) : 0;
-    if (_enemy.hp <= 0) {
-        // golpe que mata: pausa e tremor maiores, faiscas vermelhas
-        impacto(forte ? 6 : 5, forte ? 8 : 6);
-        fx_faiscas(_enemy.x, _enemy.y, _dir_golpe, c_red, 9);
-        with (instance_create_layer(_enemy.x, _enemy.y, "Instances", obj_fx_morte)) {
-            sprite_index = _enemy.sprite_index;
-            image_index = _enemy.image_index;
-        }
-        instance_destroy(_enemy);
-    } else if (instance_exists(obj_player)) {
-        if (forte) {
-            impacto(4, 4);
-            fx_faiscas(_enemy.x, _enemy.y, _dir_golpe, make_colour_rgb(255, 200, 120), 8);
-        } else {
-            impacto(2, 2);
-            fx_faiscas(_enemy.x, _enemy.y, _dir_golpe, c_white, 5);
-        }
-        if (forte) {
-            // terceiro golpe: o inimigo desliza para longe e freia (obj_enemy,
-            // Step); 0.35 da distancia no primeiro frame, perdendo 35% a cada um
-            _enemy.empurrao_x = lengthdir_x(knockback * 0.35, _dir_golpe);
-            _enemy.empurrao_y = lengthdir_y(knockback * 0.35, _dir_golpe);
-        } else {
-            // golpe comum: o empurrao curto de sempre, na hora. Deslizando, o
-            // inimigo ficava na beira do alcance e quase nunca atacava (o robo
-            // mostrou: 0 golpes de inimigo em 3 runs, contra 10 assim)
-            var _kx = lengthdir_x(knockback, _dir_golpe);
-            var _ky = lengthdir_y(knockback, _dir_golpe);
-            with (_enemy) {
-                if (!place_meeting(x + _kx, y, obj_wall)) {
-                    x += _kx;
-                }
-                if (!place_meeting(x, y + _ky, obj_wall)) {
-                    y += _ky;
-                }
-            }
-        }
-    }
+    acertar(_enemy);
     instance_destroy();
 }

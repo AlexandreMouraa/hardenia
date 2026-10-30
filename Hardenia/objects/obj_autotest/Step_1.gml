@@ -10,6 +10,7 @@ bot_v = 0;
 bot_dash = false;
 bot_enter = false;
 bot_clique = false;
+bot_especial = false;
 segurar_frames = max(0, segurar_frames - 1);
 bot_segurar = (segurar_frames > 0);
 
@@ -35,7 +36,7 @@ if (room == Room_Menu) {
     }
     if (espera == 40) {
         if (runs_feitas >= runs_total) {
-            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes) + " combos=" + string(combos) + (carregar ? " carregados=" + string(carregados) : ""));
+            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes) + " combos=" + string(combos) + (carregar ? " carregados=" + string(carregados) : "") + (usar_especial ? " especiais=" + string(especiais) : ""));
             encerrar(0);
             exit;
         }
@@ -102,6 +103,34 @@ forte_antes = _forte_agora;
 if (run_atual == 1 && !viu_carga && _p.carga >= _p.carga_max) {
     viu_carga = true;
     pedir_print("carga_cheia");
+}
+// -especial, uma vez: cerca o jogador com os inimigos da sala e gira. Sozinho o
+// robo quase nunca fica cercado, e o log precisa mostrar um giro acertando varios
+if (usar_especial && run_atual == 1 && !cercou && tempo_sala == 60) {
+    cercou = true;
+    var _k = 0;
+    with (obj_enemy) {
+        var _cx = _p.x + lengthdir_x(50, _k * 90);
+        var _cy = _p.y + lengthdir_y(50, _k * 90);
+        if (!place_meeting(_cx, _cy, obj_wall)) {
+            x = _cx;
+            y = _cy;
+        }
+        _k += 1;
+    }
+    bot_especial = true;
+}
+// giro: 3 frames depois de sair, o obj_attack ja contou os acertos
+if (_p.especial_recarga == _p.especial_recarga_max - 3 && !especial_logado) {
+    especial_logado = true;
+    especiais += 1;
+    log("especial", "acertos=" + string(_p.especial_acertos));
+    if (run_atual == 1 && !viu_especial) {
+        viu_especial = true;
+        pedir_print("especial");
+    }
+} else if (_p.especial_recarga < _p.especial_recarga_max - 3) {
+    especial_logado = false;
 }
 // terceiro golpe do combo, com o arco largo no meio da varrida
 if (run_atual == 1 && !viu_combo && _p.is_attacking && _p.golpe_atual == 3 && _p.attack_anim_timer == 9) {
@@ -370,7 +399,9 @@ if (_alvo != noone && !_ameacado && !_quer_morrer) {
                 }
                 alvo_golpeado = _alvo.id;
                 hp_golpeado = _alvo.hp;
-                if (golpes_vazios >= 5) {
+                if (usar_especial && _p.especial_recarga <= 0) {
+                    bot_especial = true;
+                } else if (golpes_vazios >= 5) {
                     log("travado", "golpes no vazio x=" + string(round(_p.x)) + " y=" + string(round(_p.y)));
                     golpes_vazios = 0;
                     desvio_frames = 20;

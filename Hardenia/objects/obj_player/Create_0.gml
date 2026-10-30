@@ -183,6 +183,49 @@ golpear = function(_carregado = false) {
     audio_play_sound(snd_attack, 1, false, 1, 0, _forte ? 0.85 : (golpe_atual == 2 ? 1.08 : 1));
 };
 
+// golpe especial (clique direito ou K): giro que acerta todos em volta, para
+// quando estiver cercado. A recarga longa e o custo
+especial_recarga = 0;
+especial_recarga_max = 180; // 3 s, sugestao da issue #4; ajustar jogando
+especial_buffer = 0;        // apertar na micro-pausa fica guardado, como o dash
+especial_negado = 0;        // barrinha treme ao apertar sem recarga (como dash_negado)
+especial_pronto = 0;        // barrinha pisca quando a recarga termina
+especial_acertos = 0;       // inimigos no ultimo giro (o robo registra)
+girar = function() {
+    especial_recarga = especial_recarga_max;
+    cancelar_carga();
+    combo_passo = 0;
+    combo_janela = 0;
+    golpe_atual = 1;
+    golpe_carregado = false;
+    // dano e empurrao do golpe forte. Escala 2,4 = 77 px para cada lado, o mesmo
+    // alcance do golpe forte (36 de distancia + 40 de metade da area), em volta toda
+    with (instance_create_layer(x, y, "Instances", obj_attack)) {
+        especial = true;
+        forte = true;
+        damage = 2;
+        knockback = 28;
+        image_xscale = 2.4;
+        image_yscale = 2.4;
+    }
+    with (instance_create_depth(x, y, depth - 1, obj_fx)) {
+        tipo = "arco";
+        abertura = 360;
+        raio = 70;
+        espessura = 14;
+        cor = make_colour_rgb(120, 200, 255);
+        intensidade = 1.6;
+        vida_max = 14;
+        vida = vida_max;
+    }
+    // mesma recarga do golpe comum (20 frames): nao emenda um golpe no giro
+    attack_cooldown = max(attack_cooldown, 20);
+    attack_anim_duration = 14;
+    attack_anim_timer = attack_anim_duration;
+    is_attacking = true;
+    audio_play_sound(snd_attack, 1, false, 1, 0, 0.7);
+};
+
 is_dead = false;
 death_timer = 0;
 death_timer_max = 90;
