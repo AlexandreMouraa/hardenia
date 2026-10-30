@@ -96,7 +96,10 @@ switch (state) {
 
             var _spawn_x = x + lengthdir_x(attack_reach, attack_dir);
             var _spawn_y = y + lengthdir_y(attack_reach, attack_dir);
-            instance_create_layer(_spawn_x, _spawn_y, "Instances", obj_enemy_attack);
+            var _golpe = instance_create_layer(_spawn_x, _spawn_y, "Instances", obj_enemy_attack);
+            _golpe.dono = id;
+            golpe_x = _spawn_x;
+            golpe_y = _spawn_y;
         }
         break;
 

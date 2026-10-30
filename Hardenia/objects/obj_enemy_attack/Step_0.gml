@@ -1,3 +1,10 @@
+// este objeto e invisivel: quem desenha a zona vermelha e o inimigo. Morto ele, o
+// golpe some junto, senao o jogador morre de um acerto que nao aparece na tela
+if (!instance_exists(dono)) {
+    instance_destroy();
+    exit;
+}
+
 if (global.game_paused || global.hitstop > 0) {
     exit;
 }
