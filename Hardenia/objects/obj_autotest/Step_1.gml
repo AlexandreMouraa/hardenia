@@ -36,7 +36,7 @@ if (room == Room_Menu) {
     }
     if (espera == 40) {
         if (runs_feitas >= runs_total) {
-            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes) + " combos=" + string(combos) + (carregar ? " carregados=" + string(carregados) : "") + (usar_especial ? " especiais=" + string(especiais) : ""));
+            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes) + " combos=" + string(combos) + (carregar ? " carregados=" + string(carregados) : "") + (usar_especial ? " especiais=" + string(especiais) : "") + (usar_estocada ? " estocadas=" + string(estocadas) : ""));
             encerrar(0);
             exit;
         }
@@ -103,6 +103,28 @@ forte_antes = _forte_agora;
 if (run_atual == 1 && !viu_carga && _p.carga >= _p.carga_max) {
     viu_carga = true;
     pedir_print("carga_cheia");
+}
+// -estocar: o ataque depois do dash
+if (estocar_em > 0) {
+    estocar_em -= 1;
+    if (estocar_em == 0) {
+        if (usar_mouse) {
+            bot_clique = true;
+        } else {
+            with (_p) {
+                event_perform(ev_keypress, ord("J"));
+            }
+        }
+    }
+}
+var _estocada_agora = _p.is_attacking && _p.golpe_estocada;
+if (_estocada_agora && !estocada_antes) {
+    estocadas += 1;
+}
+estocada_antes = _estocada_agora;
+if (run_atual == 1 && !viu_estocada && _estocada_agora && _p.attack_anim_timer == 8) {
+    viu_estocada = true;
+    pedir_print("estocada");
 }
 // -especial, uma vez: cerca o jogador com os inimigos da sala e gira. Sozinho o
 // robo quase nunca fica cercado, e o log precisa mostrar um giro acertando varios
@@ -401,6 +423,9 @@ if (_alvo != noone && !_ameacado && !_quer_morrer) {
                 hp_golpeado = _alvo.hp;
                 if (usar_especial && _p.especial_recarga <= 0) {
                     bot_especial = true;
+                } else if (usar_estocada && _p.dash_charges > 0) {
+                    bot_dash = true;
+                    estocar_em = 2;
                 } else if (golpes_vazios >= 5) {
                     log("travado", "golpes no vazio x=" + string(round(_p.x)) + " y=" + string(round(_p.y)));
                     golpes_vazios = 0;

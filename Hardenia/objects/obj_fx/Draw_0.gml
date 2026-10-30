@@ -66,6 +66,19 @@ switch (tipo) {
         gpu_set_blendmode(bm_normal);
         break;
 
+    case "estocada":
+        // ponta fina saindo do corpo ate o fim do alcance do golpe (raio)
+        var _lx = lengthdir_x(espessura, dir + 90);
+        var _ly = lengthdir_y(espessura, dir + 90);
+        gpu_set_blendmode(bm_add);
+        draw_primitive_begin(pr_trianglelist);
+        draw_vertex_colour(x + _lx, y + _ly, cor, _t);
+        draw_vertex_colour(x - _lx, y - _ly, cor, _t);
+        draw_vertex_colour(x + lengthdir_x(raio, dir), y + lengthdir_y(raio, dir), c_white, _t);
+        draw_primitive_end();
+        gpu_set_blendmode(bm_normal);
+        break;
+
     case "faisca":
         var _perto = 4 + 26 * (1 - _t);
         var _longe = _perto + 4 + 10 * _t;

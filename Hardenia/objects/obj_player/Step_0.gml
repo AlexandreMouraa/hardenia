@@ -167,7 +167,11 @@ if (combo_janela > 0) {
 }
 if (ataque_buffer > 0 && attack_cooldown <= 0) {
     ataque_buffer = 0;
-    golpear();
+    if (is_dashing || dash_freio > 0) {
+        estocar();
+    } else {
+        golpear();
+    }
 }
 ataque_buffer = max(0, ataque_buffer - 1);
 

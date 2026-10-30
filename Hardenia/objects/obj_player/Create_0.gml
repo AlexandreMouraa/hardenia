@@ -105,6 +105,7 @@ golpear = function(_carregado = false) {
     // o golpe carregado usa os mesmos valores do terceiro golpe do combo
     golpe_atual = _carregado ? 3 : combo_passo;
     golpe_carregado = _carregado;
+    golpe_estocada = false;
     var _forte = (golpe_atual == 3);
     var _alcance = _forte ? 36 : 32;
     var _dir = point_direction(0, 0, face_h, face_v);
@@ -183,6 +184,45 @@ golpear = function(_carregado = false) {
     audio_play_sound(snd_attack, 1, false, 1, 0, _forte ? 0.85 : (golpe_atual == 2 ? 1.08 : 1));
 };
 
+// estocada: atacar no dash ou logo no fim dele (dash_freio) sai para o lado do
+// dash, com 96 px de alcance contra 64 do golpe normal. Mesmo dano e recarga do
+// golpe normal. Nao mexe na invencibilidade, presa ao is_dashing (10 frames)
+golpe_estocada = false; // o ultimo golpe foi estocada (o robo conta)
+estocar = function() {
+    combo_passo = 0;
+    combo_janela = 0;
+    golpe_atual = 1;
+    golpe_carregado = false;
+    golpe_estocada = true;
+    var _dir = point_direction(0, 0, dash_dir_x, dash_dir_y);
+    ataque_dir = _dir;
+    if (_dir <= 45 || _dir >= 315) {
+        facing_dir = 1;
+    } else if (_dir >= 135 && _dir <= 225) {
+        facing_dir = 0;
+    } else {
+        facing_dir = (_dir < 180) ? 2 : 3;
+    }
+    // 96 de comprimento por 48 de largura; na diagonal, 82 nos dois eixos
+    var _golpe = instance_create_layer(x + dash_dir_x * 48, y + dash_dir_y * 48, "Instances", obj_attack);
+    _golpe.image_xscale = (48 + abs(dash_dir_x) * 48) / sprite_get_width(spr_attack);
+    _golpe.image_yscale = (48 + abs(dash_dir_y) * 48) / sprite_get_height(spr_attack);
+    with (instance_create_depth(x, y, depth - 1, obj_fx)) {
+        tipo = "estocada";
+        dir = _dir;
+        raio = 96;
+        espessura = 8;
+        cor = make_colour_rgb(255, 110, 80);
+        vida_max = 10;
+        vida = vida_max;
+    }
+    attack_cooldown = 20;
+    attack_anim_duration = 12;
+    attack_anim_timer = attack_anim_duration;
+    is_attacking = true;
+    audio_play_sound(snd_attack, 1, false, 1, 0, 1.2);
+};
+
 // golpe especial (clique direito ou K): giro que acerta todos em volta, para
 // quando estiver cercado. A recarga longa e o custo
 especial_recarga = 0;
@@ -198,6 +238,7 @@ girar = function() {
     combo_janela = 0;
     golpe_atual = 1;
     golpe_carregado = false;
+    golpe_estocada = false;
     // dano e empurrao do golpe forte. Escala 2,4 = 77 px para cada lado, o mesmo
     // alcance do golpe forte (36 de distancia + 40 de metade da area), em volta toda
     with (instance_create_layer(x, y, "Instances", obj_attack)) {

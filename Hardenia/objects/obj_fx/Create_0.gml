@@ -3,6 +3,7 @@
 //   "risco":  linhas de velocidade do dash (ver fx_risco)
 //   "anel" e "poeira": arrancada do dash (ver fx_dash_arrancada)
 //   "arco":   arco de corte da espada, na direcao do golpe
+//   "estocada": ponta do golpe que sai do dash
 //   "faisca": linhas saindo do ponto de impacto (ver fx_faiscas)
 tipo = "";
 vida_max = 10;

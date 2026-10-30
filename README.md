@@ -55,6 +55,7 @@ estão no [CONTRIBUTING.md](CONTRIBUTING.md).
 | Mover | `WASD` ou setas |
 | Atacar (3 seguidos: combo) | Clique esquerdo (mira no mouse) ou `J` (para onde anda) |
 | Golpe carregado (anda devagar enquanto carrega) | Segurar o ataque e soltar quando o personagem piscar |
+| Estocada (golpe mais comprido) | Atacar durante o dash ou logo no fim dele |
 | Golpe especial (acerta todos em volta, recarga de 3 s) | Clique direito ou `K` |
 | Dash (2 cargas, invencível durante o impulso) | `Espaço` |
 | Pausar / continuar | `Esc` |
@@ -137,6 +138,7 @@ roda 3 runs em velocidade acelerada, sem som e em janela, e termina com `OK` ou
 | `-mouse` | ataca com o clique, mirando no inimigo (testa a mira no mouse) |
 | `-carregar` | segura o ataque depois de cada golpe e solta com a carga cheia (testa o golpe carregado; soma `carregados=N` no resumo) |
 | `-especial` | usa o golpe especial sempre que tem alvo perto e recarga pronta (soma `especiais=N` no resumo e registra os acertos de cada giro) |
+| `-estocar` | com alvo perto e carga de dash, dá o dash e ataca logo depois (soma `estocadas=N` no resumo) |
 | `-desatento 40` | ignora 40% dos avisos, como um jogador distraído |
 | `-diag` | registra as decisões do robô a cada segundo |
 | `-api URL` | liga a rede e manda os eventos para essa API (teste local; sem isso o robô não envia nada) |

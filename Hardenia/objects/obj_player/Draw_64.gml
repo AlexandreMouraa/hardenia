@@ -245,7 +245,7 @@ if (global.game_paused) {
     draw_text_transformed(_w / 2, _h / 2 - 40 * _esc, "PAUSADO", _esc * 2, _esc * 2, 0);
     draw_set_alpha(1);
     draw_text_transformed(_w / 2, _h / 2, "WASD / SETAS: mover    CLIQUE ou J: atacar (3 seguidos: combo)    ESPACO: dash", _esc, _esc, 0);
-    draw_text_transformed(_w / 2, _h / 2 + 22 * _esc, "SEGURAR O ATAQUE: golpe carregado    CLIQUE DIREITO ou K: especial", _esc, _esc, 0);
+    draw_text_transformed(_w / 2, _h / 2 + 22 * _esc, "SEGURAR O ATAQUE: golpe carregado    ATACAR NO DASH: estocada    CLIQUE DIREITO ou K: especial", _esc, _esc, 0);
     draw_set_color(c_ltgray);
     draw_text_transformed(_w / 2, _h / 2 + 42 * _esc, "Atacando com o clique, o golpe vai para onde o mouse aponta; com J, para onde voce anda", _esc * 0.75, _esc * 0.75, 0);
     draw_set_color(c_white);
