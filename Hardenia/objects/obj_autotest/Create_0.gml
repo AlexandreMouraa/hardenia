@@ -2,7 +2,7 @@
 // (quem cria e o obj_menu). Joga a run inteira sozinho, sem som e em janela,
 // e grava log + prints na pasta de save: %LOCALAPPDATA%\Hardenia\autotest\
 // Parametros: -runs N (padrao 3)  -speed FPS (padrao 240)  -morrer
-// -desatento N  -diag  -appsurface  -mouse  -carregar. Para rodar: tools\autotest.ps1
+// -desatento N  -diag  -appsurface  -mouse  -carregar  -especial. Para rodar: tools\autotest.ps1
 // Rede: por padrao o robo nao manda nada ao site. Com -api URL ele manda os
 // eventos para essa API (teste local), e com -nome X digita X na vitoria e
 // envia ao ranking dela.
@@ -25,6 +25,13 @@ carregar = false;
 segurar_frames = 0;
 carregados = 0;
 viu_carga = false;
+// -especial: usa o giro sempre que tem alvo perto e recarga pronta (soma
+// "especiais=N" no resumo e registra quantos inimigos cada giro acertou)
+usar_especial = false;
+especiais = 0;
+especial_logado = false;
+viu_especial = false;
+cercou = false;
 golpes = 0;
 nome_robo = "";
 // golpes seguidos que nao tiraram vida do alvo (ver Step_1, ataque)
@@ -43,6 +50,9 @@ for (var _i = 1; _i <= parameter_count(); _i++) {
     }
     if (parameter_string(_i) == "-carregar") {
         carregar = true;
+    }
+    if (parameter_string(_i) == "-especial") {
+        usar_especial = true;
     }
 }
 for (var _i = 1; _i < parameter_count(); _i++) {
@@ -111,6 +121,7 @@ bot_dash = false;
 bot_enter = false;
 bot_clique = false;
 bot_segurar = false;
+bot_especial = false;
 bot_mira_x = 0;
 bot_mira_y = 0;
 

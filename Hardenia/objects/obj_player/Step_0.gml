@@ -25,6 +25,16 @@ if (_clique && !is_dead && !venceu) {
     carga_armada = true;
 }
 
+// golpe especial (girar, no Create). Pausa e mapa ja sairam la em cima
+var _especial = instance_exists(obj_autotest) ? obj_autotest.bot_especial : (mouse_check_button_pressed(mb_right) || keyboard_check_pressed(ord("K")));
+if (_especial && !is_dead && !venceu) {
+    if (especial_recarga > 0) {
+        especial_negado = 14;
+    } else {
+        especial_buffer = ataque_buffer_max;
+    }
+}
+
 // dash apertado fica guardado alguns frames (dash_buffer). Lido antes da
 // micro-pausa: apertar durante ela tambem vale
 var _dash_apertado = instance_exists(obj_autotest) ? obj_autotest.bot_dash : keyboard_check_pressed(vk_space);
@@ -183,6 +193,20 @@ if (carga >= carga_max) {
 } else if (carga > 0) {
     brilho = max(brilho, 0.45 * carga / carga_max);
 }
+
+if (especial_recarga > 0) {
+    especial_recarga -= 1;
+    if (especial_recarga <= 0) {
+        especial_pronto = 12;
+    }
+}
+especial_negado = max(0, especial_negado - 1);
+especial_pronto = max(0, especial_pronto - 1);
+if (especial_buffer > 0 && !is_dashing) {
+    especial_buffer = 0;
+    girar();
+}
+especial_buffer = max(0, especial_buffer - 1);
 
 tempo_na_sala += 1;
 

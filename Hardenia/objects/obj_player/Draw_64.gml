@@ -41,6 +41,29 @@ for (var _i = 0; _i < dash_charges_max; _i++) {
 draw_set_color(c_ltgray);
 draw_text_transformed(16 * _esc + dash_charges_max * 16 * _esc + 4 * _esc, 33 * _esc, "DASH", _esc * 0.7, _esc * 0.7, 0);
 
+// recarga do especial, embaixo do dash e com a largura das duas cargas: enche
+// aos poucos; apertando sem recarga, treme vermelha; pronta, pisca
+var _ex = 16 * _esc;
+var _ey = 50 * _esc;
+var _ew = 28 * _esc;
+if (especial_negado > 0) {
+    _ex += sin(especial_negado * 2.1) * 2 * _esc;
+}
+draw_set_color(especial_negado > 0 ? make_colour_rgb(150, 30, 30) : c_dkgray);
+draw_rectangle(_ex, _ey, _ex + _ew, _ey + 6 * _esc, false);
+draw_set_color(especial_recarga > 0 ? c_gray : c_white);
+draw_rectangle(_ex, _ey, _ex + _ew * (1 - especial_recarga / especial_recarga_max), _ey + 6 * _esc, false);
+if (especial_pronto > 0) {
+    var _ef = especial_pronto / 12;
+    var _em = (1 - _ef) * 3 * _esc;
+    draw_set_alpha(_ef);
+    draw_set_color(c_white);
+    draw_rectangle(_ex - _em, _ey - _em, _ex + _ew + _em, _ey + 6 * _esc + _em, true);
+    draw_set_alpha(1);
+}
+draw_set_color(c_ltgray);
+draw_text_transformed(16 * _esc + dash_charges_max * 16 * _esc + 4 * _esc, 47 * _esc, "ESPECIAL", _esc * 0.7, _esc * 0.7, 0);
+
 // HUD: fase atual, contando as salas depois do menu na ordem do projeto
 var _fase = 0;
 var _total = 0;
@@ -222,10 +245,11 @@ if (global.game_paused) {
     draw_text_transformed(_w / 2, _h / 2 - 40 * _esc, "PAUSADO", _esc * 2, _esc * 2, 0);
     draw_set_alpha(1);
     draw_text_transformed(_w / 2, _h / 2, "WASD / SETAS: mover    CLIQUE ou J: atacar (3 seguidos: combo)    ESPACO: dash", _esc, _esc, 0);
+    draw_text_transformed(_w / 2, _h / 2 + 22 * _esc, "SEGURAR O ATAQUE: golpe carregado    CLIQUE DIREITO ou K: especial", _esc, _esc, 0);
     draw_set_color(c_ltgray);
-    draw_text_transformed(_w / 2, _h / 2 + 24 * _esc, "Atacando com o clique, o golpe vai para onde o mouse aponta; com J, para onde voce anda", _esc * 0.75, _esc * 0.75, 0);
+    draw_text_transformed(_w / 2, _h / 2 + 42 * _esc, "Atacando com o clique, o golpe vai para onde o mouse aponta; com J, para onde voce anda", _esc * 0.75, _esc * 0.75, 0);
     draw_set_color(c_white);
-    draw_text_transformed(_w / 2, _h / 2 + 54 * _esc, "ESC: CONTINUAR    M: VOLTAR AO MENU", _esc, _esc, 0);
+    draw_text_transformed(_w / 2, _h / 2 + 62 * _esc, "ESC: CONTINUAR    M: VOLTAR AO MENU", _esc, _esc, 0);
     // onde voce esta no caminho ate o fim
     var _fase_mapa = mapa_indice(room);
     if (_fase_mapa >= 0) {
