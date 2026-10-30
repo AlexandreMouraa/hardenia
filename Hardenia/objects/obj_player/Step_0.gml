@@ -22,6 +22,7 @@ var _clique = instance_exists(obj_autotest) ? obj_autotest.bot_clique : mouse_ch
 if (_clique && !is_dead && !venceu) {
     global.mira_mouse = true;
     ataque_buffer = ataque_buffer_max;
+    carga_armada = true;
 }
 
 // dash apertado fica guardado alguns frames (dash_buffer). Lido antes da
@@ -50,6 +51,8 @@ if (is_dead) {
 // ultima sala limpa = fim da run
 if (!venceu && room == room_last && instance_number(obj_enemy) == 0) {
     venceu = true;
+    cancelar_carga();
+    brilho = 0;
     sprite_index = spr_player_idle;
     image_index = facing_dir * idle_frames;
     image_alpha = 1;
@@ -158,6 +161,29 @@ if (ataque_buffer > 0 && attack_cooldown <= 0) {
 }
 ataque_buffer = max(0, ataque_buffer - 1);
 
+// golpe carregado (ver Create). So enche depois da animacao do golpe normal, para
+// um toque um pouco mais longo nao deixar o jogador lento
+if (carga_armada) {
+    if (!ataque_segurado()) {
+        var _cheia = (carga >= carga_max);
+        cancelar_carga();
+        if (_cheia) {
+            golpear(true);
+        }
+    } else if (is_dashing) {
+        // o dash cancela; para carregar de novo, solta e aperta
+        cancelar_carga();
+    } else if (!is_attacking && carga < carga_max) {
+        carga += 1;
+    }
+}
+// brilho enchendo com a carga; cheia, pisca (contador, sem random)
+if (carga >= carga_max) {
+    brilho = ((tempo_na_sala div 5) mod 2 == 0) ? 0.9 : 0.25;
+} else if (carga > 0) {
+    brilho = max(brilho, 0.45 * carga / carga_max);
+}
+
 tempo_na_sala += 1;
 
 if (_dash_apertado && dash_charges == 0 && !is_dashing) {
@@ -191,8 +217,9 @@ if (is_dashing) {
     _move_y = dash_dir_y * _vel;
 } else {
     var _norm = (_h != 0 && _v != 0) ? 0.7071 : 1;
-    _move_x = _h * move_speed * _norm;
-    _move_y = _v * move_speed * _norm;
+    var _passo = (carga > 0) ? move_speed * carga_lentidao : move_speed;
+    _move_x = _h * _passo * _norm;
+    _move_y = _v * _passo * _norm;
 }
 // terceiro golpe do combo: passo curto para a frente, que da peso ao golpe
 if (ataque_impulso > 0 && !is_dashing) {
@@ -288,6 +315,8 @@ if (hp <= 0) {
     // onde e quando morreu: alimenta o mapa de mortes do site
     rede_evento("morte", { x: round(x), y: round(y), tentativa: global.tentativas, tempo_ms: frames_para_ms(tempo_na_sala) });
     is_dead = true;
+    cancelar_carga();
+    brilho = 0;
     impacto(8, 9);
     death_timer = death_timer_max;
     image_alpha = 1;

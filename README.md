@@ -54,6 +54,7 @@ estão no [CONTRIBUTING.md](CONTRIBUTING.md).
 |---|---|
 | Mover | `WASD` ou setas |
 | Atacar (3 seguidos: combo) | Clique esquerdo (mira no mouse) ou `J` (para onde anda) |
+| Golpe carregado (anda devagar enquanto carrega) | Segurar o ataque e soltar quando o personagem piscar |
 | Dash (2 cargas, invencível durante o impulso) | `Espaço` |
 | Pausar / continuar | `Esc` |
 | Voltar ao menu (na pausa) | `M` |
@@ -133,6 +134,7 @@ roda 3 runs em velocidade acelerada, sem som e em janela, e termina com `OK` ou
 |---|---|
 | `-morrer` | morre uma vez em cada sala na 1ª run (testa morte e reinício) |
 | `-mouse` | ataca com o clique, mirando no inimigo (testa a mira no mouse) |
+| `-carregar` | segura o ataque depois de cada golpe e solta com a carga cheia (testa o golpe carregado; soma `carregados=N` no resumo) |
 | `-desatento 40` | ignora 40% dos avisos, como um jogador distraído |
 | `-diag` | registra as decisões do robô a cada segundo |
 | `-api URL` | liga a rede e manda os eventos para essa API (teste local; sem isso o robô não envia nada) |
