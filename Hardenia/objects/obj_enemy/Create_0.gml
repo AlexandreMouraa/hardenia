@@ -10,6 +10,9 @@ cooldown_time = 40;
 attack_damage_dealt = false;
 attack_dir = 0;
 attack_reach = 40;
+// onde o golpe caiu: a zona desenhada fica ali mesmo se o inimigo for empurrado
+golpe_x = x;
+golpe_y = y;
 
 hit_flash = 0;
 // empurrao do terceiro golpe do combo (obj_attack): desliza e freia a cada frame

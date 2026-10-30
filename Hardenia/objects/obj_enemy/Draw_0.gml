@@ -1,8 +1,8 @@
 // zona do golpe: contorno durante o aviso, preenchida enquanto o golpe acontece.
 // mesmo tamanho da hitbox do obj_enemy_attack (spr_attack, origem no centro).
 if (state == 1 || state == 2) {
-    var _zx = x + lengthdir_x(attack_reach, attack_dir);
-    var _zy = y + lengthdir_y(attack_reach, attack_dir);
+    var _zx = (state == 2) ? golpe_x : x + lengthdir_x(attack_reach, attack_dir);
+    var _zy = (state == 2) ? golpe_y : y + lengthdir_y(attack_reach, attack_dir);
     var _r = sprite_get_width(spr_attack) / 2;
     draw_set_color(c_red);
     if (state == 1) {
