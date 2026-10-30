@@ -199,9 +199,11 @@ image_index = facing_dir * idle_frames;
 
 // rede: evento de sala limpa (uma vez por sala) e tela de vitoria com ranking.
 // vitoria_estado: "fim" (sem rede) ou "nome" -> "enviando" -> "enviado" / "falhou"
+// (nome recusado pela API volta de "enviando" para "nome")
 sala_limpa_enviada = false;
 vitoria_estado = "fim";
 vitoria_nome = "";
+vitoria_nome_recusado = false;
 vitoria_espera = 0;
 vitoria_posicao = 0;
 vitoria_total = 0;

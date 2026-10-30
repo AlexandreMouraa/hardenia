@@ -9,6 +9,7 @@ limite de requisicoes.
   GET  /api/saude
   GET  /api/ranking?limite=10
   POST /api/vitoria      {nome, tentativas, tempo_ms, plataforma, sessao}
+                         (nome com palavrao: 422 {"erro": "nome_proibido"})
   POST /api/evento       {tipo, sala, x, y, tentativa, tempo_ms, plataforma, sessao}
   GET  /api/estatisticas
   GET  /api/mortes?sala=Room1
@@ -23,6 +24,7 @@ import re
 import sqlite3
 import threading
 import time
+import unicodedata
 import urllib.request
 from collections import defaultdict, deque
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -46,6 +48,38 @@ LIMITES = {"/api/vitoria": 60, "/api/evento": 2000, "/api/opiniao": 60}
 
 NOME_OK = re.compile(r"^[\w .\-]{1,16}$", re.UNICODE)
 SESSAO_OK = re.compile(r"^[a-z0-9]{6,32}$")
+
+# Filtro do nome do ranking (ver nome_proibido). Fica aqui, e nao num arquivo ao
+# lado, porque o deploy so copia este arquivo: lista esquecida seria filtro desligado.
+# Palavra que nunca aparece dentro de nome comum: vale em qualquer parte do nome,
+# mesmo cortada por espaco ("car alho").
+PROIBIDAS_DENTRO = {
+    "caralh", "karalh", "bucet", "bocet", "xoxota", "xereca", "piroc", "pirok",
+    "cacete", "kacete", "penis", "merda", "bosta", "punhet", "siririca", "boquete",
+    "arrombad", "arombad", "foder", "fuder", "fodase", "fodasse", "fodeu", "fudeu",
+    "fodid", "fudid", "filhodaput", "filhadaput", "filhodeput", "filhadeput",
+    "putaquepariu", "putaqpariu", "vagabund", "cuzao", "cuzinho", "paupeq", "paugrand",
+    "paumole", "paudur", "paunocu", "traveco", "hitler",
+    "fuck", "bitch", "pussy", "nigger", "nigga", "faggot", "asshole",
+}
+# Palavra curta aparece dentro de nome comum (pau em Paulo, puta em Computador, cu
+# em Marcus, anal em Ana Lima, viado em Enviado): so vale como palavra inteira.
+# Pinto fica de fora sozinho: e sobrenome.
+PROIBIDAS_INTEIRAS = {
+    "cu", "cus", "ku", "pau", "paus", "pauzao", "pauzinho", "meupau", "seupau", "chupapau",
+    "meupinto", "seupinto", "pintogrande", "pintopequeno", "pintomole", "pintoduro",
+    "chupapinto", "puta", "putas", "puto", "putos", "putinha", "putona", "porra", "porras",
+    "foda", "fodas", "fode", "rola", "rolas", "rolinha", "rolao", "pica", "picas",
+    "anal", "anus", "bunda", "bundao", "bundinha", "peido", "peidao", "xana", "xaninha",
+    "xota", "xotinha", "teta", "tetas", "tetinha", "grelo", "grelinho", "gozo", "gozei",
+    "gozar", "gozada", "sexo", "porn", "porno", "corno", "cornos", "corna", "viado",
+    "viados", "viadao", "viadinho", "bicha", "sapatao", "boiola", "baitola", "vadia",
+    "otario", "babaca", "escroto", "escrota", "retardado", "retardada", "mongol",
+    "mongoloide", "nazi", "nazista",
+    "fdp", "vsf", "vtnc", "tnc", "pqp", "krl", "crl", "krlh", "crlh",
+    "shit", "dick", "cock", "ass", "cunt",
+}
+LETRA_PARECIDA = str.maketrans("01345", "oieas")
 
 ESQUEMA = """
 CREATE TABLE IF NOT EXISTS vitorias (
@@ -115,6 +149,10 @@ class Invalido(Exception):
     pass
 
 
+class NomeProibido(Exception):
+    pass
+
+
 def inteiro(dados, campo, minimo, maximo):
     valor = dados.get(campo)
     if isinstance(valor, bool) or not isinstance(valor, (int, float)):
@@ -139,12 +177,37 @@ def sessao(dados):
     return valor
 
 
+def leituras(texto):
+    """Como um pedaco do nome pode ser lido: numero como letra (p3n1s) ou numero
+    ignorado (pau123), com e sem letra repetida (puuuta)."""
+    lidas = {texto.translate(LETRA_PARECIDA), re.sub(r"\d", "", texto)}
+    return lidas | {re.sub(r"(.)\1+", r"\1", l) for l in lidas}
+
+
+def nome_proibido(nome):
+    base = unicodedata.normalize("NFKD", nome.lower())
+    base = "".join(c for c in base if not unicodedata.combining(c))
+    pedacos = [p for p in re.split(r"[\s._\-]+", base) if p]
+    junto = "".join(pedacos)
+    if any(p in l for l in leituras(junto) for p in PROIBIDAS_DENTRO):
+        return True
+    inteiras = set(pedacos)
+    # dois pedacos vizinhos ("pu ta", "meu pinto"), mas nao letra solta: "Ana L" e nome
+    inteiras.update(a + b for a, b in zip(pedacos, pedacos[1:]) if len(a) > 1 and len(b) > 1)
+    # tudo separado: "p u t a", "a n a l"
+    if all(len(p) <= 2 for p in pedacos):
+        inteiras.add(junto)
+    return any(l in PROIBIDAS_INTEIRAS for p in inteiras for l in leituras(p))
+
+
 def limpar_nome(valor):
     if not isinstance(valor, str):
         raise Invalido("nome")
     nome = " ".join(valor.split())
     if not NOME_OK.match(nome):
         raise Invalido("nome")
+    if nome_proibido(nome):
+        raise NomeProibido()
     return nome
 
 
@@ -367,6 +430,9 @@ class Api(BaseHTTPRequestHandler):
                 raise Invalido("corpo")
             with conectar() as con:
                 return self.responder(200, acoes[rota](con, dados))
+        except NomeProibido:
+            # 422 e nao 400: e pelo status que o jogo separa isto de outro erro
+            return self.responder(422, {"erro": "nome_proibido"})
         except Invalido as e:
             return self.responder(400, {"erro": "invalido", "campo": str(e)})
 
