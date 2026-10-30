@@ -59,6 +59,27 @@ ataque_buffer_max = 12;
 ataque_impulso = 0;     // passo curto para a frente no terceiro golpe
 ataque_dir = 270;       // angulo do ultimo golpe
 
+// golpe carregado: o toque continua igual, com o golpe normal saindo ao apertar.
+// Continuar segurando depois dele enche a carga; soltar com ela cheia solta um
+// golpe forte. Enquanto carrega, anda devagar: esse e o risco da escolha
+carga_armada = false;   // apertou o ataque e ainda nao soltou
+carga = 0;              // frames carregados
+carga_max = 30;         // 0,5 s, sugestao da issue #3; ajustar jogando
+carga_lentidao = 0.5;   // velocidade enquanto carrega, tambem da issue #3
+golpe_carregado = false; // o ultimo golpe foi carregado (o robo conta)
+// tecla ou botao ainda apertado; no modo -autotest quem decide e o robo
+ataque_segurado = function() {
+    if (instance_exists(obj_autotest)) {
+        return obj_autotest.bot_segurar;
+    }
+    return mouse_check_button(mb_left) || keyboard_check(ord("J"));
+};
+// fim da carga, sem golpe: dash, morte e vitoria
+cancelar_carga = function() {
+    carga_armada = false;
+    carga = 0;
+};
+
 // mira: atacando com o clique, o golpe vai para onde o mouse aponta, em
 // qualquer angulo; com J, para onde o jogador esta virado. Vale o ultimo dos
 // dois que o jogador usou (global: passa de uma sala para a outra)
@@ -79,10 +100,12 @@ mostra_mira = function() {
 // cursor do sistema escondido no jogo: quem mostra o mouse e a mira (Draw GUI)
 window_set_cursor(cr_none);
 
-golpear = function() {
+golpear = function(_carregado = false) {
     combo_passo += 1;
-    golpe_atual = combo_passo;
-    var _forte = (combo_passo == 3);
+    // o golpe carregado usa os mesmos valores do terceiro golpe do combo
+    golpe_atual = _carregado ? 3 : combo_passo;
+    golpe_carregado = _carregado;
+    var _forte = (golpe_atual == 3);
     var _alcance = _forte ? 36 : 32;
     var _dir = point_direction(0, 0, face_h, face_v);
     if (global.mira_mouse) {

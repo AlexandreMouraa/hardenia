@@ -10,6 +10,8 @@ bot_v = 0;
 bot_dash = false;
 bot_enter = false;
 bot_clique = false;
+segurar_frames = max(0, segurar_frames - 1);
+bot_segurar = (segurar_frames > 0);
 
 // trava de seguranca: 40 min de jogo
 if (frame > 60 * 60 * 40) {
@@ -33,7 +35,7 @@ if (room == Room_Menu) {
     }
     if (espera == 40) {
         if (runs_feitas >= runs_total) {
-            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes) + " combos=" + string(combos));
+            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes) + " combos=" + string(combos) + (carregar ? " carregados=" + string(carregados) : ""));
             encerrar(0);
             exit;
         }
@@ -90,9 +92,17 @@ if (run_atual == 1 && dash_prints == 0 && _p.is_dashing && _p.dash_timer == 5) {
 // combos completos: conta quando o terceiro golpe comeca
 var _forte_agora = _p.is_attacking && _p.golpe_atual == 3;
 if (_forte_agora && !forte_antes) {
-    combos += 1;
+    if (_p.golpe_carregado) {
+        carregados += 1;
+    } else {
+        combos += 1;
+    }
 }
 forte_antes = _forte_agora;
+if (run_atual == 1 && !viu_carga && _p.carga >= _p.carga_max) {
+    viu_carga = true;
+    pedir_print("carga_cheia");
+}
 // terceiro golpe do combo, com o arco largo no meio da varrida
 if (run_atual == 1 && !viu_combo && _p.is_attacking && _p.golpe_atual == 3 && _p.attack_anim_timer == 9) {
     viu_combo = true;
@@ -349,7 +359,7 @@ if (_alvo != noone && !_ameacado && !_quer_morrer) {
         if (usar_mouse || (_p.face_h == _fh && _p.face_v == _fv)) {
             _mh = 0;
             _mv = 0;
-            if (_p.attack_cooldown <= 0) {
+            if (_p.attack_cooldown <= 0 && segurar_frames <= 0) {
                 // golpe que nao tira vida: alvo do outro lado de uma parede, no
                 // limite do alcance (a conta acima tem 1 px a mais que a hitbox
                 // real). Depois de 5 seguidos, sai dali como se tivesse travado
@@ -375,6 +385,11 @@ if (_alvo != noone && !_ameacado && !_quer_morrer) {
                     with (_p) {
                         event_perform(ev_keypress, ord("J"));
                     }
+                }
+                // animacao (12) + carga (30) + folga para as micro-pausas
+                if (carregar) {
+                    segurar_frames = 70;
+                    bot_segurar = true;
                 }
             }
         } else {

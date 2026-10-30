@@ -7,3 +7,4 @@ if (global.game_paused || is_dead || venceu || instance_exists(obj_mapa)) {
 // vai para onde o jogador esta virado (com o clique, para o mouse)
 global.mira_mouse = false;
 ataque_buffer = ataque_buffer_max;
+carga_armada = true;
