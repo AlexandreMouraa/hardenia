@@ -244,7 +244,12 @@ if (is_dashing) {
     _move_y = dash_dir_y * _vel;
 } else {
     var _norm = (_h != 0 && _v != 0) ? 0.7071 : 1;
-    var _passo = (carga > 0) ? move_speed * carga_lentidao : move_speed;
+    var _passo = move_speed;
+    if (carga > 0) {
+        _passo *= carga_lentidao;
+    } else if (is_attacking) {
+        _passo *= golpe_lentidao;
+    }
     _move_x = _h * _passo * _norm;
     _move_y = _v * _passo * _norm;
 }
