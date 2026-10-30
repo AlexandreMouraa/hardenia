@@ -29,6 +29,19 @@ if (room == Room_Menu) {
 
 log("sala_inicio", "tentativa=" + string(global.tentativas) + " inimigos=" + string(inimigos_antes));
 
+if (testar_formas) {
+    if (!formas_testadas) {
+        formas_testadas = true;
+        testar_zonas();
+    }
+    var _forma = 0;
+    with (obj_enemy) {
+        ataque = other.ataques_formas[_forma mod 4];
+        hp = 12;
+        _forma += 1;
+    }
+}
+
 // grade de navegacao: cada parede inflada pelo tamanho do jogador, assim o
 // caminho e para o centro dele
 grade = mp_grid_create(0, 0, ceil(room_width / 8), ceil(room_height / 8), 8, 8);

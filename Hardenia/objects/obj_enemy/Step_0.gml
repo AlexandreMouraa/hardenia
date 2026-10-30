@@ -26,6 +26,11 @@ if (abs(empurrao_x) + abs(empurrao_y) > 0.1) {
     empurrao_y = 0;
 }
 
+// a zona acompanha o inimigo empurrado durante o aviso; depois do golpe, fica onde caiu
+if (state == 1) {
+    zona_posicionar(zona, x, y);
+}
+
 var _is_moving = false;
 
 switch (state) {
@@ -39,11 +44,13 @@ switch (state) {
             image_blend = c_white;
         }
 
-        if (_dist <= attack_range) {
+        // com parede no meio nao ataca: o golpe nao passaria
+        if (_dist <= ataque.gatilho && collision_line(x, y, obj_player.x, obj_player.y, obj_wall, false, true) == noone) {
             state = 1;
-            state_timer = windup_time;
+            state_timer = ataque.aviso;
             // a direcao trava no inicio do aviso: o jogador ve onde o golpe cai e tem tempo de sair
             attack_dir = point_direction(x, y, obj_player.x, obj_player.y);
+            zona = zona_criar(ataque, x, y, attack_dir);
             var _ax = lengthdir_x(1, attack_dir);
             var _ay = lengthdir_y(1, attack_dir);
             if (abs(_ax) > abs(_ay)) {
@@ -91,15 +98,13 @@ switch (state) {
         image_blend = ((state_timer div 6) mod 2 == 0) ? c_white : c_red;
         if (state_timer <= 0) {
             state = 2;
-            state_timer = attack_time;
+            state_timer = ataque.duracao;
             image_blend = c_red;
 
-            var _spawn_x = x + lengthdir_x(attack_reach, attack_dir);
-            var _spawn_y = y + lengthdir_y(attack_reach, attack_dir);
-            var _golpe = instance_create_layer(_spawn_x, _spawn_y, "Instances", obj_enemy_attack);
+            var _golpe = instance_create_layer(zona.cx, zona.cy, "Instances", obj_enemy_attack);
             _golpe.dono = id;
-            golpe_x = _spawn_x;
-            golpe_y = _spawn_y;
+            _golpe.zona = zona;
+            _golpe.lifetime = ataque.acerto;
         }
         break;
 
@@ -107,7 +112,7 @@ switch (state) {
         state_timer -= 1;
         if (state_timer <= 0) {
             state = 3;
-            state_timer = cooldown_time;
+            state_timer = ataque.recarga;
         }
         break;
 

@@ -36,7 +36,7 @@ if (room == Room_Menu) {
     }
     if (espera == 40) {
         if (runs_feitas >= runs_total) {
-            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes) + " combos=" + string(combos) + (carregar ? " carregados=" + string(carregados) : "") + (usar_especial ? " especiais=" + string(especiais) : "") + (usar_estocada ? " estocadas=" + string(estocadas) : ""));
+            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes) + " combos=" + string(combos) + (carregar ? " carregados=" + string(carregados) : "") + (usar_especial ? " especiais=" + string(especiais) : "") + (usar_estocada ? " estocadas=" + string(estocadas) : "") + (testar_formas ? " formas=" + string(variable_struct_names_count(formas_vistas)) : ""));
             encerrar(0);
             exit;
         }
@@ -248,20 +248,31 @@ var _quer_morrer = morrer && run_atual == 1 && mortes_sala == 0;
 var _zonas = [];
 with (obj_enemy) {
     if (state == 1 || state == 2) {
-        var _zx = x + lengthdir_x(attack_reach, attack_dir);
-        var _zy = y + lengthdir_y(attack_reach, attack_dir);
         // golpe saiu agora (o inimigo entrou no estado 2 no frame anterior)
-        if (state == 2 && state_timer == attack_time) {
+        if (state == 2 && state_timer == ataque.duracao) {
             other.golpes += 1;
-            other.log("golpe_inimigo", object_get_name(object_index) + " dentro=" + string(other.zona_toca([_zx, _zy], _p.x, _p.y, 0)) + " dash=" + string(_p.is_dashing));
+            other.log("golpe_inimigo", object_get_name(object_index) + " forma=" + zona.forma + " dentro=" + string(other.zona_toca(zona, _p.x, _p.y, 0)) + " dash=" + string(_p.is_dashing));
+        }
+        // -formas: um print de cada forma no aviso e outro logo depois do golpe
+        if (other.testar_formas) {
+            var _foto = "";
+            if (state == 1 && state_timer == 20) {
+                _foto = "aviso_" + zona.forma;
+            } else if (state == 2 && state_timer == ataque.duracao - 2) {
+                _foto = "golpe_" + zona.forma;
+            }
+            if (_foto != "" && other.print_pendente == "" && !variable_struct_exists(other.formas_vistas, _foto)) {
+                variable_struct_set(other.formas_vistas, _foto, true);
+                other.pedir_print(_foto);
+            }
         }
         // cada aviso novo sorteia se o robo percebe ou nao (-desatento)
         var _k = string(id);
-        if (!variable_struct_exists(other.percebeu, _k) || (state == 1 && state_timer == windup_time)) {
+        if (!variable_struct_exists(other.percebeu, _k) || (state == 1 && state_timer == ataque.aviso)) {
             variable_struct_set(other.percebeu, _k, random(100) >= other.desatento);
         }
         if (variable_struct_get(other.percebeu, _k) && !_quer_morrer) {
-            array_push(_zonas, [_zx, _zy, state, state_timer]);
+            array_push(_zonas, [zona, state, state_timer]);
         }
     }
 }
@@ -274,10 +285,10 @@ var _ameacado = false;
 var _urgente = false;
 var _zona_perto = -1;
 for (var _i = 0; _i < array_length(_zonas); _i++) {
-    if (zona_toca(_zonas[_i], _p.x, _p.y, 8)) {
+    if (zona_toca(_zonas[_i][0], _p.x, _p.y, 8)) {
         _ameacado = true;
         _zona_perto = _i;
-        if (_zonas[_i][2] == 2 || _zonas[_i][3] <= 6) {
+        if (_zonas[_i][1] == 2 || _zonas[_i][2] <= 6) {
             _urgente = true;
         }
     }
@@ -364,10 +375,10 @@ for (var _dh = -1; _dh <= 1; _dh++) {
             }
         }
         for (var _i = 0; _i < array_length(_zonas); _i++) {
-            if (zona_toca(_zonas[_i], _p.x + _dh * 3, _p.y + _dv * 3, 4)) {
+            if (zona_toca(_zonas[_i][0], _p.x + _dh * 3, _p.y + _dv * 3, 4)) {
                 _custo += 600;
             }
-            if (zona_toca(_zonas[_i], _p.x + _dh * 18, _p.y + _dv * 18, 10)) {
+            if (zona_toca(_zonas[_i][0], _p.x + _dh * 18, _p.y + _dv * 18, 10)) {
                 _custo += 1000;
             }
         }
@@ -458,7 +469,7 @@ if (_alvo != noone && !_ameacado && !_quer_morrer) {
 // ---------- dash: o golpe vai cair agora e ainda estou dentro ----------
 if (_urgente && _p.dash_charges > 0 && !_p.is_dashing) {
     if (_mh == 0 && _mv == 0) {
-        var _fuga = point_direction(_zonas[_zona_perto][0], _zonas[_zona_perto][1], _p.x, _p.y);
+        var _fuga = point_direction(_zonas[_zona_perto][0].cx, _zonas[_zona_perto][0].cy, _p.x, _p.y);
         _mh = round(lengthdir_x(1, _fuga));
         _mv = round(lengthdir_y(1, _fuga));
     }
