@@ -78,6 +78,10 @@ estão no [CONTRIBUTING.md](CONTRIBUTING.md).
   **tentativas** sobe.
 - Todo inimigo avisa antes de atacar: pisca, mostra `!` e desenha no chão a
   zona onde o golpe vai cair. Saia da zona ou atravesse com o dash.
+- Cada tipo age de um jeito. **Esqueleto:** golpe curto. **Ghoul:** rápido e
+  frágil, dá um bote em linha e fica exposto no fim. **Wight:** lento e duro,
+  varre um arco largo com aviso longo. Depois do golpe o inimigo fica apagado: é a
+  hora de bater nele.
 - Limpar o Cemitério encerra a run com a tela de vitória, o total de tentativas
   e o tempo. O jogo pede um nome e manda o resultado para o ranking do site.
 

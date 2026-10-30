@@ -13,6 +13,7 @@ ataque = {
     duracao: 20,
     acerto: 10,
     recarga: 40,
+    avanco: 0,
 };
 zona = undefined; // onde o ataque atual cai; existe do aviso em diante
 attack_damage_dealt = false;

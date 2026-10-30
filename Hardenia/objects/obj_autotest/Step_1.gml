@@ -288,6 +288,19 @@ with (obj_enemy) {
                 other.pedir_print(_foto);
             }
         }
+        // primeira run: um print do aviso e outro do golpe de cada tipo de inimigo
+        if (other.run_atual == 1) {
+            var _tipo = "";
+            if (state == 1 && state_timer == 20) {
+                _tipo = "aviso_" + object_get_name(object_index);
+            } else if (state == 2 && state_timer == ataque.duracao - 5) {
+                _tipo = "golpe_" + object_get_name(object_index);
+            }
+            if (_tipo != "" && other.print_pendente == "" && !variable_struct_exists(other.tipos_vistos, _tipo)) {
+                variable_struct_set(other.tipos_vistos, _tipo, true);
+                other.pedir_print(_tipo);
+            }
+        }
         // cada aviso novo sorteia se o robo percebe ou nao (-desatento)
         var _k = string(id);
         if (!variable_struct_exists(other.percebeu, _k) || (state == 1 && state_timer == ataque.aviso)) {

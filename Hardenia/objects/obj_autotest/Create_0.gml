@@ -52,11 +52,12 @@ viu_estocada = false;
 testar_formas = false;
 formas_testadas = false;
 formas_vistas = {};
+tipos_vistos = {};
 ataques_formas = [
-    { forma: "quadrado", gatilho: 50, alcance: 40, tamanho: 32, aviso: 45, duracao: 20, acerto: 10, recarga: 40 },
-    { forma: "circulo", gatilho: 70, alcance: 0, tamanho: 80, aviso: 45, duracao: 20, acerto: 10, recarga: 40 },
-    { forma: "linha", gatilho: 70, alcance: 130, tamanho: 16, aviso: 45, duracao: 20, acerto: 10, recarga: 40 },
-    { forma: "arco", gatilho: 60, alcance: 90, tamanho: 60, aviso: 45, duracao: 20, acerto: 10, recarga: 40 },
+    { forma: "quadrado", gatilho: 50, alcance: 40, tamanho: 32, aviso: 45, duracao: 20, acerto: 10, recarga: 40, avanco: 0 },
+    { forma: "circulo", gatilho: 70, alcance: 0, tamanho: 80, aviso: 45, duracao: 20, acerto: 10, recarga: 40, avanco: 0 },
+    { forma: "linha", gatilho: 70, alcance: 130, tamanho: 16, aviso: 45, duracao: 20, acerto: 10, recarga: 40, avanco: 0 },
+    { forma: "arco", gatilho: 60, alcance: 90, tamanho: 60, aviso: 45, duracao: 20, acerto: 10, recarga: 40, avanco: 0 },
 ];
 golpes = 0;
 nome_robo = "";

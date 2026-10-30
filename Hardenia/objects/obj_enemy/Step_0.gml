@@ -109,6 +109,23 @@ switch (state) {
         break;
 
     case 2: // atacando
+        // bote: anda reto enquanto o golpe acerta; a parede para o bote
+        if (ataque.avanco > 0 && ataque.duracao - state_timer < ataque.acerto) {
+            var _bx = lengthdir_x(ataque.avanco, attack_dir);
+            var _by = lengthdir_y(ataque.avanco, attack_dir);
+            if (!place_meeting(x + _bx, y + _by, obj_wall)) {
+                with (instance_create_depth(x, y, depth + 1, obj_fx)) {
+                    tipo = "rastro";
+                    sprite_index = other.sprite_index;
+                    image_index = other.image_index;
+                    cor = make_colour_rgb(200, 30, 40);
+                    vida_max = 12;
+                    vida = vida_max;
+                }
+                x += _bx;
+                y += _by;
+            }
+        }
         state_timer -= 1;
         if (state_timer <= 0) {
             state = 3;
@@ -117,6 +134,8 @@ switch (state) {
         break;
 
     case 3: // cooldown
+        // apagado: a hora de bater nele
+        image_blend = c_gray;
         state_timer -= 1;
         if (state_timer <= 0) {
             state = 0;
