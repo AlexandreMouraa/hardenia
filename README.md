@@ -65,6 +65,13 @@ estão no [CONTRIBUTING.md](CONTRIBUTING.md).
 | Sair do jogo (no menu) | `Esc` |
 | Tela cheia / janela | `Alt+Enter` |
 
+## Teste de horda
+
+No menu, `H` ou um toque no texto do canto abre um protótipo fora da run: três
+ondas de inimigos fracos chegando de fora da tela. Encostar machuca, sem aviso.
+Ali, `L` ou um toque no botão de baixo mede quantos inimigos o aparelho aguenta a
+60 fps e mostra o número na tela, sem precisar de teclado.
+
 ## Como a run funciona
 
 - Três arenas em sequência: **Ruínas** (esqueletos) → **Pátio** (ghouls) →
@@ -151,6 +158,7 @@ roda 3 runs em velocidade acelerada, sem som e em janela, e termina com `OK` ou
 | `-estocar` | com alvo perto e carga de dash, dá o dash e ataca logo depois (soma `estocadas=N` no resumo) |
 | `-formas` | confere a geometria das zonas de golpe e dá uma das 4 formas a cada inimigo, com mais vida (print de cada forma; `formas=8` no resumo quando todas apareceram) |
 | `-grupo` | na primeira sala, fica parado e confere visão, memória, alerta dos vizinhos e cerco (print `cerco`; `grupo=1` no resumo) |
+| `-horda` | joga as 3 ondas da sala de teste e depois mede o limite do aparelho a 60 fps (rodar com `-Runs 1`) |
 | `-desatento 40` | ignora 40% dos avisos, como um jogador distraído |
 | `-diag` | registra as decisões do robô a cada segundo |
 | `-api URL` | liga a rede e manda os eventos para essa API (teste local; sem isso o robô não envia nada) |

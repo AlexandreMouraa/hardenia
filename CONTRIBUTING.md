@@ -24,7 +24,7 @@ Como abrir o projeto e rodar o robô está no [README](README.md).
    powershell -ExecutionPolicy Bypass -File tools\autotest.ps1
    ```
    Mexeu em combate ou mira: rode também com `-Extra "-mouse"`. Mexeu em morte
-   ou reinício de sala: com `-Extra "-morrer"`.
+   ou vida: com `-Extra "-morrer"`. Mexeu em inimigo: com `-Extra "-grupo"`.
 6. **Suba e abra o PR:**
    ```
    git push -u origin cris/golpe-carregado

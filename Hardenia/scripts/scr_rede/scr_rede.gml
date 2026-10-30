@@ -41,6 +41,10 @@ function rede_post(_rota, _dados) {
 
 // tipo: "inicio", "morte" ou "sala" (sala limpa)
 function rede_evento(_tipo, _dados = undefined) {
+    // sala de teste nao entra nas estatisticas
+    if (room != Room_Menu && mapa_indice(room) < 0) {
+        return -1;
+    }
     if (is_undefined(_dados)) {
         _dados = {};
     }

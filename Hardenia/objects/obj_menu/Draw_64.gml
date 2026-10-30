@@ -24,6 +24,10 @@ draw_set_halign(fa_right);
 draw_set_valign(fa_top);
 draw_text_transformed(_w - 16 * _esc, 12 * _esc, os_browser == browser_not_a_browser ? "ESC: sair do jogo" : "F11: tela cheia", _esc * 0.8, _esc * 0.8, 0);
 
+draw_set_color(c_yellow);
+draw_text_transformed(_w - 16 * _esc, 40 * _esc, "H OU TOQUE: TESTE DE HORDA", _esc * 0.8, _esc * 0.8, 0);
+draw_set_color(c_ltgray);
+
 draw_set_halign(fa_left);
 draw_text_transformed(16 * _esc, 12 * _esc, "v" + VERSAO_JOGO, _esc * 0.7, _esc * 0.7, 0);
 

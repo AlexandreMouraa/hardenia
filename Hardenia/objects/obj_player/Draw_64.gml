@@ -107,20 +107,11 @@ if (especial_pronto > 0) {
 draw_set_color(c_ltgray);
 draw_text_transformed(16 * _esc + dash_charges_max * 16 * _esc + 4 * _esc, 65 * _esc, "ESPECIAL", _esc * 0.7, _esc * 0.7, 0);
 
-// HUD: fase atual, contando as salas depois do menu na ordem do projeto
-var _fase = 0;
-var _total = 0;
-var _r = room_next(room_first);
-while (_r != -1) {
-    _total += 1;
-    if (_r == room) {
-        _fase = _total;
-    }
-    _r = room_next(_r);
-}
+// HUD: fase atual; fora do caminho da run, sala de teste
+var _fase = mapa_indice(room) + 1;
 draw_set_halign(fa_center);
 draw_set_color(c_white);
-draw_text_transformed(_w / 2, 12 * _esc, "FASE " + string(_fase) + " / " + string(_total), _esc, _esc, 0);
+draw_text_transformed(_w / 2, 12 * _esc, _fase > 0 ? "FASE " + string(_fase) + " / " + string(array_length(global.mapa_fases)) : "TESTE DE HORDA", _esc, _esc, 0);
 draw_set_halign(fa_left);
 
 // HUD: inimigos restantes ou portao aberto
@@ -128,7 +119,7 @@ draw_set_halign(fa_right);
 if (_inimigos > 0) {
     draw_set_color(c_white);
     draw_text_transformed(_w - 16 * _esc, 12 * _esc, "INIMIGOS: " + string(_inimigos), _esc, _esc, 0);
-} else if (room != room_last) {
+} else if (_fase > 0 && room != sala_final()) {
     draw_set_color(c_yellow);
     draw_set_alpha(_piscar);
     draw_text_transformed(_w - 16 * _esc, 12 * _esc, "PORTAO ABERTO", _esc, _esc, 0);
@@ -137,7 +128,7 @@ if (_inimigos > 0) {
 
 // seta na borda da tela apontando para o portao aberto quando ele esta fora
 // da camera
-if (_inimigos == 0 && room != room_last && !is_dead && !venceu) {
+if (_inimigos == 0 && _fase > 0 && room != sala_final() && !is_dead && !venceu) {
     var _saida = noone;
     with (obj_exit_to_room1) {
         if (room_next(room) == Room1) {

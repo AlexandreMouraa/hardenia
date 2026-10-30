@@ -2,7 +2,7 @@
 // (quem cria e o obj_menu). Joga a run inteira sozinho, sem som e em janela,
 // e grava log + prints na pasta de save: %LOCALAPPDATA%\Hardenia\autotest\
 // Parametros: -runs N (padrao 3)  -speed FPS (padrao 240)  -morrer
-// -desatento N  -diag  -appsurface  -mouse  -carregar  -especial  -estocar  -formas  -grupo. Para rodar: tools\autotest.ps1
+// -desatento N  -diag  -appsurface  -mouse  -carregar  -especial  -estocar  -formas  -grupo  -horda. Para rodar: tools\autotest.ps1
 // Rede: por padrao o robo nao manda nada ao site. Com -api URL ele manda os
 // eventos para essa API (teste local), e com -nome X digita X na vitoria e
 // envia ao ranking dela.
@@ -69,6 +69,10 @@ grupo_parede = noone;
 grupo_a = noone;
 grupo_dir = 0;
 grupo_ok = 0;
+// -horda: joga as 3 ondas da sala de teste, com a vida sempre cheia (aqui a pergunta
+// e se o fluxo funciona, nao o balanceamento). Depois mede o limite do aparelho a 60 fps,
+// parado, e registra o fps a cada segundo. Rodar com -Runs 1
+usar_horda = false;
 golpes = 0;
 nome_robo = "";
 // golpes seguidos que nao tiraram vida do alvo (ver Step_1, ataque)
@@ -99,6 +103,9 @@ for (var _i = 1; _i <= parameter_count(); _i++) {
     }
     if (parameter_string(_i) == "-grupo") {
         testar_grupo = true;
+    }
+    if (parameter_string(_i) == "-horda") {
+        usar_horda = true;
     }
 }
 for (var _i = 1; _i < parameter_count(); _i++) {
