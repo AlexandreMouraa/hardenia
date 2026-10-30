@@ -27,7 +27,15 @@ if (_id == req_vitoria) {
         vitoria_estado = "enviado";
         req_ranking = http_get(global.api_base + "/api/ranking?limite=5");
     } else if (vitoria_estado == "enviando") {
-        vitoria_estado = "falhou";
+        // 422: a API recusou o nome. Nao e falta de internet: volta para o campo
+        if (async_load[? "http_status"] == 422) {
+            vitoria_estado = "nome";
+            vitoria_nome_recusado = true;
+            vitoria_nome = "";
+            keyboard_string = "";
+        } else {
+            vitoria_estado = "falhou";
+        }
     }
 } else {
     req_ranking = -1;

@@ -146,8 +146,8 @@ if (is_dead) {
     var _voltar = "PRESSIONE ENTER PARA VOLTAR AO MENU";
 
     if (vitoria_estado == "nome") {
-        draw_set_color(c_ltgray);
-        draw_text_transformed(_w / 2, _y + 100 * _esc, "DIGITE SEU NOME PARA O RANKING", _esc, _esc, 0);
+        draw_set_color(vitoria_nome_recusado ? c_red : c_ltgray);
+        draw_text_transformed(_w / 2, _y + 100 * _esc, vitoria_nome_recusado ? "Esse nome nao pode. Digite outro." : "DIGITE SEU NOME PARA O RANKING", _esc, _esc, 0);
         var _bw = 150 * _esc;
         draw_set_color(c_dkgray);
         draw_rectangle(_w / 2 - _bw, _y + 118 * _esc, _w / 2 + _bw, _y + 146 * _esc, true);

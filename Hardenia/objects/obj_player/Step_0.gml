@@ -93,6 +93,7 @@ if (venceu) {
                     tempo_ms: frames_para_ms(global.run_frames),
                 });
                 vitoria_estado = "enviando";
+                vitoria_nome_recusado = false;
                 vitoria_espera = 0;
             }
         }
