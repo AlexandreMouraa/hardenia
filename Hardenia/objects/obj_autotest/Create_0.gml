@@ -190,6 +190,50 @@ zona_toca = function(_z, _x, _y, _margem) {
     return zona_toca_retangulo(_z, _l, _t, _r, _b);
 };
 
+// a zona passa do quadrado de 64? Ate esse tamanho, olhar 18 px a frente (Step_1,
+// movimento) basta, e procurar a saida mudaria o jeito de o robo lutar com o
+// golpe de hoje: os numeros do resumo deixariam de servir de comparacao
+zona_grande = function(_z) {
+    var _v = _z.pontos;
+    var _x1 = _v[0][0];
+    var _x2 = _x1;
+    var _y1 = _v[0][1];
+    var _y2 = _y1;
+    for (var _i = 1; _i < array_length(_v); _i++) {
+        _x1 = min(_x1, _v[_i][0]);
+        _x2 = max(_x2, _v[_i][0]);
+        _y1 = min(_y1, _v[_i][1]);
+        _y2 = max(_y2, _v[_i][1]);
+    }
+    return _x2 - _x1 > 64 || _y2 - _y1 > 64;
+};
+
+// quantos passos de 16 px na direcao _dh,_dv ate sair de todas as zonas (passos_max
+// + 1 se nao sair, ou se tiver parede no caminho). Olhar so 18 px a frente nao
+// mostra a saida de uma zona grande
+passos_max = 12;
+passos_ate_sair = function(_zonas, _x, _y, _dh, _dv) {
+    var _norm = (_dh != 0 && _dv != 0) ? 0.7071 : 1;
+    for (var _passo = 1; _passo <= passos_max; _passo++) {
+        var _px = _x + _dh * _norm * 16 * _passo;
+        var _py = _y + _dv * _norm * 16 * _passo;
+        if (collision_line(_x, _y, _px, _py, obj_wall, false, true) != noone) {
+            break;
+        }
+        var _livre = true;
+        for (var _i = 0; _i < array_length(_zonas); _i++) {
+            if (zona_toca(_zonas[_i][0], _px, _py, 8)) {
+                _livre = false;
+                break;
+            }
+        }
+        if (_livre) {
+            return _passo;
+        }
+    }
+    return passos_max + 1;
+};
+
 // -formas: geometria das zonas com casos conhecidos, e a parede protegendo.
 // Erro vira FALHA no log, e o autotest.ps1 reprova
 testar_zonas = function() {

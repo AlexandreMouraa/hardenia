@@ -284,10 +284,12 @@ if (!ja_viu_aviso && array_length(_zonas) > 0 && run_atual == 1) {
 var _ameacado = false;
 var _urgente = false;
 var _zona_perto = -1;
+var _zona_grande = false;
 for (var _i = 0; _i < array_length(_zonas); _i++) {
     if (zona_toca(_zonas[_i][0], _p.x, _p.y, 8)) {
         _ameacado = true;
         _zona_perto = _i;
+        _zona_grande = _zona_grande || zona_grande(_zonas[_i][0]);
         if (_zonas[_i][1] == 2 || _zonas[_i][2] <= 6) {
             _urgente = true;
         }
@@ -381,6 +383,10 @@ for (var _dh = -1; _dh <= 1; _dh++) {
             if (zona_toca(_zonas[_i][0], _p.x + _dh * 18, _p.y + _dv * 18, 10)) {
                 _custo += 1000;
             }
+        }
+        // dentro de uma zona grande, o caminho mais curto para fora pesa mais que o objetivo
+        if (_zona_grande) {
+            _custo += 200 * ((_dh == 0 && _dv == 0) ? passos_max + 1 : passos_ate_sair(_zonas, _p.x, _p.y, _dh, _dv));
         }
         if (_custo < _melhor) {
             _melhor = _custo;
