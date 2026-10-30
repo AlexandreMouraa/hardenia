@@ -9,6 +9,10 @@ visible = false;
 acertar = function(_enemy) {
     _enemy.hp -= damage;
     _enemy.hit_flash = 8;
+    // apanhar acorda ele e os vizinhos, mesmo sem ter visto o jogador
+    with (_enemy) {
+        acordar();
+    }
     var _dir_golpe = instance_exists(obj_player) ? point_direction(obj_player.x, obj_player.y, _enemy.x, _enemy.y) : 0;
     if (_enemy.hp <= 0) {
         // golpe que mata: pausa e tremor maiores, faiscas vermelhas

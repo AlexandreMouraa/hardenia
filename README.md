@@ -82,6 +82,9 @@ estão no [CONTRIBUTING.md](CONTRIBUTING.md).
   frágil, dá um bote em linha e fica exposto no fim. **Wight:** lento e duro,
   varre um arco largo com aviso longo. Depois do golpe o inimigo fica apagado: é a
   hora de bater nele.
+- Os inimigos agem em grupo: a parede bloqueia a visão, quem perde o jogador vai
+  até o último lugar onde o viu, quem vê ou apanha chama os vizinhos, cada um
+  chega por um lado e só 2 atacam ao mesmo tempo. Os outros rondam perto.
 - Limpar o Cemitério encerra a run com a tela de vitória, o total de tentativas
   e o tempo. O jogo pede um nome e manda o resultado para o ranking do site.
 
@@ -147,6 +150,7 @@ roda 3 runs em velocidade acelerada, sem som e em janela, e termina com `OK` ou
 | `-especial` | usa o golpe especial sempre que tem alvo perto e recarga pronta (soma `especiais=N` no resumo e registra os acertos de cada giro) |
 | `-estocar` | com alvo perto e carga de dash, dá o dash e ataca logo depois (soma `estocadas=N` no resumo) |
 | `-formas` | confere a geometria das zonas de golpe e dá uma das 4 formas a cada inimigo, com mais vida (print de cada forma; `formas=8` no resumo quando todas apareceram) |
+| `-grupo` | na primeira sala, fica parado e confere visão, memória, alerta dos vizinhos e cerco (print `cerco`; `grupo=1` no resumo) |
 | `-desatento 40` | ignora 40% dos avisos, como um jogador distraído |
 | `-diag` | registra as decisões do robô a cada segundo |
 | `-api URL` | liga a rede e manda os eventos para essa API (teste local; sem isso o robô não envia nada) |

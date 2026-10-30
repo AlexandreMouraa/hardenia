@@ -24,7 +24,41 @@ hit_flash = 0;
 empurrao_x = 0;
 empurrao_y = 0;
 
-alert_range = 150;
+// inteligencia. Os valores sao os iniciais da issue #22, para ajustar jogando
+// visao: alcance, com a parede bloqueando. A camera mostra 1152 x 648, e com 150 dava
+// para matar um de cada vez sem o vizinho reagir
+visao = 360;
+vendo = false;
+// olha a cada 6 frames, cada um num frame diferente: nada de todos no mesmo frame
+visao_timer = 1 + instance_number(obj_enemy) mod 6;
+acordado = false;
+// perdeu de vista: vai ate o ultimo lugar onde viu e desiste depois de 4 s
+memoria_x = x;
+memoria_y = y;
+procura = 0;
+procura_max = 240;
+// quem acorda chama os vizinhos ate esta distancia
+raio_alerta = 320;
+// lado em volta do jogador (cerco_escolher); ronda balanca em volta desse lado
+cerco_ang = 0;
+cerco_timer = 0;
+ronda = 0;
+// o que faz durante a recarga: "recua", "lado" ou "parado"
+depois_golpe = "recua";
+
+// viu o jogador ou apanhou: acorda e chama os vizinhos
+acordar = function() {
+    with (obj_enemy) {
+        if (!acordado && point_distance(x, y, other.x, other.y) <= other.raio_alerta) {
+            acordado = true;
+            memoria_x = obj_player.x;
+            memoria_y = obj_player.y;
+            procura = procura_max;
+            cerco_timer = 0;
+        }
+    }
+};
+
 home_x = x;
 home_y = y;
 patrol_dir = 1;

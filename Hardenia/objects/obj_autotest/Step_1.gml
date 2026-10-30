@@ -39,7 +39,7 @@ if (room == Room_Menu) {
             if (morrer && curas == 0) {
                 log("FALHA_vida", "-morrer nao viu a cura");
             }
-            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes) + " danos=" + string(danos) + " combos=" + string(combos) + (carregar ? " carregados=" + string(carregados) : "") + (usar_especial ? " especiais=" + string(especiais) : "") + (usar_estocada ? " estocadas=" + string(estocadas) : "") + (testar_formas ? " formas=" + string(variable_struct_names_count(formas_vistas)) : ""));
+            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes) + " danos=" + string(danos) + " avisos_max=" + string(avisos_max) + " combos=" + string(combos) + (carregar ? " carregados=" + string(carregados) : "") + (usar_especial ? " especiais=" + string(especiais) : "") + (usar_estocada ? " estocadas=" + string(estocadas) : "") + (testar_formas ? " formas=" + string(variable_struct_names_count(formas_vistas)) : "") + (testar_grupo ? " grupo=" + string(grupo_ok) : ""));
             encerrar(0);
             exit;
         }
@@ -260,15 +260,26 @@ if (!testou_pausa && room == Room1 && tempo_sala >= 90) {
     exit;
 }
 
+// -grupo: parado na primeira sala enquanto confere o comportamento em grupo
+var _esperando_grupo = false;
+if (testar_grupo && run_atual == 1 && room == Room1 && grupo_passo < 3) {
+    _esperando_grupo = true;
+    grupo_conferir(_p);
+}
+
 // ---------- zonas de golpe ativas ----------
 var _quer_morrer = morrer && run_atual == 1 && !variable_struct_exists(salas_morreu, room_get_name(room));
 // -morrer, segunda run: apanha ate ficar com 3 de vida, sem morrer, para o log mostrar
 // a vida passando de uma sala para a outra e a cura de limpar a fase
-if (morrer && run_atual == 2 && _p.hp > 3) {
+if ((morrer && run_atual == 2 && _p.hp > 3) || _esperando_grupo) {
     _quer_morrer = true;
 }
 var _zonas = [];
+var _em_aviso = 0;
 with (obj_enemy) {
+    if (state == 1) {
+        _em_aviso += 1;
+    }
     if (state == 1 || state == 2) {
         // golpe saiu agora (o inimigo entrou no estado 2 no frame anterior)
         if (state == 2 && state_timer == ataque.duracao) {
@@ -310,6 +321,11 @@ with (obj_enemy) {
             array_push(_zonas, [zona, state, state_timer]);
         }
     }
+}
+// a vez de atacar (scr_inimigos): no maximo 2 em aviso ao mesmo tempo
+avisos_max = max(avisos_max, _em_aviso);
+if (_em_aviso > 2) {
+    log("FALHA_vez", string(_em_aviso) + " avisos ao mesmo tempo");
 }
 if (!ja_viu_aviso && array_length(_zonas) > 0 && run_atual == 1) {
     ja_viu_aviso = true;
@@ -432,7 +448,7 @@ for (var _dh = -1; _dh <= 1; _dh++) {
 }
 
 // -morrer: chega perto e espera o golpe, sem atacar
-if (_quer_morrer && _alvo != noone && point_distance(_p.x, _p.y, _alvo.x, _alvo.y) < 36) {
+if (_quer_morrer && _alvo != noone && (_esperando_grupo || point_distance(_p.x, _p.y, _alvo.x, _alvo.y) < 36)) {
     _mh = 0;
     _mv = 0;
 }

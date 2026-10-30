@@ -2,7 +2,7 @@
 // (quem cria e o obj_menu). Joga a run inteira sozinho, sem som e em janela,
 // e grava log + prints na pasta de save: %LOCALAPPDATA%\Hardenia\autotest\
 // Parametros: -runs N (padrao 3)  -speed FPS (padrao 240)  -morrer
-// -desatento N  -diag  -appsurface  -mouse  -carregar  -especial  -estocar  -formas. Para rodar: tools\autotest.ps1
+// -desatento N  -diag  -appsurface  -mouse  -carregar  -especial  -estocar  -formas  -grupo. Para rodar: tools\autotest.ps1
 // Rede: por padrao o robo nao manda nada ao site. Com -api URL ele manda os
 // eventos para essa API (teste local), e com -nome X digita X na vitoria e
 // envia ao ranking dela.
@@ -23,6 +23,7 @@ mortes_run = 0;
 danos = 0;
 curas = 0;
 vida_antes = -1;
+avisos_max = 0;
 // -mouse: ataca com o clique, mirando no inimigo (sem precisar virar), como
 // quem joga com mouse. Sem ela, ataca com J, para onde esta virado
 usar_mouse = false;
@@ -59,6 +60,15 @@ ataques_formas = [
     { forma: "linha", gatilho: 70, alcance: 130, tamanho: 16, aviso: 45, duracao: 20, acerto: 10, recarga: 40, avanco: 0 },
     { forma: "arco", gatilho: 60, alcance: 90, tamanho: 60, aviso: 45, duracao: 20, acerto: 10, recarga: 40, avanco: 0 },
 ];
+// -grupo: na primeira sala, o robo fica parado e confere o comportamento em grupo:
+// visao, memoria, alerta dos vizinhos e cerco (print "cerco" e "grupo=1" no resumo)
+testar_grupo = false;
+grupo_passo = 0;
+grupo_tempo = 0;
+grupo_parede = noone;
+grupo_a = noone;
+grupo_dir = 0;
+grupo_ok = 0;
 golpes = 0;
 nome_robo = "";
 // golpes seguidos que nao tiraram vida do alvo (ver Step_1, ataque)
@@ -86,6 +96,9 @@ for (var _i = 1; _i <= parameter_count(); _i++) {
     }
     if (parameter_string(_i) == "-formas") {
         testar_formas = true;
+    }
+    if (parameter_string(_i) == "-grupo") {
+        testar_grupo = true;
     }
 }
 for (var _i = 1; _i < parameter_count(); _i++) {
@@ -293,6 +306,146 @@ testar_zonas = function() {
         }
     }
     log("FALHA_zona", "jogador cercado de parede: nao deu para testar");
+};
+
+// -grupo. Passo 0: visao e alerta na hora, e comeca a memoria com uma parede no meio.
+// Passo 1: quem perdeu o jogador foi ate a memoria e desistiu; todos acordam longe.
+// Passo 2: os 4 chegam, cada um de um lado. Erro vira FALHA no log
+grupo_conferir = function(_p) {
+    grupo_tempo -= 1;
+    switch (grupo_passo) {
+        case 0:
+            grupo_a = instance_find(obj_enemy, 0);
+            var _b = instance_find(obj_enemy, 1);
+            var _c = instance_find(obj_enemy, 2);
+            var _dir = -1;
+            for (var _d = 0; _d < 360 && _dir < 0; _d += 30) {
+                if (collision_line(_p.x, _p.y, _p.x + lengthdir_x(230, _d), _p.y + lengthdir_y(230, _d), obj_wall, false, true) == noone) {
+                    _dir = _d;
+                }
+            }
+            if (_dir < 0) {
+                log("FALHA_grupo", "sem lado livre em volta do jogador");
+                grupo_passo = 3;
+                return;
+            }
+            with (obj_enemy) {
+                acordado = false;
+            }
+            grupo_a.x = _p.x + lengthdir_x(200, _dir);
+            grupo_a.y = _p.y + lengthdir_y(200, _dir);
+            // visao: enxerga perto, nao enxerga longe nem atraves de parede
+            var _ve = false;
+            with (grupo_a) {
+                _ve = inimigo_ve_jogador();
+            }
+            if (!_ve) {
+                log("FALHA_grupo", "nao viu o jogador a 200 px");
+            }
+            // parede grande e centrada na linha: a origem do sprite e o canto dela
+            grupo_parede = instance_create_layer(_p.x + lengthdir_x(100, _dir), _p.y + lengthdir_y(100, _dir), "Instances", obj_wall);
+            grupo_parede.image_xscale = 48 / sprite_get_width(grupo_parede.sprite_index);
+            grupo_parede.image_yscale = 48 / sprite_get_height(grupo_parede.sprite_index);
+            grupo_parede.x -= 24;
+            grupo_parede.y -= 24;
+            with (grupo_a) {
+                _ve = inimigo_ve_jogador();
+            }
+            if (_ve) {
+                log("FALHA_grupo", "viu atraves da parede");
+            }
+            // alerta: um golpe de verdade acorda o vizinho perto, e nao o longe
+            _b.x = grupo_a.x + lengthdir_x(100, _dir + 90);
+            _b.y = grupo_a.y + lengthdir_y(100, _dir + 90);
+            _c.x = grupo_a.x + lengthdir_x(grupo_a.raio_alerta + 100, _dir);
+            _c.y = grupo_a.y + lengthdir_y(grupo_a.raio_alerta + 100, _dir);
+            var _a = grupo_a;
+            with (instance_create_layer(_a.x, _a.y, "Instances", obj_attack)) {
+                acertar(_a);
+                instance_destroy();
+            }
+            if (!grupo_a.acordado || !_b.acordado) {
+                log("FALHA_grupo", "o golpe nao acordou o inimigo e o vizinho");
+            }
+            if (_c.acordado) {
+                log("FALHA_grupo", "o golpe acordou inimigo longe");
+            }
+            // memoria: atras da parede, vai ate o ultimo lugar onde viu e desiste. O
+            // lugar fica mais para longe na mesma linha, para a parede continuar no meio
+            with (obj_enemy) {
+                x = home_x;
+                y = home_y;
+                acordado = false;
+            }
+            grupo_a.x = _p.x + lengthdir_x(200, _dir);
+            grupo_a.y = _p.y + lengthdir_y(200, _dir);
+            grupo_a.acordado = true;
+            grupo_a.memoria_x = grupo_a.x + lengthdir_x(24, _dir);
+            grupo_a.memoria_y = grupo_a.y + lengthdir_y(24, _dir);
+            grupo_a.procura = grupo_a.procura_max;
+            grupo_dir = _dir;
+            grupo_tempo = 45;
+            grupo_passo = 1;
+            break;
+
+        case 1:
+            if (grupo_tempo <= 0) {
+                if (grupo_a.acordado) {
+                    log("FALHA_grupo", "sem ver o jogador, nao desistiu depois da memoria");
+                }
+                instance_destroy(grupo_parede);
+                // todos juntos no mesmo lado: o cerco e que tem de espalhar
+                var _k = 0;
+                var _lado = grupo_dir;
+                with (obj_enemy) {
+                    x = _p.x + lengthdir_x(200, _lado + 12 * (_k - 1.5));
+                    y = _p.y + lengthdir_y(200, _lado + 12 * (_k - 1.5));
+                    home_x = x;
+                    home_y = y;
+                    acordado = true;
+                    memoria_x = _p.x;
+                    memoria_y = _p.y;
+                    procura = procura_max;
+                    cerco_timer = 0;
+                    _k += 1;
+                }
+                grupo_tempo = 220;
+                grupo_passo = 2;
+            }
+            break;
+
+        case 2:
+            // 220 frames: tempo de um inimigo dar a volta ate o lado oposto
+            if (grupo_tempo <= 0) {
+                var _n = instance_number(obj_enemy);
+                var _perto = 0;
+                var _angulos = [];
+                with (obj_enemy) {
+                    if (point_distance(x, y, _p.x, _p.y) <= 160) {
+                        _perto += 1;
+                    }
+                    array_push(_angulos, point_direction(_p.x, _p.y, x, y));
+                }
+                var _menor = 360;
+                for (var _i = 0; _i < _n; _i++) {
+                    for (var _j = _i + 1; _j < _n; _j++) {
+                        _menor = min(_menor, abs(angle_difference(_angulos[_i], _angulos[_j])));
+                    }
+                }
+                log("cerco", "perto=" + string(_perto) + " de " + string(_n) + " menor_angulo=" + string(round(_menor)));
+                if (_perto < _n) {
+                    log("FALHA_grupo", "o grupo nao chegou");
+                }
+                // os lados ficam a 60 graus e cada um balanca 12 para cada lado: no minimo 36
+                if (_menor < 30) {
+                    log("FALHA_grupo", "dois inimigos chegaram do mesmo lado");
+                }
+                pedir_print("cerco");
+                grupo_ok = 1;
+                grupo_passo = 3;
+            }
+            break;
+    }
 };
 
 // celula livre da grade mais perto de _x,_y (encostado na parede, a celula
