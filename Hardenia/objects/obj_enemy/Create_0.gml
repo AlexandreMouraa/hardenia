@@ -3,16 +3,20 @@ move_speed = 1.5;
 
 state = 0;
 state_timer = 0;
-attack_range = 50;
-windup_time = 45;
-attack_time = 20;
-cooldown_time = 40;
+// o ataque deste inimigo (campos em scr_inimigos). Um filho troca depois do event_inherited
+ataque = {
+    forma: "quadrado",
+    gatilho: 50,
+    alcance: 40,
+    tamanho: 32,
+    aviso: 45,
+    duracao: 20,
+    acerto: 10,
+    recarga: 40,
+};
+zona = undefined; // onde o ataque atual cai; existe do aviso em diante
 attack_damage_dealt = false;
 attack_dir = 0;
-attack_reach = 40;
-// onde o golpe caiu: a zona desenhada fica ali mesmo se o inimigo for empurrado
-golpe_x = x;
-golpe_y = y;
 
 hit_flash = 0;
 // empurrao do terceiro golpe do combo (obj_attack): desliza e freia a cada frame

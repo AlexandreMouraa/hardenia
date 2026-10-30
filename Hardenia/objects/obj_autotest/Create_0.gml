@@ -2,7 +2,7 @@
 // (quem cria e o obj_menu). Joga a run inteira sozinho, sem som e em janela,
 // e grava log + prints na pasta de save: %LOCALAPPDATA%\Hardenia\autotest\
 // Parametros: -runs N (padrao 3)  -speed FPS (padrao 240)  -morrer
-// -desatento N  -diag  -appsurface  -mouse  -carregar  -especial  -estocar. Para rodar: tools\autotest.ps1
+// -desatento N  -diag  -appsurface  -mouse  -carregar  -especial  -estocar  -formas. Para rodar: tools\autotest.ps1
 // Rede: por padrao o robo nao manda nada ao site. Com -api URL ele manda os
 // eventos para essa API (teste local), e com -nome X digita X na vitoria e
 // envia ao ranking dela.
@@ -39,6 +39,18 @@ estocar_em = 0;
 estocadas = 0;
 estocada_antes = false;
 viu_estocada = false;
+// -formas: confere a geometria das zonas e da uma das 4 formas a cada inimigo,
+// com mais vida, para todas aparecerem (prints "aviso_*" e "golpe_*"; soma
+// "formas=N" no resumo, e sao 8 quando todas apareceram nos dois momentos)
+testar_formas = false;
+formas_testadas = false;
+formas_vistas = {};
+ataques_formas = [
+    { forma: "quadrado", gatilho: 50, alcance: 40, tamanho: 32, aviso: 45, duracao: 20, acerto: 10, recarga: 40 },
+    { forma: "circulo", gatilho: 70, alcance: 0, tamanho: 80, aviso: 45, duracao: 20, acerto: 10, recarga: 40 },
+    { forma: "linha", gatilho: 70, alcance: 130, tamanho: 16, aviso: 45, duracao: 20, acerto: 10, recarga: 40 },
+    { forma: "arco", gatilho: 60, alcance: 90, tamanho: 60, aviso: 45, duracao: 20, acerto: 10, recarga: 40 },
+];
 golpes = 0;
 nome_robo = "";
 // golpes seguidos que nao tiraram vida do alvo (ver Step_1, ataque)
@@ -63,6 +75,9 @@ for (var _i = 1; _i <= parameter_count(); _i++) {
     }
     if (parameter_string(_i) == "-estocar") {
         usar_estocada = true;
+    }
+    if (parameter_string(_i) == "-formas") {
+        testar_formas = true;
     }
 }
 for (var _i = 1; _i < parameter_count(); _i++) {
@@ -165,15 +180,111 @@ saida_adiante = function() {
     return noone;
 };
 
-// a zona do golpe (quadrado de 64 em volta de _z[0],_z[1]) encosta no
-// jogador se ele estiver em _x,_y?
+// a zona do golpe encosta no jogador se ele estiver em _x,_y?
 zona_toca = function(_z, _x, _y, _margem) {
     var _p = instance_find(obj_player, 0);
     var _l = _x - (_p.x - _p.bbox_left) - _margem;
     var _r = _x + (_p.bbox_right - _p.x) + _margem;
     var _t = _y - (_p.y - _p.bbox_top) - _margem;
     var _b = _y + (_p.bbox_bottom - _p.y) + _margem;
-    return rectangle_in_rectangle(_z[0] - 32, _z[1] - 32, _z[0] + 32, _z[1] + 32, _l, _t, _r, _b) > 0;
+    return zona_toca_retangulo(_z, _l, _t, _r, _b);
+};
+
+// a zona passa do quadrado de 64? Ate esse tamanho, olhar 18 px a frente (Step_1,
+// movimento) basta, e procurar a saida mudaria o jeito de o robo lutar com o
+// golpe de hoje: os numeros do resumo deixariam de servir de comparacao
+zona_grande = function(_z) {
+    var _v = _z.pontos;
+    var _x1 = _v[0][0];
+    var _x2 = _x1;
+    var _y1 = _v[0][1];
+    var _y2 = _y1;
+    for (var _i = 1; _i < array_length(_v); _i++) {
+        _x1 = min(_x1, _v[_i][0]);
+        _x2 = max(_x2, _v[_i][0]);
+        _y1 = min(_y1, _v[_i][1]);
+        _y2 = max(_y2, _v[_i][1]);
+    }
+    return _x2 - _x1 > 64 || _y2 - _y1 > 64;
+};
+
+// quantos passos de 16 px na direcao _dh,_dv ate sair de todas as zonas (passos_max
+// + 1 se nao sair, ou se tiver parede no caminho). Olhar so 18 px a frente nao
+// mostra a saida de uma zona grande
+passos_max = 12;
+passos_ate_sair = function(_zonas, _x, _y, _dh, _dv) {
+    var _norm = (_dh != 0 && _dv != 0) ? 0.7071 : 1;
+    for (var _passo = 1; _passo <= passos_max; _passo++) {
+        var _px = _x + _dh * _norm * 16 * _passo;
+        var _py = _y + _dv * _norm * 16 * _passo;
+        if (collision_line(_x, _y, _px, _py, obj_wall, false, true) != noone) {
+            break;
+        }
+        var _livre = true;
+        for (var _i = 0; _i < array_length(_zonas); _i++) {
+            if (zona_toca(_zonas[_i][0], _px, _py, 8)) {
+                _livre = false;
+                break;
+            }
+        }
+        if (_livre) {
+            return _passo;
+        }
+    }
+    return passos_max + 1;
+};
+
+// -formas: geometria das zonas com casos conhecidos, e a parede protegendo.
+// Erro vira FALHA no log, e o autotest.ps1 reprova
+testar_zonas = function() {
+    // forma, alcance, tamanho, direcao; retangulo (l, t, r, b); encosta?
+    var _casos = [
+        ["quadrado", 40, 32, 0, 1070, 1000, 1080, 1010, true], // na borda
+        ["quadrado", 40, 32, 0, 1073, 1000, 1080, 1010, false], // logo depois da borda
+        ["quadrado", 40, 32, 0, 1030, 995, 1040, 1005, true], // retangulo dentro da zona
+        ["quadrado", 40, 32, 0, 900, 900, 1200, 1100, true], // zona dentro do retangulo
+        ["circulo", 40, 40, 0, 1070, 995, 1085, 1005, true], // na borda
+        ["circulo", 40, 40, 0, 1074, 1034, 1084, 1044, false], // no canto do quadrado em volta
+        ["linha", 100, 10, 45, 1030, 960, 1040, 970, true], // no meio da linha
+        ["linha", 100, 10, 45, 1060, 990, 1070, 1000, false], // ao lado da linha
+        ["arco", 70, 60, 0, 1050, 995, 1060, 1005, true], // na frente
+        ["arco", 70, 60, 0, 930, 995, 945, 1005, false], // atras
+        ["arco", 70, 60, 0, 1008, 938, 1012, 942, false], // ao lado, a 80 graus
+        ["arco", 70, 60, 0, 1066, 980, 1080, 1020, true], // so a barriga do arco
+        ["arco", 70, 110, 0, 985, 940, 995, 950, true], // abertura maior que 180
+        ["arco", 70, 110, 0, 940, 995, 950, 1005, false], // atras dessa abertura
+    ];
+    for (var _i = 0; _i < array_length(_casos); _i++) {
+        var _c = _casos[_i];
+        // nasce em outro lugar para testar zona_posicionar junto
+        var _z = zona_criar({ forma: _c[0], alcance: _c[1], tamanho: _c[2] }, 0, 0, _c[3]);
+        zona_posicionar(_z, 1000, 1000);
+        if (zona_toca_retangulo(_z, _c[4], _c[5], _c[6], _c[7]) != _c[8]) {
+            log("FALHA_zona", "caso " + string(_i) + " forma=" + _c[0]);
+        }
+    }
+
+    // parede no meio protege: de um lado sem parede, acerta; com parede, nao
+    var _p = instance_find(obj_player, 0);
+    var _ataque = { forma: "quadrado", alcance: 40, tamanho: 32 };
+    for (var _dir = 0; _dir < 360; _dir += 90) {
+        var _ox = _p.x + lengthdir_x(50, _dir);
+        var _oy = _p.y + lengthdir_y(50, _dir);
+        if (collision_line(_ox, _oy, _p.x, _p.y, obj_wall, false, true) == noone) {
+            var _zona = zona_criar(_ataque, _ox, _oy, _dir + 180);
+            if (!zona_acerta_jogador(_zona)) {
+                log("FALHA_zona", "sem parede nao acertou");
+            }
+            var _parede = instance_create_layer((_ox + _p.x) / 2, (_oy + _p.y) / 2, "Instances", obj_wall);
+            if (zona_acerta_jogador(_zona)) {
+                log("FALHA_zona", "acertou atraves da parede");
+            }
+            instance_destroy(_parede);
+            log("zonas_conferidas", string(array_length(_casos)) + " casos e parede");
+            return;
+        }
+    }
+    log("FALHA_zona", "jogador cercado de parede: nao deu para testar");
 };
 
 // celula livre da grade mais perto de _x,_y (encostado na parede, a celula
