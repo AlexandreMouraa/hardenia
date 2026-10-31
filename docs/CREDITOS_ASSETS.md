@@ -10,6 +10,7 @@ Tudo o que veio de fora do grupo, com origem e licença. Asset novo: acrescente 
 | `snd_morte_inimigo` | `impactPunch_heavy_000.ogg` | [Impact Sounds](https://kenney.nl/assets/impact-sounds) | Kenney | CC0 |
 | `snd_morte_jogador` | `impactBell_heavy_000.ogg` | [Impact Sounds](https://kenney.nl/assets/impact-sounds) | Kenney | CC0 |
 | `snd_dash_negado` | `error_004.ogg` | [Interface Sounds](https://kenney.nl/assets/interface-sounds) | Kenney | CC0 |
+| `snd_magia` | `impactGlass_heavy_000.ogg` | [Impact Sounds](https://kenney.nl/assets/impact-sounds) | Kenney | CC0 |
 
 Convertidos para WAV, mono, 44,1 kHz, com o volume médio perto do `snd_attack`.
 
@@ -20,6 +21,8 @@ Inimigos montados com peças do [Universal LPC Spritesheet Character Generator](
 | Peça | Usada em | Autores | Licenças | Origem |
 |---|---|---|---|---|
 | Corpo e cabeça de esqueleto | arqueiro, conjurador, chefe | bluecarrot16, Napsio, JaidynReiman, Johannes Sjölund (wulax), Stephen Challener (Redshrike) | OGA-BY 3.0, CC-BY-SA 3.0, GPL 3.0 | [base](https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles), [fantasia medieval](https://opengameart.org/content/lpc-medieval-fantasy-character-sprites), [esqueleto](https://opengameart.org/content/lpc-skeleton), [bases](https://opengameart.org/content/lpc-character-bases) |
+| Túnica | conjurador | Luke Mehl | CC-BY-SA 3.0, GPL 3.0 | [roupas de maga](https://opengameart.org/content/female-mage-clothing-set) |
+| Capuz, tingido de roxo | conjurador | Johannes Sjölund (wulax), JaidynReiman | OGA-BY 3.0, CC-BY-SA 3.0, GPL 3.0 | [fantasia medieval](https://opengameart.org/content/lpc-medieval-fantasy-character-sprites), [chapéus](https://opengameart.org/content/lpc-expanded-hats-facial-helmets) |
 | Arco e flecha | arqueiro | Johannes Sjölund (wulax), Pierre Vigier (pvigier) | OGA-BY 3.0, CC-BY-SA 3.0, GPL 3.0, CC-BY 4.0 | [fantasia medieval](https://opengameart.org/content/lpc-medieval-fantasy-character-sprites), [andar com arco](https://opengameart.org/content/lpc-walk-animations-for-bows) |
 
 A flecha que voa (`spr_flecha`) foi desenhada em `tools/gerar_sprites_lpc.py`.

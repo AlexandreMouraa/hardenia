@@ -27,7 +27,7 @@ if (abs(empurrao_x) + abs(empurrao_y) > 0.1) {
 }
 
 // a zona acompanha o inimigo empurrado durante o aviso; depois do golpe, fica onde caiu
-if (state == 1) {
+if (state == 1 && !zona_fixa) {
     zona_posicionar(zona, x, y);
 }
 

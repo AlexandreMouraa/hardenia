@@ -16,6 +16,7 @@ ataque = {
     avanco: 0,
 };
 zona = undefined; // onde o ataque atual cai; existe do aviso em diante
+zona_fixa = false; // nao acompanha o inimigo empurrado durante o aviso
 // pose de ataque, para quem tem: folha com ataque_frames por linha, aviso e golpe nela
 ataque_sprite = noone;
 ataque_frames = 0;
