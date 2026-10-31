@@ -45,6 +45,8 @@ acertar = function(_enemy) {
         }
         instance_destroy(_enemy);
     } else if (instance_exists(obj_player)) {
+        // quem nao se move leva o golpe, mas nao e empurrado
+        var _kb = _enemy.imovel ? 0 : knockback;
         if (forte) {
             impacto(4, 4);
             fx_faiscas(_enemy.x, _enemy.y, _dir_golpe, make_colour_rgb(255, 200, 120), 8);
@@ -55,14 +57,14 @@ acertar = function(_enemy) {
         if (forte) {
             // terceiro golpe: o inimigo desliza para longe e freia (obj_enemy,
             // Step); 0.35 da distancia no primeiro frame, perdendo 35% a cada um
-            _enemy.empurrao_x = lengthdir_x(knockback * 0.35, _dir_golpe);
-            _enemy.empurrao_y = lengthdir_y(knockback * 0.35, _dir_golpe);
+            _enemy.empurrao_x = lengthdir_x(_kb * 0.35, _dir_golpe);
+            _enemy.empurrao_y = lengthdir_y(_kb * 0.35, _dir_golpe);
         } else {
             // golpe comum: o empurrao curto de sempre, na hora. Deslizando, o
             // inimigo ficava na beira do alcance e quase nunca atacava (o robo
             // mostrou: 0 golpes de inimigo em 3 runs, contra 10 assim)
-            var _kx = lengthdir_x(knockback, _dir_golpe);
-            var _ky = lengthdir_y(knockback, _dir_golpe);
+            var _kx = lengthdir_x(_kb, _dir_golpe);
+            var _ky = lengthdir_y(_kb, _dir_golpe);
             with (_enemy) {
                 if (!place_meeting(x + _kx, y, obj_wall)) {
                     x += _kx;

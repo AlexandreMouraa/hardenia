@@ -23,6 +23,8 @@ invocar_timer = 120;
 invocar_total = 0;
 zona = undefined; // onde o ataque atual cai; existe do aviso em diante
 zona_fixa = false; // nao acompanha o inimigo empurrado durante o aviso
+imovel = false; // golpe nao empurra (chefe)
+ao_voltar = undefined; // roda quando a recarga acaba (o chefe troca de ataque)
 // pose de ataque, para quem tem: folha com ataque_frames por linha, aviso e golpe nela
 ataque_sprite = noone;
 ataque_frames = 0;

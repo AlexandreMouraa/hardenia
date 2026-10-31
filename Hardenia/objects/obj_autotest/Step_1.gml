@@ -39,6 +39,12 @@ if (room == Room_Menu) {
             if (morrer && curas == 0) {
                 log("FALHA_vida", "-morrer nao viu a cura");
             }
+            if (!usar_horda && chefe_vencido < vitorias) {
+                log("FALHA_chefe", "vitorias=" + string(vitorias) + " chefe vencido=" + string(chefe_vencido));
+            }
+            if (!usar_horda && !chefe_metade_vista) {
+                log("FALHA_chefe", "nao viu a mudanca na metade da vida");
+            }
             if (!usar_horda && variable_struct_names_count(elites_vistas) < 3) {
                 log("FALHA_elite", "so " + string(variable_struct_names_count(elites_vistas)) + " habilidades apareceram");
             }
@@ -310,6 +316,25 @@ var _esperando_grupo = false;
 if (testar_grupo && run_atual == 1 && room == Room1 && grupo_passo < 4) {
     _esperando_grupo = true;
     grupo_conferir(_p);
+}
+
+// chefe: a run so vale com ele vencido, e o print mostra a metade da vida
+if (instance_exists(obj_enemy_chefe)) {
+    var _ch = instance_find(obj_enemy_chefe, 0);
+    if (!chefe_vivo) {
+        chefe_vivo = true;
+        log("chefe", "hp=" + string(_ch.hp));
+        pedir_print("chefe_inicio");
+    }
+    if (_ch.metade && !chefe_metade_vista) {
+        chefe_metade_vista = true;
+        log("chefe_metade", "hp=" + string(_ch.hp));
+        pedir_print("chefe_metade");
+    }
+} else if (chefe_vivo && room == Room_Trono) {
+    chefe_vivo = false;
+    chefe_vencido += 1;
+    log("chefe_vencido", "tempo_sala=" + string(round(tempo_sala / 60)) + "s danos=" + string(danos));
 }
 
 // ---------- zonas de golpe ativas ----------

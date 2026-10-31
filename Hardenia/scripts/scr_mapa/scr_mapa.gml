@@ -6,9 +6,10 @@ global.mapa_fases = [
     { sala: Room_Tunel, nome: "CATACUMBAS", frase: "Aqui embaixo ninguem vem me buscar. Nem eles esperam que eu volte." },
     { sala: Room2, nome: "PATIO DO CASTELO", frase: "No patio, quem fica parado nao chega ao castelo." },
     { sala: Room3, nome: "CEMITERIO GELADO", frase: "O cemiterio tem lugar para mais um. Ainda nao." },
+    { sala: Room_Trono, nome: "O TRONO", frase: "O trono esta logo ali. Ele tambem morreu um dia." },
 ];
-// o ultimo ponto ainda nao existe no jogo (o chefe final): aparece trancado
-global.mapa_final = "O TRONO";
+// ponto trancado no fim do caminho, para um lugar que ainda nao existe no jogo. "" = nenhum
+global.mapa_final = "";
 
 // golpes que o jogador aguenta (decisao de 30/10: com 1, horda seria morte certa;
 // ajustar jogando)
@@ -32,6 +33,7 @@ global.frases_inimigo = {
     obj_enemy_arqueiro: ["A flecha avisou antes. Eu e que fiquei na linha.", "Esse arqueiro de novo. Agora eu corro de lado."],
     obj_enemy_conjurador: ["O circulo estava no chao. Eu e que fiquei em cima dele.", "O conjurador de novo. Da proxima eu vou atras dele primeiro."],
     obj_explosao: ["Ele explodiu depois de morrer. Eu devia ter saido de perto.", "De novo a explosao. Mata e corre."],
+    obj_enemy_chefe: ["O rei morto nao tem pressa. Eu tive.", "O Trono de novo. A coluna para a investida."],
     obj_enemy_horda: ["Eram muitos. Da proxima eu abro caminho com o dash.", "A horda de novo. Parado eu nao saio daqui."],
 };
 global.frases_teimoso = [
@@ -74,6 +76,7 @@ function frase_de_morte(_causa) {
 global.mascaras_sala = [
     { sala: Room1, sprite: spr_mascara_fase01, passo: 4 },
     { sala: Room_Tunel, sprite: spr_mascara_tunel, passo: 8 },
+    { sala: Room_Trono, sprite: spr_mascara_trono, passo: 8 },
 ];
 // retangulos ja lidos, por sprite: ler pixel e caro, e morrer recria a sala
 global.mascaras_lidas = {};
@@ -207,7 +210,8 @@ function ir_para_sala(_sala) {
 // -0.6 = ainda antes da primeira fase (saindo do menu)
 function mapa_desenhar(_cy, _esc, _pos, _alpha) {
     var _w = display_get_gui_width();
-    var _n = array_length(global.mapa_fases) + 1; // fases + final
+    var _tem_final = (global.mapa_final != "");
+    var _n = array_length(global.mapa_fases) + (_tem_final ? 1 : 0);
     var _x0 = _w * 0.16;
     var _x1 = _w * 0.84;
     var _passo = (_x1 - _x0) / (_n - 1);
@@ -227,7 +231,7 @@ function mapa_desenhar(_cy, _esc, _pos, _alpha) {
     draw_set_valign(fa_top);
     for (var _i = 0; _i < _n; _i++) {
         var _px = _x0 + _i * _passo;
-        var _final = (_i == _n - 1);
+        var _final = (_tem_final && _i == _n - 1);
         var _chegou = (_pos >= _i - 0.001);
         var _aqui = (abs(_pos - _i) < 0.001);
         var _r = (_final ? 13 : 10) * _esc;

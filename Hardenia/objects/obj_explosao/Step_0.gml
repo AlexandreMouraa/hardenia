@@ -27,7 +27,7 @@ if (tempo <= 0) {
 if (duracao - tempo <= acerto && instance_exists(obj_player)) {
     var _p = instance_find(obj_player, 0);
     if (_p.invuln_timer <= 0 && !_p.is_dashing && !_p.venceu && zona_acerta_jogador(zona)) {
-        _p.morto_por = "obj_explosao";
+        _p.morto_por = causa;
         _p.levar_dano(1);
     }
 }

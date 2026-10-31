@@ -145,6 +145,11 @@ if (_inimigos == 0 && _fase > 0 && room != sala_final() && !is_dead && !venceu) 
             _saida = id;
         }
     }
+    with (obj_exit_to_trono) {
+        if (room_next(room) == Room_Trono) {
+            _saida = id;
+        }
+    }
     with (obj_exit_to_room3) {
         if (room_next(room) == Room3) {
             _saida = id;

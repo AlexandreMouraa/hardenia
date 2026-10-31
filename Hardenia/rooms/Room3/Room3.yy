@@ -6,6 +6,7 @@
   "inheritCreationOrder":false,
   "inheritLayers":false,
   "instanceCreationOrder":[
+    {"name":"inst_r3_trono","path":"rooms/Room3/Room3.yy",},
     {"name":"inst_r3_player","path":"rooms/Room3/Room3.yy",},
     {"name":"inst_r3_portal","path":"rooms/Room3/Room3.yy",},
     {"name":"inst_r3_enemy_tl","path":"rooms/Room3/Room3.yy",},
@@ -27,6 +28,7 @@
   "isDnd":false,
   "layers":[
     {"$GMRInstanceLayer":"","%Name":"Instances","depth":0,"effectEnabled":true,"effectType":null,"gridX":32,"gridY":32,"hierarchyFrozen":false,"inheritLayerDepth":false,"inheritLayerSettings":false,"inheritSubLayers":true,"inheritVisibility":true,"instances":[
+        {"$GMRInstance":"v4","%Name":"inst_r3_trono","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_r3_trono","objectId":{"name":"obj_exit_to_trono","path":"objects/obj_exit_to_trono/obj_exit_to_trono.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.5,"scaleY":1.0,"x":768.0,"y":950.0,},
         {"$GMRInstance":"v4","%Name":"inst_r3_player","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_r3_player","objectId":{"name":"obj_player","path":"objects/obj_player/obj_player.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.0,"scaleY":1.0,"x":768.0,"y":300.0,},
         {"$GMRInstance":"v4","%Name":"inst_r3_portal","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_r3_portal","objectId":{"name":"obj_exit_to_room2","path":"objects/obj_exit_to_room2/obj_exit_to_room2.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.0,"scaleY":1.0,"x":736.0,"y":80.0,},
         {"$GMRInstance":"v4","%Name":"inst_r3_enemy_tl","colour":4294967295,"frozen":false,"hasCreationCode":false,"ignore":false,"imageIndex":0,"imageSpeed":1.0,"inheritCode":false,"inheritedItemId":null,"inheritItemSettings":false,"isDnd":false,"name":"inst_r3_enemy_tl","objectId":{"name":"obj_enemy_wight","path":"objects/obj_enemy_wight/obj_enemy_wight.yy",},"properties":[],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.0,"scaleY":1.0,"x":400.0,"y":350.0,},
