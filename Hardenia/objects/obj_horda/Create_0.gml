@@ -4,6 +4,10 @@
 
 // primeira leitura: da para enfrentar, e a terceira onda ja enche a tela. Ajustar jogando
 ondas = [25, 50, 100];
+// teto de inimigos vivos nas ondas. Provisorio: a issue pede que saia da medida num iPad,
+// e ela ainda nao foi feita. O PC aguenta bem mais (1.580 a 1.960), entao 150 e so a maior
+// onda com folga, para o aparelho fraco nao sofrer. A medida (L) ignora o teto
+horda_teto = 150;
 onda = -1;
 faltam = 0;
 espera = 120;

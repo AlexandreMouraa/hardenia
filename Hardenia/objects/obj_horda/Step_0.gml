@@ -58,7 +58,7 @@ if (fim) {
 if (faltam > 0) {
     // 20 por segundo, para virem em fila pela borda e nao de uma vez
     tempo += 1;
-    if (tempo mod 3 == 0 && criar_um()) {
+    if (tempo mod 3 == 0 && instance_number(obj_enemy_horda) < horda_teto && criar_um()) {
         faltam -= 1;
     }
 } else if (instance_number(obj_enemy_horda) == 0) {
