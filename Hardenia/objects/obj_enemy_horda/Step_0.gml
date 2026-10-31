@@ -23,6 +23,7 @@ if (separar_timer <= 0) {
 // encostou: machuca, sem aviso. O dash atravessa, e a invencibilidade depois do
 // golpe segura o resto da horda
 if (point_distance(x, y, obj_player.x, obj_player.y) < 22 && obj_player.invuln_timer <= 0 && !obj_player.is_dashing) {
+    obj_player.morto_por = object_get_name(object_index);
     obj_player.levar_dano(1);
 }
 

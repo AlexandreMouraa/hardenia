@@ -2,9 +2,9 @@
 // cada fase nova (obj_mapa) e na pausa. Fase nova: acrescentar aqui, na ordem.
 // Nomes sem acento: a fonte do jogo nao tem esses caracteres
 global.mapa_fases = [
-    { sala: Room1, nome: "RUINAS" },
-    { sala: Room2, nome: "PATIO DO CASTELO" },
-    { sala: Room3, nome: "CEMITERIO GELADO" },
+    { sala: Room1, nome: "RUINAS", frase: "As ruinas guardam os ossos de quem veio antes de mim." },
+    { sala: Room2, nome: "PATIO DO CASTELO", frase: "No patio, quem fica parado nao chega ao castelo." },
+    { sala: Room3, nome: "CEMITERIO GELADO", frase: "O cemiterio tem lugar para mais um. Ainda nao." },
 ];
 // o ultimo ponto ainda nao existe no jogo (o chefe final): aparece trancado
 global.mapa_final = "O TRONO";
@@ -21,6 +21,48 @@ function run_zerar() {
 }
 // no codigo solto: a sala aberta direto pela IDE, sem passar pelo menu, tambem funciona
 run_zerar();
+
+// Frase da tela de morte: o guerreiro mais fraco aprendendo, sem cutscene. Por inimigo:
+// [primeira vez, voltou a morrer ali]. Inimigo novo: acrescentar aqui, com o nome do objeto
+global.frases_inimigo = {
+    obj_enemy: ["O esqueleto avisou. Eu e que nao sai da frente.", "Esse esqueleto de novo... dessa vez eu desvio."],
+    obj_enemy_ghoul: ["O ghoul so corre em linha reta. Era so sair do caminho.", "Esse ghoul de novo. Agora eu sei onde ele para."],
+    obj_enemy_wight: ["O wight demora, mas quando varre, varre tudo.", "De novo esse wight. Depois da varredura ele fica exposto."],
+    obj_enemy_horda: ["Eram muitos. Da proxima eu abro caminho com o dash.", "A horda de novo. Parado eu nao saio daqui."],
+};
+global.frases_teimoso = [
+    "Mais uma. O mais fraco de todos continua voltando.",
+    "Eles nao aprendem. Eu sim.",
+    "Nenhum guerreiro chegou tao longe morrendo tanto.",
+];
+// quantas vezes morreu em cada sala, nesta sessao de jogo (zera no menu)
+global.mortes_por_sala = {};
+
+// conta esta morte e escolhe a frase, sem sorteio: o robo depende da sequencia
+// aleatoria do jogo. _causa: nome do objeto que acertou o ultimo golpe
+function frase_de_morte(_causa) {
+    var _nome = room_get_name(room);
+    var _ali = 1;
+    if (variable_struct_exists(global.mortes_por_sala, _nome)) {
+        _ali += variable_struct_get(global.mortes_por_sala, _nome);
+    }
+    variable_struct_set(global.mortes_por_sala, _nome, _ali);
+    var _fase = mapa_indice(room);
+    var _inimigo = variable_struct_exists(global.frases_inimigo, _causa);
+    if (_ali >= 5) {
+        return global.frases_teimoso[_ali mod array_length(global.frases_teimoso)];
+    }
+    if (_ali >= 3 && _inimigo) {
+        return variable_struct_get(global.frases_inimigo, _causa)[1];
+    }
+    if (_ali == 2 && _fase >= 0) {
+        return global.mapa_fases[_fase].frase;
+    }
+    if (_inimigo) {
+        return variable_struct_get(global.frases_inimigo, _causa)[0];
+    }
+    return "Cada morte ensina.";
+}
 
 // posicao da sala no caminho; -1 fora dele (menu)
 function mapa_indice(_sala) {

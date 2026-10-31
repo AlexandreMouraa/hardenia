@@ -20,6 +20,7 @@ window_set_cursor(cr_default);
 
 // cada morte conta uma tentativa; a run inteira comeca aqui
 global.tentativas = 1;
+global.mortes_por_sala = {};
 run_zerar();
 
 audio_stop_sound(snd_game_music);

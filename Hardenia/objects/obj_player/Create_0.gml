@@ -52,6 +52,9 @@ hud_dano_max = 30;
 hud_cura = 0;
 hud_cura_max = 40;
 // golpe que pegou. A morte fica no fim do Step
+// quem acertou o ultimo golpe e a frase da tela de morte (frase_de_morte, em scr_mapa)
+morto_por = "";
+frase_morte = "";
 levar_dano = function(_dano) {
     hp -= _dano;
     global.vida = hp;

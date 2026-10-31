@@ -371,6 +371,7 @@ if (hp <= 0) {
     // onde e quando morreu: alimenta o mapa de mortes do site
     rede_evento("morte", { x: round(x), y: round(y), tentativa: global.tentativas, tempo_ms: frames_para_ms(tempo_na_sala) });
     is_dead = true;
+    frase_morte = frase_de_morte(morto_por);
     cancelar_carga();
     brilho = 0;
     impacto(8, 9);
