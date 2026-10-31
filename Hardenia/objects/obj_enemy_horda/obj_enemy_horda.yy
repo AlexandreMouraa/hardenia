@@ -34,8 +34,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"spr_enemy_walk_skeleton",
-    "path":"sprites/spr_enemy_walk_skeleton/spr_enemy_walk_skeleton.yy",
+    "name":"spr_zumbi_andar",
+    "path":"sprites/spr_zumbi_andar/spr_zumbi_andar.yy",
   },
   "spriteMaskId":null,
   "visible":true,

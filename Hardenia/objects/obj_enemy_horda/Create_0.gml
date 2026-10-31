@@ -1,13 +1,16 @@
 event_inherited();
 // inimigo de horda (#25): fraco, em grande numero, sem aviso nem golpe. Machuca ao
 // encostar: dezenas de zonas vermelhas virariam ruido. Decisao inicial da issue, para
-// rever se ficar injusto jogando. Ate haver arte, e um esqueleto menor e azulado
+// rever se ficar injusto jogando
+walk_sprite = spr_zumbi_andar;
+walk_frames = 8;
+anim_speed = 5;
 sprite_index = walk_sprite;
+mask_index = spr_enemy_walk_skeleton;
 hp = 1;
 move_speed = 1.8;
 image_xscale = 0.7;
 image_yscale = 0.7;
-image_blend = make_colour_rgb(150, 190, 255);
 leve = true;
 // o golpe nao acorda ninguem: a horda ja vem de uma vez
 acordar = function() {};
