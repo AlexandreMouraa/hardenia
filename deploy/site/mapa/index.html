@@ -49,18 +49,18 @@
 </main>
 
 <script>
-  // tamanho das salas no GameMaker: as coordenadas das mortes vem nessa escala
-  var SALA_L = 1536, SALA_A = 1024;
+  // tamanho de cada sala no GameMaker: as coordenadas das mortes vem nessa escala
   var SALAS = [
-    { codigo: "Room1", imagem: "sala1.jpg" },
-    { codigo: "Room2", imagem: "sala2.jpg" },
-    { codigo: "Room3", imagem: "sala3.jpg" }
+    { codigo: "Room1", imagem: "sala1.jpg", l: 1536, a: 1024 },
+    { codigo: "Room_Tunel", imagem: "sala-tunel.jpg", l: 2000, a: 1400 },
+    { codigo: "Room2", imagem: "sala2.jpg", l: 1536, a: 1024 },
+    { codigo: "Room3", imagem: "sala3.jpg", l: 1536, a: 1024 }
   ];
   var raiz = document.getElementById("salas");
 
   SALAS.forEach(function (s) {
     var sec = document.createElement("section");
-    sec.innerHTML = '<div class="cabeca"><h2></h2><span class="dados"></span></div><canvas width="1152" height="768"></canvas>';
+    sec.innerHTML = '<div class="cabeca"><h2></h2><span class="dados"></span></div><canvas width="1152" height="' + Math.round(1152 * s.a / s.l) + '"></canvas>';
     raiz.appendChild(sec);
     s.titulo = sec.querySelector("h2");
     s.dados = sec.querySelector(".dados");
@@ -74,7 +74,7 @@
 
   function desenhar(s) {
     var c = s.canvas, ctx = c.getContext("2d");
-    var ex = c.width / SALA_L, ey = c.height / SALA_A;
+    var ex = c.width / s.l, ey = c.height / s.a;
     ctx.globalCompositeOperation = "source-over";
     if (s.img.complete) ctx.drawImage(s.img, 0, 0, c.width, c.height);
     ctx.fillStyle = "rgba(0,0,0,.35)";

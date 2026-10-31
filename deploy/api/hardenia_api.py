@@ -34,7 +34,7 @@ DB = os.environ.get("HARDENIA_DB", "/var/lib/hardenia/hardenia.db")
 PORTA = int(os.environ.get("HARDENIA_PORTA", "8081"))
 DISCORD = os.environ.get("HARDENIA_DISCORD_WEBHOOK", "")
 
-SALAS = {"Room1": "Ruínas", "Room2": "Pátio", "Room3": "Cemitério"}
+SALAS = {"Room1": "Ruínas", "Room_Tunel": "Catacumbas", "Room2": "Pátio", "Room3": "Cemitério"}
 PLATAFORMAS = {"web", "windows"}
 TIPOS_EVENTO = {"inicio", "morte", "sala"}
 TIPOS_OPINIAO = {"opiniao", "bug"}
