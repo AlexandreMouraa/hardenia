@@ -43,7 +43,7 @@ if (room == Room_Menu) {
     exit;
 }
 
-log("sala_inicio", "tentativa=" + string(global.tentativas) + " inimigos=" + string(inimigos_antes));
+log("sala_inicio", "tentativa=" + string(global.tentativas) + " inimigos=" + string(inimigos_antes) + " paredes=" + string(instance_number(obj_wall)));
 
 // -morrer: a frase muda conforme as mortes. O robo so morre uma vez em cada sala,
 // entao confere a escolha direto, com 6 mortes de mentira na primeira sala
