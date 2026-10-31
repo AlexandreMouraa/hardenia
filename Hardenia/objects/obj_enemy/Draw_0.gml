@@ -11,6 +11,10 @@ if (state == 1 || state == 2) {
     draw_set_color(c_white);
 }
 
+if (elite != "") {
+    elite_desenhar();
+}
+
 draw_self();
 
 // flash branco ao levar dano

@@ -31,6 +31,7 @@ global.frases_inimigo = {
     obj_enemy_wight: ["O wight demora, mas quando varre, varre tudo.", "De novo esse wight. Depois da varredura ele fica exposto."],
     obj_enemy_arqueiro: ["A flecha avisou antes. Eu e que fiquei na linha.", "Esse arqueiro de novo. Agora eu corro de lado."],
     obj_enemy_conjurador: ["O circulo estava no chao. Eu e que fiquei em cima dele.", "O conjurador de novo. Da proxima eu vou atras dele primeiro."],
+    obj_explosao: ["Ele explodiu depois de morrer. Eu devia ter saido de perto.", "De novo a explosao. Mata e corre."],
     obj_enemy_horda: ["Eram muitos. Da proxima eu abro caminho com o dash.", "A horda de novo. Parado eu nao saio daqui."],
 };
 global.frases_teimoso = [

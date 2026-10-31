@@ -524,6 +524,16 @@ tem_caminho = function(_x1, _y1, _x2, _y2) {
     return mp_grid_path(grade, caminho, _a[0], _a[1], _b[0], _b[1], true);
 };
 
+// habilidades de elite que apareceram: o log e o resumo mostram quantas, com um print de cada
+elites_vistas = {};
+ver_elite = function(_nome) {
+    if (!variable_struct_exists(elites_vistas, _nome)) {
+        variable_struct_set(elites_vistas, _nome, true);
+        log("elite", _nome);
+        pedir_print("elite_" + _nome);
+    }
+};
+
 // estado por sala (zerado no Room Start)
 grade = -1;
 caminho = path_add();

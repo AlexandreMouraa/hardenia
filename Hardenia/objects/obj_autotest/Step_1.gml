@@ -39,7 +39,10 @@ if (room == Room_Menu) {
             if (morrer && curas == 0) {
                 log("FALHA_vida", "-morrer nao viu a cura");
             }
-            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes) + " danos=" + string(danos) + " avisos_max=" + string(avisos_max) + " combos=" + string(combos) + (carregar ? " carregados=" + string(carregados) : "") + (usar_especial ? " especiais=" + string(especiais) : "") + (usar_estocada ? " estocadas=" + string(estocadas) : "") + (testar_formas ? " formas=" + string(variable_struct_names_count(formas_vistas)) : "") + (testar_grupo ? " grupo=" + string(grupo_ok) : ""));
+            if (!usar_horda && variable_struct_names_count(elites_vistas) < 3) {
+                log("FALHA_elite", "so " + string(variable_struct_names_count(elites_vistas)) + " habilidades apareceram");
+            }
+            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes) + " danos=" + string(danos) + " avisos_max=" + string(avisos_max) + " combos=" + string(combos) + " elites=" + string(variable_struct_names_count(elites_vistas)) + (carregar ? " carregados=" + string(carregados) : "") + (usar_especial ? " especiais=" + string(especiais) : "") + (usar_estocada ? " estocadas=" + string(estocadas) : "") + (testar_formas ? " formas=" + string(variable_struct_names_count(formas_vistas)) : "") + (testar_grupo ? " grupo=" + string(grupo_ok) : ""));
             encerrar(0);
             exit;
         }
@@ -364,10 +367,36 @@ with (obj_enemy) {
         }
     }
 }
-// flecha no ar: a linha continua perigosa, mesmo com o arqueiro morto
+// flecha no ar e explosao de elite: continuam perigosas, mesmo com o dono morto
 if (!_quer_morrer) {
     with (obj_flecha) {
         array_push(_zonas, [zona, 2, vida]);
+    }
+    with (obj_explosao) {
+        array_push(_zonas, [zona, estado, tempo]);
+    }
+}
+// as 3 habilidades de elite: print da primeira vez, e o limite de invocados
+with (obj_explosao) {
+    other.ver_elite("explosao");
+}
+with (obj_enemy) {
+    if (elite == "escudo" && !escudo) {
+        other.ver_elite("escudo");
+    }
+    if (elite == "invocacao") {
+        var _vivos_inv = 0;
+        for (var _vi = 0; _vi < array_length(invocados); _vi++) {
+            if (instance_exists(invocados[_vi])) {
+                _vivos_inv += 1;
+            }
+        }
+        if (_vivos_inv > 0) {
+            other.ver_elite("invocacao");
+        }
+        if (_vivos_inv > 2) {
+            other.log("FALHA_elite", string(_vivos_inv) + " invocados vivos");
+        }
     }
 }
 // a vez de atacar (scr_inimigos): no maximo 2 em aviso ao mesmo tempo
@@ -537,7 +566,25 @@ if (_alvo != noone && !_ameacado && !_quer_morrer) {
                 }
                 alvo_golpeado = _alvo.id;
                 hp_golpeado = _alvo.hp;
-                if (usar_especial && _p.especial_recarga <= 0) {
+                if (_alvo.escudo) {
+                    // o golpe comum nao tira vida do escudo: gira, ou segura ate a carga encher
+                    golpes_vazios = 0;
+                    if (_p.especial_recarga <= 0) {
+                        bot_especial = true;
+                    } else {
+                        if (usar_mouse) {
+                            bot_clique = true;
+                            bot_mira_x = _alvo.x;
+                            bot_mira_y = _alvo.y;
+                        } else {
+                            with (_p) {
+                                event_perform(ev_keypress, ord("J"));
+                            }
+                        }
+                        segurar_frames = 70;
+                        bot_segurar = true;
+                    }
+                } else if (usar_especial && _p.especial_recarga <= 0) {
                     bot_especial = true;
                 } else if (usar_estocada && _p.dash_charges > 0) {
                     bot_dash = true;
