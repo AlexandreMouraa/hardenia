@@ -16,6 +16,18 @@ ataque = {
     avanco: 0,
 };
 zona = undefined; // onde o ataque atual cai; existe do aviso em diante
+// pose de ataque, para quem tem: folha com ataque_frames por linha, aviso e golpe nela
+ataque_sprite = noone;
+ataque_frames = 0;
+// roda na hora de mirar, com attack_dir ja definido (o arqueiro corta a linha na parede)
+ao_mirar = undefined;
+// o que sai quando o aviso acaba. Quem ataca de longe troca este
+disparar = function() {
+    var _golpe = instance_create_layer(zona.cx, zona.cy, "Instances", obj_enemy_attack);
+    _golpe.dono = id;
+    _golpe.zona = zona;
+    _golpe.lifetime = ataque.acerto;
+};
 attack_damage_dealt = false;
 attack_dir = 0;
 

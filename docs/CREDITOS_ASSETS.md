@@ -12,3 +12,16 @@ Tudo o que veio de fora do grupo, com origem e licença. Asset novo: acrescente 
 | `snd_dash_negado` | `error_004.ogg` | [Interface Sounds](https://kenney.nl/assets/interface-sounds) | Kenney | CC0 |
 
 Convertidos para WAV, mono, 44,1 kHz, com o volume médio perto do `snd_attack`.
+
+## Sprites
+
+Inimigos montados com peças do [Universal LPC Spritesheet Character Generator](https://github.com/LiberatedPixelCup/Universal-LPC-Spritesheet-Character-Generator), em `tools/gerar_sprites_lpc.py`. O projeto usa as peças sob CC-BY-SA 3.0, que é a licença comum a todas elas, e as folhas montadas ficam sob a mesma licença.
+
+| Peça | Usada em | Autores | Licenças | Origem |
+|---|---|---|---|---|
+| Corpo e cabeça de esqueleto | arqueiro, conjurador, chefe | bluecarrot16, Napsio, JaidynReiman, Johannes Sjölund (wulax), Stephen Challener (Redshrike) | OGA-BY 3.0, CC-BY-SA 3.0, GPL 3.0 | [base](https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles), [fantasia medieval](https://opengameart.org/content/lpc-medieval-fantasy-character-sprites), [esqueleto](https://opengameart.org/content/lpc-skeleton), [bases](https://opengameart.org/content/lpc-character-bases) |
+| Arco e flecha | arqueiro | Johannes Sjölund (wulax), Pierre Vigier (pvigier) | OGA-BY 3.0, CC-BY-SA 3.0, GPL 3.0, CC-BY 4.0 | [fantasia medieval](https://opengameart.org/content/lpc-medieval-fantasy-character-sprites), [andar com arco](https://opengameart.org/content/lpc-walk-animations-for-bows) |
+
+A flecha que voa (`spr_flecha`) foi desenhada em `tools/gerar_sprites_lpc.py`.
+
+Crédito obrigatório: quem publicar o jogo precisa manter esta lista acessível. Ela também aparece no site.

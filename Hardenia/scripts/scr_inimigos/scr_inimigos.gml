@@ -358,6 +358,16 @@ function casa_rumo() {
     return point_direction(x, y, casa_rota[casa_passo][0], casa_rota[casa_passo][1]);
 }
 
+// ate onde uma linha reta vai antes de bater na parede, de 16 em 16 px
+function linha_ate_parede(_x, _y, _dir, _max) {
+    for (var _d = 16; _d < _max; _d += 16) {
+        if (collision_point(_x + lengthdir_x(_d, _dir), _y + lengthdir_y(_d, _dir), obj_wall, false, true) != noone) {
+            return _d;
+        }
+    }
+    return _max;
+}
+
 // anda para _dir, escorregando na parede
 function inimigo_andar(_dir, _vel) {
     var _mx = lengthdir_x(_vel, _dir);

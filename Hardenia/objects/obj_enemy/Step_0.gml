@@ -61,6 +61,9 @@ switch (state) {
                 state_timer = ataque.aviso;
                 // a direcao trava no inicio do aviso: o jogador ve onde o golpe cai e tem tempo de sair
                 attack_dir = _dir;
+                if (ao_mirar != undefined) {
+                    ao_mirar();
+                }
                 zona = zona_criar(ataque, x, y, attack_dir);
                 inimigo_virar(attack_dir);
             } else {
@@ -141,11 +144,7 @@ switch (state) {
             state = 2;
             state_timer = ataque.duracao;
             image_blend = c_red;
-
-            var _golpe = instance_create_layer(zona.cx, zona.cy, "Instances", obj_enemy_attack);
-            _golpe.dono = id;
-            _golpe.zona = zona;
-            _golpe.lifetime = ataque.acerto;
+            disparar();
         }
         break;
 
@@ -218,4 +217,15 @@ if (_is_moving) {
     anim_frame = 0;
 }
 
-image_index = facing_dir * walk_frames + anim_frame;
+if ((state == 1 || state == 2) && ataque_sprite != noone) {
+    // a pose avanca durante o aviso e termina no golpe
+    sprite_index = ataque_sprite;
+    var _quadro = ataque_frames - 1;
+    if (state == 1) {
+        _quadro = floor((1 - state_timer / ataque.aviso) * (ataque_frames - 1));
+    }
+    image_index = facing_dir * ataque_frames + _quadro;
+} else {
+    sprite_index = walk_sprite;
+    image_index = facing_dir * walk_frames + anim_frame;
+}
