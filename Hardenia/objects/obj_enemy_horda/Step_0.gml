@@ -7,12 +7,23 @@ if (!instance_exists(obj_player)) {
 }
 
 var _dir = point_direction(x, y, obj_player.x, obj_player.y);
+if (!reto) {
+    var _rumo = campo_rumo();
+    if (_rumo >= 0) {
+        _dir = _rumo;
+    }
+}
 inimigo_andar(_dir, move_speed);
 inimigo_virar(_dir);
 
 separar_timer -= 1;
 if (separar_timer <= 0) {
     separar_timer = 6;
+    // a horda sempre sabe onde o jogador esta; o teste de parede fica a cada 6 frames
+    reto = collision_line(x, y, obj_player.x, obj_player.y, obj_wall, false, true) == noone;
+    if (!reto) {
+        campo_ver(obj_player.x, obj_player.y);
+    }
     var _outro = instance_place(x, y, obj_enemy_horda);
     if (_outro != noone) {
         var _afasta = (_outro.x == x && _outro.y == y) ? _dir + 90 : point_direction(_outro.x, _outro.y, x, y);

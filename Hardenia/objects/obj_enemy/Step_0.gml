@@ -44,6 +44,7 @@ switch (state) {
                 memoria_x = obj_player.x;
                 memoria_y = obj_player.y;
                 procura = procura_max;
+                campo_ver(obj_player.x, obj_player.y);
                 if (!acordado) {
                     acordar();
                 }
@@ -85,15 +86,32 @@ switch (state) {
             procura -= 1;
             if (procura <= 0 || point_distance(x, y, memoria_x, memoria_y) < 8) {
                 acordado = false;
+                casa_passo = -1;
             } else {
                 var _dir_memoria = point_direction(x, y, memoria_x, memoria_y);
+                // parede no meio: segue o mapa, que leva ao ultimo lugar onde alguem do
+                // grupo viu o jogador. Os 4 s de memoria nao bastam para um caminho longo:
+                // ganha o tempo de andar ate la, e enquanto alguem ainda ve, ele nao desiste
+                if (collision_line(x, y, memoria_x, memoria_y, obj_wall, false, true) != noone) {
+                    var _rumo = campo_rumo();
+                    if (_rumo >= 0) {
+                        _dir_memoria = _rumo;
+                        memoria_x = global.campo.alvo_x;
+                        memoria_y = global.campo.alvo_y;
+                        if (global.campo.visto_em > campo_visto) {
+                            campo_visto = global.campo.visto_em;
+                            procura = procura_max;
+                        }
+                        procura = max(procura, ceil(campo_passos * CAMPO_CELULA / move_speed) + 30);
+                    }
+                }
                 inimigo_andar(_dir_memoria, move_speed);
                 inimigo_virar(_dir_memoria);
                 _is_moving = true;
             }
         } else if (abs(y - home_y) > 4 || abs(x - home_x) > patrol_range + 4) {
             // de volta para casa, antes de patrulhar de novo
-            var _dir_casa = point_direction(x, y, home_x, home_y);
+            var _dir_casa = casa_rumo();
             inimigo_andar(_dir_casa, patrol_speed);
             inimigo_virar(_dir_casa);
             _is_moving = true;

@@ -14,3 +14,5 @@ acordar = function() {};
 // separacao a cada 6 frames, cada um no seu: testar todos contra todos em todo frame
 // pesaria com centenas
 separar_timer = 1 + instance_number(obj_enemy_horda) mod 6;
+// sem parede no meio vai reto: o mapa de direcoes (campo_rumo) so anda de celula em celula
+reto = true;
