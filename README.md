@@ -65,6 +65,8 @@ estão no [CONTRIBUTING.md](CONTRIBUTING.md).
 | Sair do jogo (no menu) | `Esc` |
 | Tela cheia / janela | `Alt+Enter` |
 
+**Tablet e celular:** os controles aparecem no primeiro toque. O polegar na metade esquerda da tela vira o direcional, e os botões ficam à direita: atacar (segurar carrega), dash, giro e pausa. O golpe vira sozinho para o inimigo mais perto. Mexer o mouse ou usar o teclado esconde tudo de novo.
+
 ## Teste de horda
 
 No menu, `H` ou um toque no texto do canto abre um protótipo fora da run: três
@@ -161,6 +163,7 @@ roda 3 runs em velocidade acelerada, sem som e em janela, e termina com `OK` ou
 | `-horda` | joga as 3 ondas da sala de teste e depois mede o limite do aparelho a 60 fps (rodar com `-Runs 1`) |
 | `-desatento 40` | ignora 40% dos avisos, como um jogador distraído |
 | `-diag` | registra as decisões do robô a cada segundo |
+| `-toque` | joga pelos controles de toque, com dedos de mentira, e reprova se o direcional não andar para onde o robô mandou (soma `toque=1` no resumo) |
 | `-api URL` | liga a rede e manda os eventos para essa API (teste local; sem isso o robô não envia nada) |
 | `-nome X` | com `-api`, digita X na vitória e envia ao ranking |
 

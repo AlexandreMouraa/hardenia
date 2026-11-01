@@ -40,8 +40,8 @@ if (keyboard_check_pressed(ord("L"))) {
 }
 if (_clique) {
     var _b = botao_medir();
-    var _mx = device_mouse_x_to_gui(0);
-    var _my = device_mouse_y_to_gui(0);
+    var _mx = ponteiro_gui_x(0);
+    var _my = ponteiro_gui_y(0);
     if (point_in_rectangle(_mx, _my, _b[0], _b[1], _b[2], _b[3])) {
         medir();
         exit;
@@ -49,7 +49,7 @@ if (_clique) {
 }
 
 if (fim) {
-    if (keyboard_check_pressed(vk_enter)) {
+    if (keyboard_check_pressed(vk_enter) || (global.toque_ativo && _clique)) {
         room_goto(Room_Menu);
     }
     exit;

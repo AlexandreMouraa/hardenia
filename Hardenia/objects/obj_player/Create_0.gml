@@ -94,6 +94,9 @@ carga_lentidao = 0.5;   // velocidade enquanto carrega, tambem da issue #3
 golpe_carregado = false; // o ultimo golpe foi carregado (o robo conta)
 // tecla ou botao ainda apertado; no modo -autotest quem decide e o robo
 ataque_segurado = function() {
+    if (global.toque_ativo) {
+        return global.toque.ataque_preso;
+    }
     if (instance_exists(obj_autotest)) {
         return obj_autotest.bot_segurar;
     }
@@ -113,6 +116,11 @@ if (!variable_global_exists("mira_mouse")) {
 }
 // ponto da mira na sala; no modo -autotest -mouse, o alvo que o robo escolheu
 mira_alvo = function() {
+    if (global.toque_ativo) {
+        // no toque, a mira e o inimigo mais perto (obj_player, Step)
+        var _perto = instance_nearest(x, y, obj_enemy);
+        return (_perto != noone) ? [_perto.x, _perto.y] : [x + lengthdir_x(32, ataque_dir), y + lengthdir_y(32, ataque_dir)];
+    }
     if (instance_exists(obj_autotest)) {
         return [obj_autotest.bot_mira_x, obj_autotest.bot_mira_y];
     }
@@ -120,10 +128,28 @@ mira_alvo = function() {
 };
 // a mira aparece com mouse de verdade, ou no robo so com -mouse
 mostra_mira = function() {
-    return !instance_exists(obj_autotest) || obj_autotest.usar_mouse;
+    return !global.toque_ativo && (!instance_exists(obj_autotest) || obj_autotest.usar_mouse);
 };
 // cursor do sistema escondido no jogo: quem mostra o mouse e a mira (Draw GUI)
 window_set_cursor(cr_none);
+
+// tela de vitoria: manda o nome ao ranking. Sem nome, pula o ranking
+pedido_nome = -1; // resposta pendente do teclado do aparelho (Other_63)
+enviar_nome = function() {
+    var _nome = string_trim(vitoria_nome);
+    if (_nome == "") {
+        room_goto(Room_Menu);
+        return;
+    }
+    req_vitoria = rede_post("/api/vitoria", {
+        nome: _nome,
+        tentativas: global.tentativas,
+        tempo_ms: frames_para_ms(global.run_frames),
+    });
+    vitoria_estado = "enviando";
+    vitoria_nome_recusado = false;
+    vitoria_espera = 0;
+};
 
 golpear = function(_carregado = false) {
     combo_passo += 1;

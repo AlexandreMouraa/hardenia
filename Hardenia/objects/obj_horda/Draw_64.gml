@@ -26,7 +26,7 @@ if (medindo) {
         draw_set_color(c_yellow);
         draw_text_transformed(_w / 2, _h * 0.4, "HORDA VENCIDA", _esc * 2, _esc * 2, 0);
         draw_set_color(c_white);
-        draw_text_transformed(_w / 2, _h * 0.4 + 36 * _esc, "ENTER: VOLTAR AO MENU", _esc, _esc, 0);
+        draw_text_transformed(_w / 2, _h * 0.4 + 36 * _esc, "ENTER OU TOQUE: VOLTAR AO MENU", _esc, _esc, 0);
     } else if (onda >= 0) {
         draw_text_transformed(_w / 2, _h * 0.12, "ONDA " + string(onda + 1) + " / " + string(array_length(ondas)), _esc * 1.2, _esc * 1.2, 0);
     } else {

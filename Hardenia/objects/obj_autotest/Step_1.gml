@@ -5,6 +5,16 @@ if (encerrando) {
 }
 
 frame += 1;
+// -toque: o que o direcional leu no frame passado e o que o robo mandou?
+if (usar_toque && toque_conferido) {
+    if (global.toque.h != toque_esperado_h || global.toque.v != toque_esperado_v) {
+        log("FALHA_toque", "direcional leu " + string(global.toque.h) + "," + string(global.toque.v) + " esperado " + string(toque_esperado_h) + "," + string(toque_esperado_v));
+    }
+    toque_conferido = false;
+}
+bot_dedos_antes = bot_dedos;
+bot_dedos = array_create(TOQUE_DEDOS, undefined);
+toque_pedido_ataque = false;
 bot_h = 0;
 bot_v = 0;
 bot_dash = false;
@@ -48,7 +58,7 @@ if (room == Room_Menu) {
             if (!usar_horda && variable_struct_names_count(elites_vistas) < 3) {
                 log("FALHA_elite", "so " + string(variable_struct_names_count(elites_vistas)) + " habilidades apareceram");
             }
-            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes) + " danos=" + string(danos) + " avisos_max=" + string(avisos_max) + " combos=" + string(combos) + " elites=" + string(variable_struct_names_count(elites_vistas)) + (carregar ? " carregados=" + string(carregados) : "") + (usar_especial ? " especiais=" + string(especiais) : "") + (usar_estocada ? " estocadas=" + string(estocadas) : "") + (testar_formas ? " formas=" + string(variable_struct_names_count(formas_vistas)) : "") + (testar_grupo ? " grupo=" + string(grupo_ok) : ""));
+            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes) + " danos=" + string(danos) + " avisos_max=" + string(avisos_max) + " combos=" + string(combos) + " elites=" + string(variable_struct_names_count(elites_vistas)) + (carregar ? " carregados=" + string(carregados) : "") + (usar_especial ? " especiais=" + string(especiais) : "") + (usar_estocada ? " estocadas=" + string(estocadas) : "") + (testar_formas ? " formas=" + string(variable_struct_names_count(formas_vistas)) : "") + (testar_grupo ? " grupo=" + string(grupo_ok) : "") + (usar_toque ? " toque=1" : ""));
             encerrar(0);
             exit;
         }
@@ -182,9 +192,7 @@ if (estocar_em > 0) {
         if (usar_mouse) {
             bot_clique = true;
         } else {
-            with (_p) {
-                event_perform(ev_keypress, ord("J"));
-            }
+            bater(_p);
         }
     }
 }
@@ -297,8 +305,19 @@ if (tempo_sala > 60 * 150 && room != Room_Horda) {
 // pausa: abre, tira print e fecha, uma vez na primeira sala
 if (!testou_pausa && room == Room1 && tempo_sala >= 90) {
     if (tempo_sala == 90 || tempo_sala == 120) {
-        with (_p) {
-            event_perform(ev_keypress, vk_escape);
+        if (usar_toque) {
+            // pausa pelo botao da tela, e continua pelo botao da tela de pausa
+            if (tempo_sala == 90) {
+                var _bp = toque_botoes().pausa;
+                bot_dedos[4] = [_bp.x, _bp.y];
+            } else {
+                var _rc = toque_botoes_pausa().continuar;
+                bot_dedos[4] = [(_rc[0] + _rc[2]) / 2, (_rc[1] + _rc[3]) / 2];
+            }
+        } else {
+            with (_p) {
+                event_perform(ev_keypress, vk_escape);
+            }
         }
     }
     if (tempo_sala == 105) {
@@ -607,9 +626,7 @@ if (_alvo != noone && !_ameacado && !_quer_morrer) {
                             bot_mira_x = _alvo.x;
                             bot_mira_y = _alvo.y;
                         } else {
-                            with (_p) {
-                                event_perform(ev_keypress, ord("J"));
-                            }
+                            bater(_p);
                         }
                         segurar_frames = 70;
                         bot_segurar = true;
@@ -631,9 +648,7 @@ if (_alvo != noone && !_ameacado && !_quer_morrer) {
                     bot_mira_x = _alvo.x;
                     bot_mira_y = _alvo.y;
                 } else {
-                    with (_p) {
-                        event_perform(ev_keypress, ord("J"));
-                    }
+                    bater(_p);
                 }
                 // animacao (12) + carga (30) + folga para as micro-pausas
                 if (carregar) {
@@ -715,6 +730,9 @@ bot_h = _mh;
 bot_v = _mv;
 mov_h = _mh;
 mov_v = _mv;
+if (usar_toque) {
+    toque_sintetizar(_mh, _mv);
+}
 
 if (diag && tempo_sala mod 60 == 0) {
     log("DIAG", "p=" + string(round(_p.x)) + "," + string(round(_p.y)) + " alvo=" + ((_alvo != noone) ? object_get_name(_alvo.object_index) + "@" + string(round(_alvo.x)) + "," + string(round(_alvo.y)) + " st=" + string(_alvo.state) : "saida")
