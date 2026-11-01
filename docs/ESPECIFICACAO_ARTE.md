@@ -49,19 +49,25 @@ Animações necessárias pro jogador:
 
 ## Inimigos
 
-Ainda usando placeholder (quadrado colorido) — arte real é a prioridade atual da equipe.
+Medido nos sprites que estão no jogo. Eles podem variar de tamanho e de quadros, desde que tenham as 4 direções.
 
-**Seguir a mesma convenção do jogador** (40x48 por quadro, grade de 4 direções, origem centralizada) pra manter consistência visual e facilitar a importação. Se um inimigo específico for maior/menor que o padrão, avisar antes pra ajustar a máscara de colisão no código.
-
-Cada inimigo precisa de, no mínimo, estas poses/animações (o inimigo já tem uma máquina de estados no código que espera essas fases):
-
-| Estado no jogo | O que a arte precisa comunicar |
+| Item | Valor |
 |---|---|
-| Patrulha / perseguição | Andando normalmente (like o Walk do jogador) |
-| Aviso de ataque (telegraph) | Pose de preparação clara e distinta — o jogador precisa perceber que um ataque vai vir |
-| Atacando | Pose de golpe/ataque de fato |
+| Tamanho do quadro | **64 x 64 px**, com o boneco no centro (chefe: 128 x 128) |
+| Origem | Centro do quadro |
+| Formato | Um PNG por animação, com fundo transparente |
+| Ordem das linhas | **Baixo, esquerda, direita, cima** |
 
-Recomendo: 4 quadros pra andar, 2-3 pra aviso, 2-4 pra ataque — mas pode ajustar, só me avisar a contagem final de cada spritesheet antes de eu configurar no jogo.
+| Animação | Quadros por direção | Exemplo |
+|---|---|---|
+| Andando | 3 nos antigos (esqueleto, ghoul, wight), 8 nos novos | `spr_arqueiro_andar`: 512 x 256 px |
+| Pose de ataque (opcional) | Quantos vierem | `spr_arqueiro_tiro`: 13 quadros, 832 x 256 px |
+
+No código, cada inimigo diz o que usa no `Create`: `walk_sprite`, `walk_frames`, `ataque_sprite` e `ataque_frames`. A pose avança durante o aviso e termina no golpe. Sem pose, o inimigo continua no quadro de andar.
+
+Pacote em outro tamanho ou ordem também serve: `tools/gerar_sprites_lpc.py` mostra como converter. Elite não precisa de arte própria: é anel, cor e tamanho, em `scr_inimigos`.
+
+**Licença:** o jogo é público. Anote autor, origem e licença em `docs/CREDITOS_ASSETS.md` no mesmo PR. Pacote de RPG Maker costuma limitar o uso ao próprio RPG Maker, e nada pode vir de jogo comercial.
 
 ## Efeitos de ataque (slash/hitbox visual)
 
@@ -109,6 +115,6 @@ Manter o mesmo estilo já usado na arte atual (guerreiro de costas, capa vermelh
 ## Checklist rápido pra cada entrega
 
 - [ ] PNG com fundo transparente (exceto mapas e telas de menu, que são opacos)
-- [ ] Sprites de personagem/inimigo em grade 40x48 por quadro, 4 linhas (esquerda/direita/cima/baixo)
+- [ ] Jogador em grade de 40 x 48 por quadro, com linhas esquerda, direita, cima, baixo. Inimigo em grade de 64 x 64, com linhas baixo, esquerda, direita, cima
 - [ ] Confirmar contagem de quadros por animação antes de enviar
 - [ ] Manter o tom sombrio/gótico e a mesma escala de pixel entre todas as artes
