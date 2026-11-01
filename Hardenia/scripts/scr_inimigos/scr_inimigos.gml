@@ -17,6 +17,8 @@
 //   duracao  frames em que a zona fica na tela depois do golpe
 //   acerto   frames em que ela machuca, contados do inicio da duracao
 //   recarga  frames parado depois do golpe
+//   avanco   px por frame que o inimigo anda para a frente enquanto o golpe acerta
+//            (bote); 0 = fica parado
 
 // a zona e um poligono: circulo e arco viram varios lados retos, e o acerto testa
 // esse mesmo poligono. cx,cy e o meio da forma; ox,oy e de onde o golpe saiu
