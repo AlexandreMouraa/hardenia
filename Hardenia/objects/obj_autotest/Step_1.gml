@@ -581,84 +581,65 @@ if (_quer_morrer && _alvo != noone && (_esperando_grupo || point_distance(_p.x, 
 
 // ---------- ataque: vira para o alvo e bate quando ele esta no alcance ----------
 if (_alvo != noone && !_ameacado && !_quer_morrer) {
-    var _dx = _alvo.x - _p.x;
-    var _dy = _alvo.y - _p.y;
-    var _fh = (abs(_dx) > 16) ? sign(_dx) : 0;
-    var _fv = (abs(_dy) > 16) ? sign(_dy) : 0;
-    if (_fh == 0 && _fv == 0) {
-        _fv = 1;
-    }
-    var _ax = _p.x + _fh * 32;
-    var _ay = _p.y + _fv * 32;
-    if (usar_mouse) {
-        // mesma conta do golpe com mira (obj_player, golpear): alcance de 32
-        // nas retas, ate 45 nas diagonais
-        var _ang = point_direction(_p.x, _p.y, _alvo.x, _alvo.y);
-        var _cx = lengthdir_x(1, _ang);
-        var _cy = lengthdir_y(1, _ang);
-        var _k = 32 / max(abs(_cx), abs(_cy));
-        _ax = _p.x + _cx * _k;
-        _ay = _p.y + _cy * _k;
-    }
+    // mesma conta do golpe (obj_player, golpear): vira sozinho para o inimigo, com
+    // alcance de 32 nas retas e ate 45 nas diagonais
+    var _mira = _p.mira_alvo();
+    var _ang = (_mira != noone) ? point_direction(_p.x, _p.y, _mira.x, _mira.y) : point_direction(0, 0, _p.face_h, _p.face_v);
+    var _cx = lengthdir_x(1, _ang);
+    var _cy = lengthdir_y(1, _ang);
+    var _k = 32 / max(abs(_cx), abs(_cy));
+    var _ax = _p.x + _cx * _k;
+    var _ay = _p.y + _cy * _k;
     if (rectangle_in_rectangle(_alvo.bbox_left, _alvo.bbox_top, _alvo.bbox_right, _alvo.bbox_bottom, _ax - 32, _ay - 32, _ax + 32, _ay + 32) > 0) {
-        if (usar_mouse || (_p.face_h == _fh && _p.face_v == _fv)) {
-            _mh = 0;
-            _mv = 0;
-            if (_p.attack_cooldown <= 0 && segurar_frames <= 0) {
-                // golpe que nao tira vida: alvo do outro lado de uma parede, no
-                // limite do alcance (a conta acima tem 1 px a mais que a hitbox
-                // real). Depois de 5 seguidos, sai dali como se tivesse travado
-                if (_alvo.id == alvo_golpeado && _alvo.hp == hp_golpeado) {
-                    golpes_vazios += 1;
-                } else {
-                    golpes_vazios = 0;
-                }
-                alvo_golpeado = _alvo.id;
-                hp_golpeado = _alvo.hp;
-                if (_alvo.escudo) {
-                    // o golpe comum nao tira vida do escudo: gira, ou segura ate a carga encher
-                    golpes_vazios = 0;
-                    if (_p.especial_recarga <= 0) {
-                        bot_especial = true;
-                    } else {
-                        if (usar_mouse) {
-                            bot_clique = true;
-                            bot_mira_x = _alvo.x;
-                            bot_mira_y = _alvo.y;
-                        } else {
-                            bater(_p);
-                        }
-                        segurar_frames = 70;
-                        bot_segurar = true;
-                    }
-                } else if (usar_especial && _p.especial_recarga <= 0) {
+        _mh = 0;
+        _mv = 0;
+        if (_p.attack_cooldown <= 0 && segurar_frames <= 0) {
+            // golpe que nao tira vida: alvo do outro lado de uma parede, no
+            // limite do alcance (a conta acima tem 1 px a mais que a hitbox
+            // real). Depois de 5 seguidos, sai dali como se tivesse travado
+            if (_alvo.id == alvo_golpeado && _alvo.hp == hp_golpeado) {
+                golpes_vazios += 1;
+            } else {
+                golpes_vazios = 0;
+            }
+            alvo_golpeado = _alvo.id;
+            hp_golpeado = _alvo.hp;
+            if (_alvo.escudo) {
+                // o golpe comum nao tira vida do escudo: gira, ou segura ate a carga encher
+                golpes_vazios = 0;
+                if (_p.especial_recarga <= 0) {
                     bot_especial = true;
-                } else if (usar_estocada && _p.dash_charges > 0) {
-                    bot_dash = true;
-                    estocar_em = 2;
-                } else if (golpes_vazios >= 5) {
-                    log("travado", "golpes no vazio x=" + string(round(_p.x)) + " y=" + string(round(_p.y)));
-                    golpes_vazios = 0;
-                    desvio_frames = 20;
-                    desvio_h = choose(-1, 1);
-                    desvio_v = choose(-1, 0, 1);
-                    forcar_caminho = 120;
-                } else if (usar_mouse) {
-                    bot_clique = true;
-                    bot_mira_x = _alvo.x;
-                    bot_mira_y = _alvo.y;
                 } else {
-                    bater(_p);
-                }
-                // animacao (12) + carga (30) + folga para as micro-pausas
-                if (carregar) {
+                    if (usar_mouse) {
+                        bot_clique = true;
+                    } else {
+                        bater(_p);
+                    }
                     segurar_frames = 70;
                     bot_segurar = true;
                 }
+            } else if (usar_especial && _p.especial_recarga <= 0) {
+                bot_especial = true;
+            } else if (usar_estocada && _p.dash_charges > 0) {
+                bot_dash = true;
+                estocar_em = 2;
+            } else if (golpes_vazios >= 5) {
+                log("travado", "golpes no vazio x=" + string(round(_p.x)) + " y=" + string(round(_p.y)));
+                golpes_vazios = 0;
+                desvio_frames = 20;
+                desvio_h = choose(-1, 1);
+                desvio_v = choose(-1, 0, 1);
+                forcar_caminho = 120;
+            } else if (usar_mouse) {
+                bot_clique = true;
+            } else {
+                bater(_p);
             }
-        } else {
-            _mh = _fh;
-            _mv = _fv;
+            // animacao (12) + carga (30) + folga para as micro-pausas
+            if (carregar) {
+                segurar_frames = 70;
+                bot_segurar = true;
+            }
         }
     }
 }

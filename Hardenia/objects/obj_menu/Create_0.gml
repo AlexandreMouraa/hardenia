@@ -15,7 +15,7 @@ if (!instance_exists(obj_autotest) && !variable_global_exists("tela_cheia_aplica
     window_set_fullscreen(true);
 }
 
-// no menu o cursor do sistema volta (no jogo quem aparece e a mira)
+// no menu o cursor do sistema volta (no jogo ele fica escondido)
 window_set_cursor(cr_default);
 
 // cada morte conta uma tentativa; a run inteira comeca aqui

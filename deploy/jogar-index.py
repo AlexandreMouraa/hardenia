@@ -8,8 +8,8 @@
   a esquerda (em cima ficam o HUD e o aviso de F11 do menu). Sao div
   sem foco de proposito: um <button> focado dispararia de novo com o Espaco,
   que e o dash;
-- clique direito em cima do jogo nao abre o menu do navegador (o jogo usa o
-  mouse para mirar e atacar);
+- clique direito em cima do jogo nao abre o menu do navegador (o clique direito
+  e o golpe especial);
 - no toque: sem zoom, rolagem, selecao de texto ou menu de segurar o dedo, que
   atrapalhariam o direcional e os botoes da tela. Os cantos somem, porque o
   link ficaria embaixo do polegar esquerdo.

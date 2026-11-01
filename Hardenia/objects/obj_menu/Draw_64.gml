@@ -17,7 +17,7 @@ draw_text_transformed(_w / 2, _h - 66 * _esc, "ENTER, CLIQUE OU TOQUE PARA INICI
 draw_set_alpha(1);
 
 draw_set_color(c_ltgray);
-draw_text_transformed(_w / 2, _h - 38 * _esc, "WASD / SETAS: mover    MOUSE: mirar    CLIQUE ou J: atacar (3x: combo)    ESPACO: dash    ESC: pausar", _esc * 0.8, _esc * 0.8, 0);
+draw_text_transformed(_w / 2, _h - 38 * _esc, "WASD / SETAS: mover    CLIQUE ou J: atacar (3x: combo)    ESPACO: dash    ESC: pausar", _esc * 0.8, _esc * 0.8, 0);
 draw_text_transformed(_w / 2, _h - 20 * _esc, "SEGURAR O ATAQUE: golpe carregado    ATACAR NO DASH: estocada    CLIQUE DIREITO ou K: especial", _esc * 0.8, _esc * 0.8, 0);
 
 draw_set_halign(fa_right);

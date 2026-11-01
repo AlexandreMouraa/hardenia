@@ -268,27 +268,6 @@ if (is_dead) {
     }
 }
 
-// mira do mouse, no lugar do cursor do sistema (escondido no jogo). Fraca
-// enquanto o jogador ataca pelo teclado: mostra que o mouse tambem mira
-if (!venceu && mostra_mira()) {
-    var _m = mira_alvo();
-    var _cam = view_camera[0];
-    var _gx = (_m[0] - camera_get_view_x(_cam)) * _w / camera_get_view_width(_cam);
-    var _gy = (_m[1] - camera_get_view_y(_cam)) * _h / camera_get_view_height(_cam);
-    var _r = 7 * _esc;
-    draw_set_alpha(global.mira_mouse ? 0.95 : 0.45);
-    draw_set_color(make_colour_rgb(230, 40, 40));
-    draw_circle(_gx, _gy, _r, true);
-    draw_circle(_gx, _gy, _r + 1, true);
-    draw_line_width(_gx - _r * 1.8, _gy, _gx - _r * 0.6, _gy, 2 * _esc);
-    draw_line_width(_gx + _r * 0.6, _gy, _gx + _r * 1.8, _gy, 2 * _esc);
-    draw_line_width(_gx, _gy - _r * 1.8, _gx, _gy - _r * 0.6, 2 * _esc);
-    draw_line_width(_gx, _gy + _r * 0.6, _gx, _gy + _r * 1.8, 2 * _esc);
-    draw_set_color(c_white);
-    draw_circle(_gx, _gy, 1.5 * _esc, false);
-    draw_set_alpha(1);
-}
-
 if (global.toque_ativo && !venceu && !is_dead && !global.game_paused && !instance_exists(obj_mapa)) {
     toque_desenhar(dash_charges > 0, especial_recarga <= 0);
     draw_set_halign(fa_center);
@@ -317,7 +296,7 @@ if (global.game_paused) {
     draw_text_transformed(_w / 2, _h / 2, "WASD / SETAS: mover    CLIQUE ou J: atacar (3 seguidos: combo)    ESPACO: dash", _esc, _esc, 0);
     draw_text_transformed(_w / 2, _h / 2 + 22 * _esc, "SEGURAR O ATAQUE: golpe carregado    ATACAR NO DASH: estocada    CLIQUE DIREITO ou K: especial", _esc, _esc, 0);
     draw_set_color(c_ltgray);
-    draw_text_transformed(_w / 2, _h / 2 + 42 * _esc, "Atacando com o clique, o golpe vai para onde o mouse aponta; com J, para onde voce anda", _esc * 0.75, _esc * 0.75, 0);
+    draw_text_transformed(_w / 2, _h / 2 + 42 * _esc, "O golpe vira sozinho para o inimigo mais perto", _esc * 0.85, _esc * 0.85, 0);
     draw_set_color(c_white);
     draw_text_transformed(_w / 2, _h / 2 + 62 * _esc, "ESC: CONTINUAR    M: VOLTAR AO MENU", _esc, _esc, 0);
     }

@@ -108,29 +108,29 @@ cancelar_carga = function() {
     carga = 0;
 };
 
-// mira: atacando com o clique, o golpe vai para onde o mouse aponta, em
-// qualquer angulo; com J, para onde o jogador esta virado. Vale o ultimo dos
-// dois que o jogador usou (global: passa de uma sala para a outra)
-if (!variable_global_exists("mira_mouse")) {
-    global.mira_mouse = false;
-}
-// ponto da mira na sala; no modo -autotest -mouse, o alvo que o robo escolheu
+// mira: o golpe vira sozinho para o inimigo mais perto, com preferencia para quem esta
+// para onde o jogador anda. Clique, J e toque seguem a mesma regra; sem ninguem perto, o
+// golpe vai para onde o jogador esta virado. 140 px: um pouco alem do alcance do golpe forte
+mira_raio = 140;
+golpe_mirado = false; // o ultimo golpe virou para um inimigo
 mira_alvo = function() {
-    if (global.toque_ativo) {
-        // no toque, a mira e o inimigo mais perto (obj_player, Step)
-        var _perto = instance_nearest(x, y, obj_enemy);
-        return (_perto != noone) ? [_perto.x, _perto.y] : [x + lengthdir_x(32, ataque_dir), y + lengthdir_y(32, ataque_dir)];
+    var _rumo = point_direction(0, 0, face_h, face_v);
+    var _melhor = noone;
+    var _nota = infinity;
+    with (obj_enemy) {
+        var _d = point_distance(other.x, other.y, x, y);
+        if (_d < other.mira_raio) {
+            // quem esta de costas para o rumo conta como ate 1,5 vez mais longe
+            var _n = _d * (1 + 0.5 * abs(angle_difference(_rumo, point_direction(other.x, other.y, x, y))) / 180);
+            if (_n < _nota && collision_line(other.x, other.y, x, y, obj_wall, false, true) == noone) {
+                _nota = _n;
+                _melhor = id;
+            }
+        }
     }
-    if (instance_exists(obj_autotest)) {
-        return [obj_autotest.bot_mira_x, obj_autotest.bot_mira_y];
-    }
-    return [mouse_x, mouse_y];
+    return _melhor;
 };
-// a mira aparece com mouse de verdade, ou no robo so com -mouse
-mostra_mira = function() {
-    return !global.toque_ativo && (!instance_exists(obj_autotest) || obj_autotest.usar_mouse);
-};
-// cursor do sistema escondido no jogo: quem mostra o mouse e a mira (Draw GUI)
+// cursor do sistema escondido no jogo: o golpe nao depende do mouse
 window_set_cursor(cr_none);
 
 // tela de vitoria: manda o nome ao ranking. Sem nome, pula o ranking
@@ -160,9 +160,10 @@ golpear = function(_carregado = false) {
     var _forte = (golpe_atual == 3);
     var _alcance = _forte ? 36 : 32;
     var _dir = point_direction(0, 0, face_h, face_v);
-    if (global.mira_mouse) {
-        var _m = mira_alvo();
-        _dir = point_direction(x, y, _m[0], _m[1]);
+    var _alvo = mira_alvo();
+    golpe_mirado = (_alvo != noone);
+    if (golpe_mirado) {
+        _dir = point_direction(x, y, _alvo.x, _alvo.y);
         // o dash parado tambem sai para o lado do golpe
         face_h = round(lengthdir_x(1, _dir));
         face_v = round(lengthdir_y(1, _dir));
@@ -177,13 +178,13 @@ golpear = function(_carregado = false) {
     } else {
         facing_dir = (_dir < 180) ? 2 : 3;
     }
-    // teclado: 32 em cada eixo da direcao (45 nas diagonais). Mouse: mesmo
-    // alcance em qualquer angulo. A conta do mouse daria o mesmo no teclado,
-    // mas com resto de arredondamento (32,000000000000004), e o robo mostrou
-    // que isso muda a run; no teclado fica a conta exata
+    // sem alvo: 32 em cada eixo da direcao (45 nas diagonais). Com alvo: mesmo
+    // alcance em qualquer angulo. A conta com alvo daria o mesmo sem ele, mas
+    // com resto de arredondamento (32,000000000000004), e o robo mostrou que
+    // isso muda a run; sem alvo fica a conta exata
     var _gx = x + face_h * _alcance;
     var _gy = y + face_v * _alcance;
-    if (global.mira_mouse) {
+    if (golpe_mirado) {
         var _cx = lengthdir_x(1, _dir);
         var _cy = lengthdir_y(1, _dir);
         var _k = _alcance / max(abs(_cx), abs(_cy));
@@ -230,6 +231,10 @@ golpear = function(_carregado = false) {
         combo_janela = 34;
         attack_cooldown = 20;
         attack_anim_duration = 12;
+        // alvo na beira do alcance: passo curto ate ele, para o golpe nao passar raspando
+        if (golpe_mirado && point_distance(x, y, _alvo.x, _alvo.y) > 48) {
+            ataque_impulso = 3;
+        }
     }
     is_attacking = true;
     attack_anim_timer = attack_anim_duration;
