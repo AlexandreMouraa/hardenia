@@ -2,13 +2,18 @@
 //   "rastro": copia do sprite do jogador no dash, brilhante, sumindo
 //   "risco":  linhas de velocidade do dash (ver fx_risco)
 //   "anel" e "poeira": arrancada do dash (ver fx_dash_arrancada)
-//   "arco":   arco de corte da espada, na direcao do golpe
+//   "arco":   arco de corte, na direcao do golpe
+//   "corte":  risco de luz em cima de quem levou o golpe (ver fx_corte)
 //   "estocada": ponta do golpe que sai do dash
 //   "faisca": linhas saindo do ponto de impacto (ver fx_faiscas)
 tipo = "";
 vida_max = 10;
 vida = vida_max;
 cor = c_white;
+// arco: cor da borda de fora
+borda = c_white;
+// acompanha quem golpeou, que continua andando durante o golpe
+dono = noone;
 dir = 0;
 raio = 34;
 // arco: varre no sentido 1 (anti-horario) ou -1, "abertura" graus

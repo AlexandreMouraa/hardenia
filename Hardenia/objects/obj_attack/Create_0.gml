@@ -38,6 +38,7 @@ acertar = function(_enemy) {
         if (!_enemy.leve) {
             impacto(forte ? 6 : 5, forte ? 8 : 6);
             fx_faiscas(_enemy.x, _enemy.y, _dir_golpe, c_red, 9);
+            fx_corte(_enemy.x, _enemy.y, _dir_golpe, make_colour_rgb(255, 120, 90), forte ? 56 : 46);
         }
         with (instance_create_layer(_enemy.x, _enemy.y, "Instances", obj_fx_morte)) {
             sprite_index = _enemy.sprite_index;
@@ -50,9 +51,11 @@ acertar = function(_enemy) {
         if (forte) {
             impacto(4, 4);
             fx_faiscas(_enemy.x, _enemy.y, _dir_golpe, make_colour_rgb(255, 200, 120), 8);
+            fx_corte(_enemy.x, _enemy.y, _dir_golpe, make_colour_rgb(255, 170, 80), 50);
         } else {
             impacto(2, 2);
             fx_faiscas(_enemy.x, _enemy.y, _dir_golpe, c_white, 5);
+            fx_corte(_enemy.x, _enemy.y, _dir_golpe, make_colour_rgb(180, 205, 240), 38);
         }
         if (forte) {
             // terceiro golpe: o inimigo desliza para longe e freia (obj_enemy,

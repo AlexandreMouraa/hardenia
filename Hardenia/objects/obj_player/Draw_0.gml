@@ -12,9 +12,17 @@ var _de_lado = 1 - 0.6 * _e;
 var _hx = dash_dir_x * dash_dir_x; // 1 no dash na horizontal, 0 na vertical, 0.5 na diagonal
 var _sx = lerp(_de_lado, _ao_longo, _hx);
 var _sy = lerp(_ao_longo, _de_lado, _hx);
-draw_sprite_ext(sprite_index, image_index, x, y, _sx, _sy, 0, image_blend, image_alpha);
+// o corpo vai junto com o golpe e volta, so no desenho
+var _dx = 0;
+var _dy = 0;
+if (is_attacking) {
+    var _ida = sin(pi * (1 - attack_anim_timer / attack_anim_duration)) * (golpe_atual == 3 ? 6 : 4);
+    _dx = lengthdir_x(_ida, ataque_dir);
+    _dy = lengthdir_y(_ida, ataque_dir);
+}
+draw_sprite_ext(sprite_index, image_index, x + _dx, y + _dy, _sx, _sy, 0, image_blend, image_alpha);
 if (brilho > 0) {
     gpu_set_blendmode(bm_add);
-    draw_sprite_ext(sprite_index, image_index, x, y, _sx, _sy, 0, c_white, brilho * image_alpha);
+    draw_sprite_ext(sprite_index, image_index, x + _dx, y + _dy, _sx, _sy, 0, c_white, brilho * image_alpha);
     gpu_set_blendmode(bm_normal);
 }
