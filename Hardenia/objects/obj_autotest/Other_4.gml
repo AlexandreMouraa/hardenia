@@ -45,6 +45,22 @@ if (room == Room_Menu) {
 
 log("sala_inicio", "tentativa=" + string(global.tentativas) + " inimigos=" + string(inimigos_antes));
 
+// -morrer: a frase muda conforme as mortes. O robo so morre uma vez em cada sala,
+// entao confere a escolha direto, com 6 mortes de mentira na primeira sala
+if (morrer && !frases_testadas && mapa_indice(room) >= 0) {
+    frases_testadas = true;
+    var _vistas = {};
+    for (var _f = 0; _f < 6; _f++) {
+        var _frase = frase_de_morte("obj_enemy");
+        log("frase", string(_f + 1) + " morte(s): " + _frase);
+        variable_struct_set(_vistas, _frase, true);
+    }
+    global.mortes_por_sala = {};
+    if (variable_struct_names_count(_vistas) < 4) {
+        log("FALHA_frase", "so " + string(variable_struct_names_count(_vistas)) + " frases em 6 mortes");
+    }
+}
+
 if (testar_formas) {
     if (!formas_testadas) {
         formas_testadas = true;

@@ -18,6 +18,7 @@ percebeu = {};
 // Na segunda, apanha sem morrer, para testar a vida entre salas e a cura
 morrer = false;
 salas_morreu = {};
+frases_testadas = false;
 mortes_run = 0;
 // vida: danos conta os golpes que pegaram (golpes_inimigos conta os que foram dados)
 danos = 0;

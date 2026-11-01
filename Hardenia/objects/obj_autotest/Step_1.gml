@@ -229,7 +229,7 @@ if (_p.is_dead) {
         if (_perto != noone) {
             _quem = object_get_name(_perto.object_index) + " a " + string(round(point_distance(_p.x, _p.y, _perto.x, _perto.y))) + "px";
         }
-        log("morte", "x=" + string(round(_p.x)) + " y=" + string(round(_p.y)) + " perto=" + _quem + " mortes_na_sala=" + string(mortes_sala));
+        log("morte", "x=" + string(round(_p.x)) + " y=" + string(round(_p.y)) + " perto=" + _quem + " mortes_na_sala=" + string(mortes_sala) + " frase=" + _p.frase_morte);
         if (mortes_total <= 6) {
             pedir_print("morte");
         }

@@ -189,7 +189,10 @@ if (is_dead) {
     draw_set_color(c_red);
     draw_text_transformed(_w / 2, _h / 2 - 20 * _esc, "VOCE MORREU", _esc * 3, _esc * 3, 0);
     draw_set_color(c_white);
-    draw_text_transformed(_w / 2, _h / 2 + 24 * _esc, "Cada morte ensina. A run recomeca.", _esc, _esc, 0);
+    draw_text_transformed(_w / 2, _h / 2 + 24 * _esc, frase_morte, _esc, _esc, 0);
+    draw_set_color(c_ltgray);
+    draw_text_transformed(_w / 2, _h / 2 + 46 * _esc, "A run recomeca.", _esc * 0.85, _esc * 0.85, 0);
+    draw_set_color(c_white);
 } else if (venceu) {
     draw_set_alpha(0.7);
     draw_set_color(c_black);
