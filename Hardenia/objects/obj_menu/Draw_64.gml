@@ -13,7 +13,7 @@ draw_set_halign(fa_center);
 draw_set_valign(fa_middle);
 draw_set_color(c_white);
 draw_set_alpha(_alpha);
-draw_text_transformed(_w / 2, _h - 66 * _esc, "ENTER OU CLIQUE PARA INICIAR", _esc, _esc, 0);
+draw_text_transformed(_w / 2, _h - 66 * _esc, "ENTER, CLIQUE OU TOQUE PARA INICIAR", _esc, _esc, 0);
 draw_set_alpha(1);
 
 draw_set_color(c_ltgray);

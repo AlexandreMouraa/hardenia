@@ -75,6 +75,15 @@ grupo_chegou = false;
 // e se o fluxo funciona, nao o balanceamento). Depois mede o limite do aparelho a 60 fps,
 // parado, e registra o fps a cada segundo. Rodar com -Runs 1
 usar_horda = false;
+// -toque: joga pelos controles de toque, com dedos de mentira (scr_toque), e reprova se o
+// direcional nao andar para onde o robo mandou
+usar_toque = false;
+bot_dedos = array_create(TOQUE_DEDOS, undefined);
+bot_dedos_antes = array_create(TOQUE_DEDOS, undefined);
+toque_pedido_ataque = false;
+toque_esperado_h = 0;
+toque_esperado_v = 0;
+toque_conferido = false;
 golpes = 0;
 nome_robo = "";
 // golpes seguidos que nao tiraram vida do alvo (ver Step_1, ataque)
@@ -108,6 +117,9 @@ for (var _i = 1; _i <= parameter_count(); _i++) {
     }
     if (parameter_string(_i) == "-horda") {
         usar_horda = true;
+    }
+    if (parameter_string(_i) == "-toque") {
+        usar_toque = true;
     }
 }
 for (var _i = 1; _i < parameter_count(); _i++) {
@@ -524,6 +536,45 @@ tem_caminho = function(_x1, _y1, _x2, _y2) {
     var _a = celula_livre(_x1, _y1);
     var _b = celula_livre(_x2, _y2);
     return mp_grid_path(grade, caminho, _a[0], _a[1], _b[0], _b[1], true);
+};
+
+// aperta o ataque: tecla J, ou o botao da tela no -toque
+bater = function(_p) {
+    if (usar_toque) {
+        toque_pedido_ataque = true;
+    } else {
+        with (_p) {
+            event_perform(ev_keypress, ord("J"));
+        }
+    }
+};
+
+// o que o robo decidiu neste frame, como dedos na tela. O primeiro frame do direcional so
+// encosta o polegar, como uma pessoa: ele nasce onde encostou
+toque_sintetizar = function(_mh, _mv) {
+    var _e = toque_escala();
+    var _b = toque_botoes();
+    if (_mh != 0 || _mv != 0) {
+        var _bx = 150 * _e;
+        var _by = display_get_gui_height() - 150 * _e;
+        if (bot_dedos_antes[0] == undefined) {
+            bot_dedos[0] = [_bx, _by];
+        } else {
+            bot_dedos[0] = [_bx + _mh * 40 * _e, _by + _mv * 40 * _e];
+            toque_esperado_h = _mh;
+            toque_esperado_v = _mv;
+            toque_conferido = true;
+        }
+    }
+    if (toque_pedido_ataque || bot_segurar) {
+        bot_dedos[1] = [_b.ataque.x, _b.ataque.y];
+    }
+    if (bot_dash) {
+        bot_dedos[2] = [_b.dash.x, _b.dash.y];
+    }
+    if (bot_especial) {
+        bot_dedos[3] = [_b.especial.x, _b.especial.y];
+    }
 };
 
 // habilidades de elite que apareceram: o log e o resumo mostram quantas, com um print de cada

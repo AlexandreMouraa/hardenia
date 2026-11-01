@@ -1,7 +1,18 @@
+toque_detectar();
+if (global.toque_ativo) {
+    toque_ler();
+    if (global.toque.pausa_novo && !is_dead && !venceu) {
+        event_perform(ev_keypress, vk_escape);
+    }
+}
+
 if (global.game_paused) {
-    if (keyboard_check_pressed(ord("M"))) {
+    var _pausa_toque = toque_botoes_pausa();
+    if (keyboard_check_pressed(ord("M")) || (global.toque_ativo && toque_tap_em(_pausa_toque.menu))) {
         global.game_paused = false;
         room_goto(Room_Menu);
+    } else if (global.toque_ativo && toque_tap_em(_pausa_toque.continuar)) {
+        event_perform(ev_keypress, vk_escape);
     }
     exit;
 }
@@ -19,6 +30,17 @@ if (!venceu) {
 // clique: ataque mirando no mouse (o J, em KeyPress_74, mira para onde anda).
 // Lido antes da micro-pausa, como o dash: clicar durante ela fica guardado
 var _clique = instance_exists(obj_autotest) ? obj_autotest.bot_clique : mouse_check_button_pressed(mb_left);
+if (global.toque_ativo) {
+    // o dedo na tela nao e clique: quem ataca e o botao, e o golpe vira para o inimigo perto
+    // (sem mouse nao da para mirar; 140 px: um pouco alem do alcance do golpe forte)
+    _clique = false;
+    if (global.toque.ataque_novo && !is_dead && !venceu) {
+        var _perto = instance_nearest(x, y, obj_enemy);
+        global.mira_mouse = (_perto != noone && point_distance(x, y, _perto.x, _perto.y) < 140);
+        ataque_buffer = ataque_buffer_max;
+        carga_armada = true;
+    }
+}
 if (_clique && !is_dead && !venceu) {
     global.mira_mouse = true;
     ataque_buffer = ataque_buffer_max;
@@ -27,6 +49,9 @@ if (_clique && !is_dead && !venceu) {
 
 // golpe especial (girar, no Create). Pausa e mapa ja sairam la em cima
 var _especial = instance_exists(obj_autotest) ? obj_autotest.bot_especial : (mouse_check_button_pressed(mb_right) || keyboard_check_pressed(ord("K")));
+if (global.toque_ativo) {
+    _especial = global.toque.especial_novo;
+}
 if (_especial && !is_dead && !venceu) {
     if (especial_recarga > 0) {
         especial_negado = 14;
@@ -38,6 +63,9 @@ if (_especial && !is_dead && !venceu) {
 // dash apertado fica guardado alguns frames (dash_buffer). Lido antes da
 // micro-pausa: apertar durante ela tambem vale
 var _dash_apertado = instance_exists(obj_autotest) ? obj_autotest.bot_dash : keyboard_check_pressed(vk_space);
+if (global.toque_ativo) {
+    _dash_apertado = global.toque.dash_novo;
+}
 if (_dash_apertado) {
     dash_buffer = dash_buffer_max;
 }
@@ -112,26 +140,26 @@ if (instance_exists(obj_autotest)) {
     _v = obj_autotest.bot_v;
     _enter_apertado = obj_autotest.bot_enter;
 }
+if (global.toque_ativo) {
+    _h = global.toque.h;
+    _v = global.toque.v;
+    _enter_apertado = _enter_apertado || global.toque.qualquer_novo;
+}
 
 if (venceu) {
     if (vitoria_estado == "nome") {
         vitoria_nome = nome_filtrado(keyboard_string);
         keyboard_string = vitoria_nome;
-        if (_enter_apertado) {
-            var _nome = string_trim(vitoria_nome);
-            if (_nome == "") {
-                // sem nome: pula o ranking
+        if (global.toque_ativo) {
+            // sem teclado: quem escreve e o teclado do aparelho (resposta em Other_63)
+            var _botoes_nome = toque_botoes_nome();
+            if (pedido_nome < 0 && toque_tap_em(_botoes_nome.escrever)) {
+                pedido_nome = get_string_async("Seu nome para o ranking", vitoria_nome);
+            } else if (pedido_nome < 0 && toque_tap_em(_botoes_nome.pular)) {
                 room_goto(Room_Menu);
-            } else {
-                req_vitoria = rede_post("/api/vitoria", {
-                    nome: _nome,
-                    tentativas: global.tentativas,
-                    tempo_ms: frames_para_ms(global.run_frames),
-                });
-                vitoria_estado = "enviando";
-                vitoria_nome_recusado = false;
-                vitoria_espera = 0;
             }
+        } else if (_enter_apertado) {
+            enviar_nome();
         }
     } else if (vitoria_estado == "enviando") {
         // a resposta chega no Async HTTP; sem resposta em 10 s, desiste

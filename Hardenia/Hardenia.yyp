@@ -96,6 +96,7 @@
     {"id":{"name":"spr_chefe_golpe","path":"sprites/spr_chefe_golpe/spr_chefe_golpe.yy",},},
     {"id":{"name":"spr_chefe_magia","path":"sprites/spr_chefe_magia/spr_chefe_magia.yy",},},
     {"id":{"name":"spr_zumbi_andar","path":"sprites/spr_zumbi_andar/spr_zumbi_andar.yy",},},
+    {"id":{"name":"scr_toque","path":"scripts/scr_toque/scr_toque.yy",},},
   ],
   "resourceType":"GMProject",
   "resourceVersion":"2.0",

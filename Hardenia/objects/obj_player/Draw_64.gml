@@ -187,7 +187,7 @@ if (room == room_next(room_first) && global.tentativas == 1 && tempo_na_sala < 3
     draw_set_color(c_white);
     draw_text_transformed(_w / 2, _h * 0.2, "DERROTE TODOS OS INIMIGOS PARA ABRIR O PORTAO", _esc, _esc, 0);
     draw_set_color(c_ltgray);
-    draw_text_transformed(_w / 2, _h * 0.2 + 24 * _esc, "Saia da area vermelha antes do golpe.   ESC: pausa e controles", _esc * 0.8, _esc * 0.8, 0);
+    draw_text_transformed(_w / 2, _h * 0.2 + 24 * _esc, global.toque_ativo ? "Saia da area vermelha antes do golpe.   Esquerda da tela: andar.   Direita: botoes." : "Saia da area vermelha antes do golpe.   ESC: pausa e controles", _esc * 0.8, _esc * 0.8, 0);
     draw_set_alpha(1);
 }
 
@@ -213,7 +213,7 @@ if (is_dead) {
     draw_text_transformed(_w / 2, _y, "VITORIA", _esc * 3, _esc * 3, 0);
     draw_set_color(c_white);
     draw_text_transformed(_w / 2, _y + 52 * _esc, "O ultimo guerreiro venceu em " + string(global.tentativas) + " tentativa(s), em " + tempo_texto(frames_para_ms(global.run_frames)) + ".", _esc, _esc, 0);
-    var _voltar = "PRESSIONE ENTER PARA VOLTAR AO MENU";
+    var _voltar = global.toque_ativo ? "TOQUE NA TELA PARA VOLTAR AO MENU" : "PRESSIONE ENTER PARA VOLTAR AO MENU";
 
     if (vitoria_estado == "nome") {
         draw_set_color(vitoria_nome_recusado ? c_red : c_ltgray);
@@ -225,9 +225,15 @@ if (is_dead) {
         var _cursor = (current_time div 500) mod 2 == 0 ? "_" : " ";
         draw_text_transformed(_w / 2, _y + 132 * _esc, vitoria_nome + _cursor, _esc * 1.2, _esc * 1.2, 0);
         draw_set_color(c_white);
-        draw_set_alpha(_piscar);
-        draw_text_transformed(_w / 2, _y + 172 * _esc, "ENTER: ENVIAR    (VAZIO: PULAR)", _esc * 0.9, _esc * 0.9, 0);
-        draw_set_alpha(1);
+        if (global.toque_ativo) {
+            var _botoes_nome = toque_botoes_nome();
+            toque_botao_ret(_botoes_nome.escrever);
+            toque_botao_ret(_botoes_nome.pular);
+        } else {
+            draw_set_alpha(_piscar);
+            draw_text_transformed(_w / 2, _y + 172 * _esc, "ENTER: ENVIAR    (VAZIO: PULAR)", _esc * 0.9, _esc * 0.9, 0);
+            draw_set_alpha(1);
+        }
     } else if (vitoria_estado == "enviando") {
         draw_set_color(c_ltgray);
         draw_text_transformed(_w / 2, _y + 110 * _esc, "ENVIANDO...", _esc, _esc, 0);
@@ -283,6 +289,12 @@ if (!venceu && mostra_mira()) {
     draw_set_alpha(1);
 }
 
+if (global.toque_ativo && !venceu && !is_dead && !global.game_paused && !instance_exists(obj_mapa)) {
+    toque_desenhar(dash_charges > 0, especial_recarga <= 0);
+    draw_set_halign(fa_center);
+    draw_set_valign(fa_middle);
+}
+
 if (global.game_paused) {
     draw_set_alpha(0.6);
     draw_set_color(c_black);
@@ -291,12 +303,24 @@ if (global.game_paused) {
     draw_set_color(c_white);
     draw_text_transformed(_w / 2, _h / 2 - 40 * _esc, "PAUSADO", _esc * 2, _esc * 2, 0);
     draw_set_alpha(1);
+    if (global.toque_ativo) {
+        // os controles de toque no lugar dos de teclado
+        var _botoes_pausa = toque_botoes_pausa();
+        toque_botao_ret(_botoes_pausa.continuar);
+        toque_botao_ret(_botoes_pausa.menu);
+        draw_text_transformed(_w / 2, _h / 2, "ESQUERDA DA TELA: andar    ATACAR: golpe (3 seguidos: combo)    DASH: esquiva", _esc, _esc, 0);
+        draw_text_transformed(_w / 2, _h / 2 + 22 * _esc, "SEGURAR ATACAR: golpe carregado    ATACAR NO DASH: estocada    GIRO: especial", _esc, _esc, 0);
+        draw_set_color(c_ltgray);
+        draw_text_transformed(_w / 2, _h / 2 + 42 * _esc, "O golpe vira sozinho para o inimigo mais perto", _esc * 0.85, _esc * 0.85, 0);
+        draw_set_color(c_white);
+    } else {
     draw_text_transformed(_w / 2, _h / 2, "WASD / SETAS: mover    CLIQUE ou J: atacar (3 seguidos: combo)    ESPACO: dash", _esc, _esc, 0);
     draw_text_transformed(_w / 2, _h / 2 + 22 * _esc, "SEGURAR O ATAQUE: golpe carregado    ATACAR NO DASH: estocada    CLIQUE DIREITO ou K: especial", _esc, _esc, 0);
     draw_set_color(c_ltgray);
     draw_text_transformed(_w / 2, _h / 2 + 42 * _esc, "Atacando com o clique, o golpe vai para onde o mouse aponta; com J, para onde voce anda", _esc * 0.75, _esc * 0.75, 0);
     draw_set_color(c_white);
     draw_text_transformed(_w / 2, _h / 2 + 62 * _esc, "ESC: CONTINUAR    M: VOLTAR AO MENU", _esc, _esc, 0);
+    }
     // onde voce esta no caminho ate o fim
     var _fase_mapa = mapa_indice(room);
     if (_fase_mapa >= 0) {

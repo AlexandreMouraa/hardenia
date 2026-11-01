@@ -9,7 +9,10 @@
   sem foco de proposito: um <button> focado dispararia de novo com o Espaco,
   que e o dash;
 - clique direito em cima do jogo nao abre o menu do navegador (o jogo usa o
-  mouse para mirar e atacar).
+  mouse para mirar e atacar);
+- no toque: sem zoom, rolagem, selecao de texto ou menu de segurar o dedo, que
+  atrapalhariam o direcional e os botoes da tela. Os cantos somem, porque o
+  link ficaria embaixo do polegar esquerdo.
 
 Uso: python3 -I jogar-index.py caminho/para/index.html
 """
@@ -25,6 +28,8 @@ html,body{margin:0!important;padding:0!important;width:100%;height:100%;overflow
 .hd-cantos:hover{opacity:1}
 .hd-cantos a,.hd-cantos div{color:#e9e2d6;background:rgba(21,12,13,.85);border:1px solid #3a1d1f;border-radius:4px;padding:7px 10px;text-decoration:none;cursor:pointer;user-select:none}
 :fullscreen .hd-cantos{display:none}
+html,body,canvas{touch-action:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+@media (pointer:coarse){.hd-cantos{display:none}}
 </style>"""
 
 CORPO = """<div class="hd-cantos">
@@ -51,6 +56,10 @@ CORPO = """<div class="hd-cantos">
     ctx.textAlign = "center";
     ctx.fillText("Carregando " + Math.round(p * 100) + "%", w / 2, y - Math.round(h * 0.018));
   }
+
+  // o Safari ignora o touch-action no gesto de pinca
+  document.addEventListener("gesturestart", function (e) { e.preventDefault(); });
+  document.addEventListener("touchmove", function (e) { e.preventDefault(); }, { passive: false });
 
   document.addEventListener("contextmenu", function (e) {
     if (e.target.tagName === "CANVAS") e.preventDefault();
