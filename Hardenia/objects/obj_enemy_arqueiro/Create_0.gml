@@ -1,5 +1,6 @@
 event_inherited();
-// ataca de longe: para, mira com aviso em linha e atira. Sprite do LPC (CREDITOS_ASSETS)
+// ataca de longe: para, puxa o arco e atira. Sem linha no chao: quem avisa e a pose, o brilho
+// na ponta da flecha e o som do arco. Sprite do LPC (CREDITOS_ASSETS)
 walk_sprite = spr_arqueiro_andar;
 walk_frames = 8;
 anim_speed = 5;
@@ -8,6 +9,9 @@ sprite_index = walk_sprite;
 mask_index = spr_enemy_walk_skeleton;
 ataque_sprite = spr_arqueiro_tiro;
 ataque_frames = 13;
+// na folha, a flecha sai no quadro 9: o aviso vai ate o 8, e o tiro comeca dali
+ataque_solta = 9;
+zona_visivel = false;
 // fragil e lento: chegar nele resolve, entao o risco e atravessar a linha de tiro
 hp = 2;
 move_speed = 1.3;
@@ -29,6 +33,21 @@ ataque = {
 // a linha para na parede: o aviso mostra ate onde a flecha vai de verdade
 ao_mirar = function() {
     ataque.alcance = linha_ate_parede(x, y, attack_dir, 480);
+};
+// brilho na ponta da flecha, logo antes do tiro: mostra para onde e quando
+ao_desenhar = function() {
+    if (state == 1 && state_timer <= 16) {
+        var _b = 1 - state_timer / 16;
+        var _px = x + lengthdir_x(30, attack_dir);
+        var _py = y + lengthdir_y(30, attack_dir);
+        var _r = 3 + 7 * _b;
+        gpu_set_blendmode(bm_add);
+        draw_set_alpha(_b);
+        draw_line_width_colour(_px - _r, _py, _px + _r, _py, 2, c_white, c_white);
+        draw_line_width_colour(_px, _py - _r, _px, _py + _r, 2, c_white, c_white);
+        draw_set_alpha(1);
+        gpu_set_blendmode(bm_normal);
+    }
 };
 disparar = function() {
     var _nome = object_get_name(object_index);

@@ -29,6 +29,8 @@ ao_voltar = undefined; // roda quando a recarga acaba (o chefe troca de ataque)
 // pose de ataque, para quem tem: folha com ataque_frames por linha, aviso e golpe nela
 ataque_sprite = noone;
 ataque_frames = 0;
+// quadro em que o golpe sai, para folha que continua depois dele. -1 = o aviso vai ate o fim
+ataque_solta = -1;
 // roda na hora de mirar, com attack_dir ja definido (o arqueiro corta a linha na parede)
 ao_mirar = undefined;
 // desenha por cima do corpo (o brilho na ponta da flecha, no arqueiro)
