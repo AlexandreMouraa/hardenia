@@ -69,6 +69,7 @@
     {"id":{"name":"snd_morte_inimigo","path":"sounds/snd_morte_inimigo/snd_morte_inimigo.yy",},},
     {"id":{"name":"snd_morte_jogador","path":"sounds/snd_morte_jogador/snd_morte_jogador.yy",},},
     {"id":{"name":"snd_dash_negado","path":"sounds/snd_dash_negado/snd_dash_negado.yy",},},
+    {"id":{"name":"spr_mascara_fase01","path":"sprites/spr_mascara_fase01/spr_mascara_fase01.yy",},},
   ],
   "resourceType":"GMProject",
   "resourceVersion":"2.0",

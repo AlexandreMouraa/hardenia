@@ -1,3 +1,6 @@
+// a sala com mascara de colisao cria as paredes aqui (scr_mapa)
+paredes_da_mascara();
+
 move_speed = 3;
 
 dash_speed = 7.8;

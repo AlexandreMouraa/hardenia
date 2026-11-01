@@ -92,6 +92,8 @@ A direção agora é sair das arenas abertas e ir para corredores, túneis e cam
 | Recortes nas paredes | evitar dentes menores que 32 px | Contorno liso evita prender jogador e inimigo; o jogo já escorrega o jogador em quinas de até 6 px |
 
 - **Máscara de colisão**: uma segunda imagem do mesmo tamanho do mapa, com o que é parede pintado de **preto** e o chão de **branco**. Com ela as paredes entram no jogo automaticamente, sem posicionar bloco por bloco.
+  - Para ligar: importe como sprite (`spr_mascara_<fase>`, origem 0,0) e acrescente a sala em `global.mascaras_sala`, no `scr_mapa`. O `passo` diz de quantos em quantos pixels ela é lida: 4 serve para quinas retas, e 8 pesa menos em contorno de caverna.
+  - O robô mostra quantas paredes saíram (`paredes=` no log): quanto menos, mais leve. Acima de umas 400, aumente o `passo` ou alise o contorno.
 - Os inimigos hoje perseguem em linha reta; em túnel eles vão precisar contornar parede (mudança no código, já prevista no roteiro). Não precisa ajustar nada na arte por causa disso.
 - Cada fase nova também entra no **mapa de progresso** do jogo (a tela entre as fases): mandar o nome da fase junto.
 

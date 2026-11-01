@@ -64,6 +64,104 @@ function frase_de_morte(_causa) {
     return "Cada morte ensina.";
 }
 
+// Colisao por imagem: a sala abaixo tira as paredes de uma mascara do tamanho dela (preto =
+// parede), em vez de obj_wall posicionados a mao. passo: de quantos em quantos pixels da
+// imagem ela e lida; contorno mais detalhado que isso vira degrau. Veja ESPECIFICACAO_ARTE
+global.mascaras_sala = [
+    { sala: Room1, sprite: spr_mascara_fase01, passo: 4 },
+];
+// retangulos ja lidos, por sprite: ler pixel e caro, e morrer recria a sala
+global.mascaras_lidas = {};
+
+// le a imagem uma vez e junta os pontos pretos em retangulos: primeiro os trechos de cada
+// linha, depois o trecho igual ao da linha de cima vira um retangulo so. Menos obj_wall e
+// menos conta em todo place_meeting. Devolve [x, y, largura, altura], em pixels da sala
+function mascara_ler(_spr, _passo) {
+    var _w = sprite_get_width(_spr);
+    var _h = sprite_get_height(_spr);
+    var _surf = surface_create(_w, _h);
+    surface_set_target(_surf);
+    draw_clear(c_white);
+    draw_sprite(_spr, 0, 0, 0);
+    surface_reset_target();
+    var _buf = buffer_create(_w * _h * 4, buffer_fixed, 1);
+    buffer_get_surface(_buf, _surf, 0);
+    surface_free(_surf);
+
+    var _sx = room_width / _w;
+    var _sy = room_height / _h;
+    var _prontos = [];
+    var _abertos = []; // [coluna inicial, coluna final, linha inicial]
+    var _colunas = _w div _passo;
+    var _linhas = _h div _passo;
+    for (var _j = 0; _j <= _linhas; _j++) {
+        var _novos = [];
+        var _i = 0;
+        var _a = 0;
+        while (_j < _linhas && _i < _colunas) {
+            // o pixel do meio da celula; verde porque a ordem das cores muda entre Windows e navegador
+            var _pos = ((_j * _passo + _passo div 2) * _w + _i * _passo + _passo div 2) * 4 + 1;
+            if (buffer_peek(_buf, _pos, buffer_u8) >= 128) {
+                _i += 1;
+                continue;
+            }
+            var _ini = _i;
+            while (_i < _colunas && buffer_peek(_buf, ((_j * _passo + _passo div 2) * _w + _i * _passo + _passo div 2) * 4 + 1, buffer_u8) < 128) {
+                _i += 1;
+            }
+            // mesmo trecho da linha de cima: continua aquele retangulo
+            var _linha_ini = _j;
+            while (_a < array_length(_abertos) && _abertos[_a][1] <= _ini) {
+                array_push(_prontos, _abertos[_a]);
+                _abertos[_a][3] = _j;
+                _a += 1;
+            }
+            if (_a < array_length(_abertos) && _abertos[_a][0] == _ini && _abertos[_a][1] == _i) {
+                _linha_ini = _abertos[_a][2];
+                _a += 1;
+            }
+            array_push(_novos, [_ini, _i, _linha_ini, 0]);
+        }
+        while (_a < array_length(_abertos)) {
+            _abertos[_a][3] = _j;
+            array_push(_prontos, _abertos[_a]);
+            _a += 1;
+        }
+        _abertos = _novos;
+    }
+    buffer_delete(_buf);
+
+    var _saida = [];
+    for (var _r = 0; _r < array_length(_prontos); _r++) {
+        var _p = _prontos[_r];
+        array_push(_saida, [_p[0] * _passo * _sx, _p[2] * _passo * _sy, (_p[1] - _p[0]) * _passo * _sx, (_p[3] - _p[2]) * _passo * _sy]);
+    }
+    return _saida;
+}
+
+// chamada no Create do obj_player, que nasce primeiro: as paredes ja existem quando o resto
+// da sala comecar
+function paredes_da_mascara() {
+    for (var _m = 0; _m < array_length(global.mascaras_sala); _m++) {
+        var _def = global.mascaras_sala[_m];
+        if (_def.sala == room) {
+            var _nome = sprite_get_name(_def.sprite);
+            if (!variable_struct_exists(global.mascaras_lidas, _nome)) {
+                variable_struct_set(global.mascaras_lidas, _nome, mascara_ler(_def.sprite, _def.passo));
+            }
+            var _ret = variable_struct_get(global.mascaras_lidas, _nome);
+            for (var _r = 0; _r < array_length(_ret); _r++) {
+                var _q = _ret[_r];
+                with (instance_create_layer(_q[0], _q[1], "Instances", obj_wall)) {
+                    image_xscale = _q[2] / sprite_width;
+                    image_yscale = _q[3] / sprite_height;
+                }
+            }
+            return;
+        }
+    }
+}
+
 // posicao da sala no caminho; -1 fora dele (menu)
 function mapa_indice(_sala) {
     for (var _i = 0; _i < array_length(global.mapa_fases); _i++) {
