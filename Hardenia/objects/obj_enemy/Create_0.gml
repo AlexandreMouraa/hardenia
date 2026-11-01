@@ -45,6 +45,8 @@ disparar = function() {
 };
 // a zona desenhada no chao. Quem nao tem (arqueiro) avisa so com a pose
 zona_visivel = true;
+// o golpe e uma bomba caindo no meio da zona (conjurador e magia do chefe)
+bomba = false;
 // frames do "!" depois de acordar
 alerta = 0;
 attack_damage_dealt = false;

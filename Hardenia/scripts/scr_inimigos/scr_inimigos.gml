@@ -146,6 +146,36 @@ function fx_golpe_inimigo(_ataque, _x, _y, _dir) {
     }
 }
 
+// ---------- bomba que cai no circulo marcado. Tudo so no desenho: quem acerta e a zona ----------
+// _t vai de 0 (aviso comecando) a 1 (hora do golpe). Altura em pixels da camera: comeca fora da
+// tela e acelera. Cai no meio da zona exatamente quando o aviso acaba
+#macro BOMBA_ALTURA 440
+
+function bomba_altura(_t) {
+    return BOMBA_ALTURA * (1 - _t * _t);
+}
+
+// a sombra cresce: mostra onde ela vai cair antes de a bomba aparecer na tela
+function bomba_sombra_desenhar(_x, _y, _t) {
+    var _r = 6 + 20 * _t * _t;
+    draw_set_color(c_black);
+    draw_set_alpha(0.25 + 0.35 * _t);
+    draw_ellipse(_x - _r, _y - _r * 0.45, _x + _r, _y + _r * 0.45, false);
+    draw_set_alpha(1);
+    draw_set_color(c_white);
+}
+
+// roda no Draw End: por cima de todo mundo, porque ela vem do alto. _tempo gira e troca a fagulha
+function bomba_desenhar(_x, _y, _t, _tempo) {
+    var _esc = 1.25 - 0.25 * _t;
+    draw_sprite_ext(spr_bomba, (_tempo div 4) mod 2, _x, _y - bomba_altura(_t), _esc, _esc, _tempo * 5, c_white, 1);
+}
+
+// quem jogou a bomba morreu antes de ela cair: o golpe some com ele, e ela apaga no ar
+function bomba_apagar(_x, _y, _t) {
+    fx_faiscas(_x, _y - bomba_altura(_t), 90, make_colour_rgb(255, 170, 70), 6);
+}
+
 // o segmento passa pelo retangulo? (Liang-Barsky: recorta o segmento nos 4 lados)
 function segmento_toca_retangulo(_x1, _y1, _x2, _y2, _l, _t, _r, _b) {
     var _dx = _x2 - _x1;
