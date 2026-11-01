@@ -74,8 +74,8 @@ Ali, `L` ou um toque no botão de baixo mede quantos inimigos o aparelho aguenta
 
 ## Como a run funciona
 
-- Quatro salas em sequência: **Ruínas** (esqueletos) → **Catacumbas** (túnel com os
-  três tipos) → **Pátio** (ghouls) → **Cemitério** (wights). A câmera segue o jogador; o HUD mostra a tentativa,
+- Cinco salas em sequência: **Ruínas** (esqueletos) → **Catacumbas** (túnel com os
+  três tipos) → **Pátio** (ghouls) → **Cemitério** (wights) → **O Trono** (chefe). A câmera segue o jogador; o HUD mostra a tentativa,
   as cargas de dash, a fase e quantos inimigos faltam.
 - O portão só abre quando a sala está limpa. O portão que leva adiante acende,
   e uma seta amarela na borda da tela aponta para ele quando está fora de vista.
@@ -92,7 +92,7 @@ Ali, `L` ou um toque no botão de baixo mede quantos inimigos o aparelho aguenta
 - Os inimigos agem em grupo: a parede bloqueia a visão, quem perde o jogador vai
   até o último lugar onde o viu, quem vê ou apanha chama os vizinhos, cada um
   chega por um lado e só 2 atacam ao mesmo tempo. Os outros rondam perto.
-- Limpar o Cemitério encerra a run com a tela de vitória, o total de tentativas
+- Vencer o Trono encerra a run com a tela de vitória, o total de tentativas
   e o tempo. O jogo pede um nome e manda o resultado para o ranking do site.
 
 ## Ranking, mapa de mortes e efeitos

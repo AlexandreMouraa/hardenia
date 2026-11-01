@@ -188,6 +188,9 @@ switch (state) {
         state_timer -= 1;
         if (state_timer <= 0) {
             state = 0;
+            if (ao_voltar != undefined) {
+                ao_voltar();
+            }
         }
         break;
 }
