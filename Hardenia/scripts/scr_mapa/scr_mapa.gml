@@ -3,6 +3,7 @@
 // Nomes sem acento: a fonte do jogo nao tem esses caracteres
 global.mapa_fases = [
     { sala: Room1, nome: "RUINAS", frase: "As ruinas guardam os ossos de quem veio antes de mim." },
+    { sala: Room_Tunel, nome: "CATACUMBAS", frase: "Aqui embaixo ninguem vem me buscar. Nem eles esperam que eu volte." },
     { sala: Room2, nome: "PATIO DO CASTELO", frase: "No patio, quem fica parado nao chega ao castelo." },
     { sala: Room3, nome: "CEMITERIO GELADO", frase: "O cemiterio tem lugar para mais um. Ainda nao." },
 ];
@@ -69,6 +70,7 @@ function frase_de_morte(_causa) {
 // imagem ela e lida; contorno mais detalhado que isso vira degrau. Veja ESPECIFICACAO_ARTE
 global.mascaras_sala = [
     { sala: Room1, sprite: spr_mascara_fase01, passo: 4 },
+    { sala: Room_Tunel, sprite: spr_mascara_tunel, passo: 8 },
 ];
 // retangulos ja lidos, por sprite: ler pixel e caro, e morrer recria a sala
 global.mascaras_lidas = {};

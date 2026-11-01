@@ -200,8 +200,8 @@ terminar_run = function(_motivo) {
 // portao que leva adiante (o que brilha quando a sala esta limpa)
 saida_adiante = function() {
     var _prox = room_next(room);
-    var _objs = [obj_exit_to_room1, obj_exit_to_room2, obj_exit_to_room3];
-    var _salas = [Room1, Room2, Room3];
+    var _objs = [obj_exit_to_room1, obj_exit_to_tunel, obj_exit_to_room2, obj_exit_to_room3];
+    var _salas = [Room1, Room_Tunel, Room2, Room3];
     for (var _i = 0; _i < array_length(_objs); _i++) {
         if (_salas[_i] == _prox && instance_exists(_objs[_i])) {
             return instance_find(_objs[_i], 0);

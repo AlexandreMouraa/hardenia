@@ -74,8 +74,8 @@ Ali, `L` ou um toque no botão de baixo mede quantos inimigos o aparelho aguenta
 
 ## Como a run funciona
 
-- Três arenas em sequência: **Ruínas** (esqueletos) → **Pátio** (ghouls) →
-  **Cemitério** (wights). A câmera segue o jogador; o HUD mostra a tentativa,
+- Quatro salas em sequência: **Ruínas** (esqueletos) → **Catacumbas** (túnel com os
+  três tipos) → **Pátio** (ghouls) → **Cemitério** (wights). A câmera segue o jogador; o HUD mostra a tentativa,
   as cargas de dash, a fase e quantos inimigos faltam.
 - O portão só abre quando a sala está limpa. O portão que leva adiante acende,
   e uma seta amarela na borda da tela aponta para ele quando está fora de vista.
