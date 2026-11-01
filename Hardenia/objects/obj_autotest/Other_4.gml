@@ -68,9 +68,12 @@ if (testar_formas) {
     }
     var _forma = 0;
     with (obj_enemy) {
-        ataque = other.ataques_formas[_forma mod 4];
-        hp = 12;
-        _forma += 1;
+        // quem atira corta o proprio ataque (ao_mirar): a sala fica como e
+        if (ao_mirar == undefined) {
+            ataque = other.ataques_formas[_forma mod 4];
+            hp = 12;
+            _forma += 1;
+        }
     }
 }
 

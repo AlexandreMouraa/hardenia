@@ -364,6 +364,12 @@ with (obj_enemy) {
         }
     }
 }
+// flecha no ar: a linha continua perigosa, mesmo com o arqueiro morto
+if (!_quer_morrer) {
+    with (obj_flecha) {
+        array_push(_zonas, [zona, 2, vida]);
+    }
+}
 // a vez de atacar (scr_inimigos): no maximo 2 em aviso ao mesmo tempo
 avisos_max = max(avisos_max, _em_aviso);
 if (_em_aviso > 2) {
