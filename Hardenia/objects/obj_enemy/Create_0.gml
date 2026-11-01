@@ -4,11 +4,12 @@ move_speed = 1.5;
 state = 0;
 state_timer = 0;
 // o ataque deste inimigo (campos em scr_inimigos). Um filho troca depois do event_inherited
+// corte em arco, saindo de quem bate: a zona e o desenho do golpe sao a mesma coisa
 ataque = {
-    forma: "quadrado",
+    forma: "arco",
     gatilho: 50,
-    alcance: 40,
-    tamanho: 32,
+    alcance: 72,
+    tamanho: 55,
     aviso: 45,
     duracao: 20,
     acerto: 10,
