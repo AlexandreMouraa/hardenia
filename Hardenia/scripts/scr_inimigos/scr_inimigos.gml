@@ -162,3 +162,104 @@ function zona_acerta_jogador(_z) {
     return zona_toca_retangulo(_z, _p.bbox_left, _p.bbox_top, _p.bbox_right, _p.bbox_bottom)
         && collision_line(_z.ox, _z.oy, _p.x, _p.y, obj_wall, false, true) == noone;
 }
+
+// ---------- comportamento em grupo. Rodam no inimigo que chama ----------
+
+// a mesma visao para todo mundo: alcance e parede no meio
+function inimigo_ve_jogador() {
+    return point_distance(x, y, obj_player.x, obj_player.y) <= visao
+        && collision_line(x, y, obj_player.x, obj_player.y, obj_wall, false, true) == noone;
+}
+
+// anda para _dir, escorregando na parede
+function inimigo_andar(_dir, _vel) {
+    var _mx = lengthdir_x(_vel, _dir);
+    var _my = lengthdir_y(_vel, _dir);
+    if (!place_meeting(x + _mx, y, obj_wall)) {
+        x += _mx;
+    }
+    if (!place_meeting(x, y + _my, obj_wall)) {
+        y += _my;
+    }
+}
+
+// vira o sprite para o lado (dos 4) mais perto de _dir
+function inimigo_virar(_dir) {
+    var _ax = lengthdir_x(1, _dir);
+    var _ay = lengthdir_y(1, _dir);
+    if (abs(_ax) > abs(_ay)) {
+        facing_dir = (_ax < 0) ? 1 : 2;
+    } else {
+        facing_dir = (_ay < 0) ? 3 : 0;
+    }
+}
+
+// Cerco: 6 lados em volta do jogador, cada um com um dono. Custa 6 contas a cada
+// 90 frames por inimigo: nada de procurar todos contra todos, pensando em horda.
+// Dono morto ou que voltou a dormir libera o lado sozinho
+global.cerco = array_create(6, noone);
+
+// fica com o lado livre mais longe dos outros, sem andar demais: o peso 0,25 faz o
+// segundo do grupo passar para o lado oposto em vez de vir colado no primeiro. Com
+// todos ocupados, vai direto de onde estiver
+function cerco_escolher() {
+    var _onde = point_direction(obj_player.x, obj_player.y, x, y);
+    var _n = array_length(global.cerco);
+    for (var _i = 0; _i < _n; _i++) {
+        var _dono = global.cerco[_i];
+        if (_dono == id || !instance_exists(_dono) || !_dono.acordado) {
+            global.cerco[_i] = noone;
+        }
+    }
+    var _melhor = -1;
+    var _nota = -1000;
+    for (var _i = 0; _i < _n; _i++) {
+        if (global.cerco[_i] == noone) {
+            var _longe = 180;
+            for (var _j = 0; _j < _n; _j++) {
+                if (global.cerco[_j] != noone) {
+                    _longe = min(_longe, abs(angle_difference(_i * 60, _j * 60)));
+                }
+            }
+            var _esta = _longe - 0.25 * abs(angle_difference(_i * 60, _onde));
+            if (_esta > _nota) {
+                _nota = _esta;
+                _melhor = _i;
+            }
+        }
+    }
+    if (_melhor >= 0) {
+        global.cerco[_melhor] = id;
+        cerco_ang = _melhor * 60;
+    } else {
+        cerco_ang = _onde;
+    }
+}
+
+// Vez de atacar: no maximo 2 em aviso ou golpe ao mesmo tempo. Com mais de um
+// pedaco de vida ainda e dificil ler 4 avisos juntos. Quem morreu ou entrou na
+// recarga solta a vez sozinho, entao nao precisa de contador nem de evento de morte
+global.vez_atacar = array_create(2, noone);
+
+function vez_solta(_dono) {
+    return !instance_exists(_dono) || (_dono.state != 1 && _dono.state != 2);
+}
+
+function vez_livre() {
+    for (var _i = 0; _i < array_length(global.vez_atacar); _i++) {
+        if (vez_solta(global.vez_atacar[_i])) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function vez_pegar() {
+    for (var _i = 0; _i < array_length(global.vez_atacar); _i++) {
+        if (vez_solta(global.vez_atacar[_i])) {
+            global.vez_atacar[_i] = id;
+            return true;
+        }
+    }
+    return false;
+}

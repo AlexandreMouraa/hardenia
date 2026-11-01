@@ -34,46 +34,69 @@ if (state == 1) {
 var _is_moving = false;
 
 switch (state) {
-	case 0: // perseguindo
+	case 0: // sem atacar: patrulha, procura ou cerca
     if (instance_exists(obj_player)) {
-        var _dist = point_distance(x, y, obj_player.x, obj_player.y);
-
-        if (_dist <= alert_range) {
-            image_blend = c_red;
-        } else {
-            image_blend = c_white;
+        visao_timer -= 1;
+        if (visao_timer <= 0) {
+            visao_timer = 6;
+            vendo = inimigo_ve_jogador();
+            if (vendo) {
+                memoria_x = obj_player.x;
+                memoria_y = obj_player.y;
+                procura = procura_max;
+                if (!acordado) {
+                    acordar();
+                }
+            }
         }
+        var _dist = point_distance(x, y, obj_player.x, obj_player.y);
+        var _dir = point_direction(x, y, obj_player.x, obj_player.y);
+        image_blend = acordado ? c_red : c_white;
 
-        // com parede no meio nao ataca: o golpe nao passaria
-        if (_dist <= ataque.gatilho && collision_line(x, y, obj_player.x, obj_player.y, obj_wall, false, true) == noone) {
-            state = 1;
-            state_timer = ataque.aviso;
-            // a direcao trava no inicio do aviso: o jogador ve onde o golpe cai e tem tempo de sair
-            attack_dir = point_direction(x, y, obj_player.x, obj_player.y);
-            zona = zona_criar(ataque, x, y, attack_dir);
-            var _ax = lengthdir_x(1, attack_dir);
-            var _ay = lengthdir_y(1, attack_dir);
-            if (abs(_ax) > abs(_ay)) {
-                facing_dir = (_ax < 0) ? 1 : 2;
+        if (acordado && vendo) {
+            // com parede no meio nao ataca: o golpe nao passaria. Sem a vez, espera
+            if (_dist <= ataque.gatilho && collision_line(x, y, obj_player.x, obj_player.y, obj_wall, false, true) == noone && vez_pegar()) {
+                state = 1;
+                state_timer = ataque.aviso;
+                // a direcao trava no inicio do aviso: o jogador ve onde o golpe cai e tem tempo de sair
+                attack_dir = _dir;
+                zona = zona_criar(ataque, x, y, attack_dir);
+                inimigo_virar(attack_dir);
             } else {
-                facing_dir = (_ay < 0) ? 3 : 0;
+                cerco_timer -= 1;
+                if (cerco_timer <= 0) {
+                    cerco_timer = 90;
+                    cerco_escolher();
+                }
+                // vai para o seu lado do jogador. Com a vez livre, chega ao alcance do
+                // golpe; sem ela, ronda um pouco mais longe, balancando de um lado para o outro
+                ronda += 1;
+                var _raio = vez_livre() ? ataque.gatilho * 0.85 : ataque.gatilho + 45;
+                var _ang = cerco_ang + 12 * sin(ronda * 0.03);
+                var _tx = obj_player.x + lengthdir_x(_raio, _ang);
+                var _ty = obj_player.y + lengthdir_y(_raio, _ang);
+                if (point_distance(x, y, _tx, _ty) > move_speed) {
+                    inimigo_andar(point_direction(x, y, _tx, _ty), move_speed);
+                    _is_moving = true;
+                }
+                inimigo_virar(_dir);
             }
-        } else if (_dist <= alert_range) {
-            var _dir = point_direction(x, y, obj_player.x, obj_player.y);
-            var _move_x = lengthdir_x(move_speed, _dir);
-            var _move_y = lengthdir_y(move_speed, _dir);
-            if (!place_meeting(x + _move_x, y, obj_wall)) {
-                x += _move_x;
+        } else if (acordado) {
+            procura -= 1;
+            if (procura <= 0 || point_distance(x, y, memoria_x, memoria_y) < 8) {
+                acordado = false;
+            } else {
+                var _dir_memoria = point_direction(x, y, memoria_x, memoria_y);
+                inimigo_andar(_dir_memoria, move_speed);
+                inimigo_virar(_dir_memoria);
+                _is_moving = true;
             }
-            if (!place_meeting(x, y + _move_y, obj_wall)) {
-                y += _move_y;
-            }
+        } else if (abs(y - home_y) > 4 || abs(x - home_x) > patrol_range + 4) {
+            // de volta para casa, antes de patrulhar de novo
+            var _dir_casa = point_direction(x, y, home_x, home_y);
+            inimigo_andar(_dir_casa, patrol_speed);
+            inimigo_virar(_dir_casa);
             _is_moving = true;
-            if (abs(_move_x) > abs(_move_y)) {
-                facing_dir = (_move_x < 0) ? 1 : 2;
-            } else {
-                facing_dir = (_move_y < 0) ? 3 : 0;
-            }
         } else {
             var _patrol_move = patrol_dir * patrol_speed;
             if (!place_meeting(x + _patrol_move, y, obj_wall)) {
@@ -136,6 +159,12 @@ switch (state) {
     case 3: // cooldown
         // apagado: a hora de bater nele
         image_blend = c_gray;
+        if (depois_golpe != "parado" && instance_exists(obj_player)) {
+            var _de_frente = point_direction(x, y, obj_player.x, obj_player.y);
+            inimigo_andar(_de_frente + (depois_golpe == "recua" ? 180 : 90), 1);
+            inimigo_virar(_de_frente);
+            _is_moving = true;
+        }
         state_timer -= 1;
         if (state_timer <= 0) {
             state = 0;
@@ -145,7 +174,7 @@ switch (state) {
 
 // inimigos encostados se afastam devagar, para nao virarem um bolo so; fora do
 // ataque, senao a zona do golpe andaria durante o aviso
-if (state == 0) {
+if (state == 0 || state == 3) {
     var _outro = instance_place(x, y, obj_enemy);
     if (_outro != noone) {
         var _afasta = (_outro.x == x && _outro.y == y) ? random(360) : point_direction(_outro.x, _outro.y, x, y);

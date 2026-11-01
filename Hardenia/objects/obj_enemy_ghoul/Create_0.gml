@@ -4,7 +4,8 @@ sprite_index = walk_sprite;
 // rapido e fragil: abaixo da velocidade do jogador (3), para ainda dar para fugir
 hp = 2;
 move_speed = 2.4;
-alert_range = 220;
+// parado depois do bote: e o que o deixa exposto
+depois_golpe = "parado";
 // bote: de longe, avisa em linha, avanca reto e fica exposto no fim (recarga longa).
 // 12 frames de 13 px = 156 px, dentro da linha de 170
 ataque = {
