@@ -5,17 +5,60 @@ var _inimigos = instance_number(obj_enemy);
 // pisca sem nunca sumir: no minimo 40% visivel
 var _piscar = 0.4 + 0.6 * (0.5 + 0.5 * sin(current_time / 200));
 
-// HUD: tentativa e cargas de dash
+// golpe que pegou: a tela fica vermelha e volta
+if (hud_dano > 0) {
+    draw_set_alpha(0.3 * hud_dano / hud_dano_max);
+    draw_set_color(c_red);
+    draw_rectangle(0, 0, _w, _h, false);
+    draw_set_alpha(1);
+}
+
+// HUD: tentativa, vida e cargas de dash
 draw_set_halign(fa_left);
 draw_set_valign(fa_top);
 draw_set_color(c_white);
 draw_text_transformed(16 * _esc, 12 * _esc, "TENTATIVA " + string(global.tentativas), _esc, _esc, 0);
 
+// barra de vida: um pedaco por golpe que aguenta. Ao levar golpe ela treme e o
+// pedaco perdido apaga do branco; com o ultimo, pulsa; ao ganhar vida, o pedaco pisca
+var _vl = 26 * _esc;
+var _va = 12 * _esc;
+var _vy = 34 * _esc;
+var _vx0 = 16 * _esc;
+if (hud_dano > 0) {
+    _vx0 += sin(hud_dano * 2.1) * 3 * _esc * hud_dano / hud_dano_max;
+}
+for (var _i = 0; _i < hp_max; _i++) {
+    var _vx = _vx0 + _i * (_vl + 2 * _esc);
+    draw_set_color(make_colour_rgb(50, 20, 20));
+    draw_rectangle(_vx, _vy, _vx + _vl, _vy + _va, false);
+    if (_i < hp) {
+        draw_set_alpha(hp == 1 ? _piscar : 1);
+        draw_set_color(make_colour_rgb(210, 30, 40));
+        draw_rectangle(_vx, _vy, _vx + _vl, _vy + _va, false);
+        draw_set_alpha(1);
+    }
+    if (hud_dano > 0 && _i == hp) {
+        draw_set_alpha(hud_dano / hud_dano_max);
+        draw_set_color(c_white);
+        draw_rectangle(_vx, _vy, _vx + _vl, _vy + _va, false);
+        draw_set_alpha(1);
+    }
+    if (hud_cura > 0 && _i == hp - 1) {
+        draw_set_alpha(((hud_cura div 6) mod 2 == 0) ? 0.9 : 0.2);
+        draw_set_color(c_white);
+        draw_rectangle(_vx, _vy, _vx + _vl, _vy + _va, false);
+        draw_set_alpha(1);
+    }
+}
+draw_set_color(c_ltgray);
+draw_text_transformed(_vx0 + hp_max * (_vl + 2 * _esc) + 4 * _esc, 34 * _esc, "VIDA", _esc * 0.7, _esc * 0.7, 0);
+
 // a carga que esta voltando enche aos poucos; sem carga, treme vermelha; ao
 // voltar, pisca
 for (var _i = 0; _i < dash_charges_max; _i++) {
     var _px = 16 * _esc + _i * 16 * _esc;
-    var _py = 36 * _esc;
+    var _py = 54 * _esc;
     if (dash_negado > 0) {
         _px += sin(dash_negado * 2.1) * 2 * _esc;
     }
@@ -39,12 +82,12 @@ for (var _i = 0; _i < dash_charges_max; _i++) {
     }
 }
 draw_set_color(c_ltgray);
-draw_text_transformed(16 * _esc + dash_charges_max * 16 * _esc + 4 * _esc, 33 * _esc, "DASH", _esc * 0.7, _esc * 0.7, 0);
+draw_text_transformed(16 * _esc + dash_charges_max * 16 * _esc + 4 * _esc, 51 * _esc, "DASH", _esc * 0.7, _esc * 0.7, 0);
 
 // recarga do especial, embaixo do dash e com a largura das duas cargas: enche
 // aos poucos; apertando sem recarga, treme vermelha; pronta, pisca
 var _ex = 16 * _esc;
-var _ey = 50 * _esc;
+var _ey = 68 * _esc;
 var _ew = 28 * _esc;
 if (especial_negado > 0) {
     _ex += sin(especial_negado * 2.1) * 2 * _esc;
@@ -62,7 +105,7 @@ if (especial_pronto > 0) {
     draw_set_alpha(1);
 }
 draw_set_color(c_ltgray);
-draw_text_transformed(16 * _esc + dash_charges_max * 16 * _esc + 4 * _esc, 47 * _esc, "ESPECIAL", _esc * 0.7, _esc * 0.7, 0);
+draw_text_transformed(16 * _esc + dash_charges_max * 16 * _esc + 4 * _esc, 65 * _esc, "ESPECIAL", _esc * 0.7, _esc * 0.7, 0);
 
 // HUD: fase atual, contando as salas depois do menu na ordem do projeto
 var _fase = 0;
@@ -155,7 +198,7 @@ if (is_dead) {
     draw_set_color(c_red);
     draw_text_transformed(_w / 2, _h / 2 - 20 * _esc, "VOCE MORREU", _esc * 3, _esc * 3, 0);
     draw_set_color(c_white);
-    draw_text_transformed(_w / 2, _h / 2 + 24 * _esc, "Cada morte ensina.", _esc, _esc, 0);
+    draw_text_transformed(_w / 2, _h / 2 + 24 * _esc, "Cada morte ensina. A run recomeca.", _esc, _esc, 0);
 } else if (venceu) {
     draw_set_alpha(0.7);
     draw_set_color(c_black);

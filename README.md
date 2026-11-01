@@ -72,7 +72,10 @@ estão no [CONTRIBUTING.md](CONTRIBUTING.md).
   as cargas de dash, a fase e quantos inimigos faltam.
 - O portão só abre quando a sala está limpa. O portão que leva adiante acende,
   e uma seta amarela na borda da tela aponta para ele quando está fora de vista.
-- Um golpe mata. Ao morrer, a sala recomeça e o contador de **tentativas** sobe.
+- A barra mostra a **vida**: 5 golpes até morrer. Ela passa de uma sala para a
+  outra, e limpar uma fase pela primeira vez na run devolve 1.
+- Ao morrer, a run recomeça na primeira fase, com a vida cheia, e o contador de
+  **tentativas** sobe.
 - Todo inimigo avisa antes de atacar: pisca, mostra `!` e desenha no chão a
   zona onde o golpe vai cair. Saia da zona ou atravesse com o dash.
 - Limpar o Cemitério encerra a run com a tela de vitória, o total de tentativas
@@ -134,7 +137,7 @@ roda 3 runs em velocidade acelerada, sem som e em janela, e termina com `OK` ou
 
 | Opção (`-Extra "..."`) | O que faz |
 |---|---|
-| `-morrer` | morre uma vez em cada sala na 1ª run (testa morte e reinício) |
+| `-morrer` | morre uma vez em cada sala na 1ª run (testa morte, volta ao começo da run e a vida) |
 | `-mouse` | ataca com o clique, mirando no inimigo (testa a mira no mouse) |
 | `-carregar` | segura o ataque depois de cada golpe e solta com a carga cheia (testa o golpe carregado; soma `carregados=N` no resumo) |
 | `-especial` | usa o golpe especial sempre que tem alvo perto e recarga pronta (soma `especiais=N` no resumo e registra os acertos de cada giro) |

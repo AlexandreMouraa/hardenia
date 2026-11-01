@@ -1,3 +1,19 @@
+// a vida passa de uma sala para a outra, e morrer volta ao comeco com ela cheia
+if (room == Room_Menu) {
+    vida_antes = -1;
+    mortes_run = 0;
+} else if (instance_exists(obj_player)) {
+    var _vp = instance_find(obj_player, 0);
+    if (estava_morto && room != global.mapa_fases[0].sala) {
+        log("FALHA_vida", "morreu e nao voltou ao comeco da run");
+    }
+    var _vida_certa = (estava_morto || vida_antes < 0) ? _vp.hp_max : vida_antes;
+    if (_vp.hp != _vida_certa) {
+        log("FALHA_vida", "hp=" + string(_vp.hp) + " esperado=" + string(_vida_certa));
+    }
+    vida_antes = _vp.hp;
+}
+
 tempo_sala = 0;
 espera = 0;
 estava_morto = false;

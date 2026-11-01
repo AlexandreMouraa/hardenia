@@ -42,9 +42,25 @@ hud_recarga = array_create(dash_charges_max, 0);
 face_h = 0;
 face_v = 1;
 
-hp = 1;
-hp_max = 1;
+// a vida passa de uma sala para a outra (global.vida, em scr_mapa)
+hp = global.vida;
+hp_max = VIDA_MAX;
 invuln_timer = 0;
+// HUD: tela e barra reagem ao levar golpe e ao ganhar vida (frames restantes)
+hud_dano = 0;
+hud_dano_max = 30;
+hud_cura = 0;
+hud_cura_max = 40;
+// golpe que pegou. A morte fica no fim do Step
+levar_dano = function(_dano) {
+    hp -= _dano;
+    global.vida = hp;
+    invuln_timer = 45;
+    hud_dano = hud_dano_max;
+    if (hp > 0) {
+        impacto(5, 7);
+    }
+};
 
 attack_cooldown = 0;
 

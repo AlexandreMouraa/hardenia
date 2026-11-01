@@ -14,8 +14,15 @@ diag = false;
 desatento = 0;
 percebeu = {};
 // -morrer: na primeira run o robo morre uma vez em cada sala, de proposito,
-// para testar a tela de morte, o reinicio da sala e o contador de tentativas
+// para testar a tela de morte, a volta ao comeco da run e o contador de tentativas.
+// Na segunda, apanha sem morrer, para testar a vida entre salas e a cura
 morrer = false;
+salas_morreu = {};
+mortes_run = 0;
+// vida: danos conta os golpes que pegaram (golpes_inimigos conta os que foram dados)
+danos = 0;
+curas = 0;
+vida_antes = -1;
 // -mouse: ataca com o clique, mirando no inimigo (sem precisar virar), como
 // quem joga com mouse. Sem ela, ataca com J, para onde esta virado
 usar_mouse = false;
