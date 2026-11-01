@@ -165,6 +165,7 @@ golpear = function(_carregado = false) {
         _gy = y + _cy * _k;
     }
     var _golpe = instance_create_layer(_gx, _gy, "Instances", obj_attack);
+    _golpe.quebra_escudo = _carregado;
     if (_forte) {
         _golpe.forte = true;
         _golpe.damage = 2;
@@ -230,6 +231,7 @@ estocar = function() {
     }
     // 96 de comprimento por 48 de largura; na diagonal, 82 nos dois eixos
     var _golpe = instance_create_layer(x + dash_dir_x * 48, y + dash_dir_y * 48, "Instances", obj_attack);
+    _golpe.quebra_escudo = true;
     _golpe.image_xscale = (48 + abs(dash_dir_x) * 48) / sprite_get_width(spr_attack);
     _golpe.image_yscale = (48 + abs(dash_dir_y) * 48) / sprite_get_height(spr_attack);
     with (instance_create_depth(x, y, depth - 1, obj_fx)) {
@@ -269,6 +271,7 @@ girar = function() {
     with (instance_create_layer(x, y, "Instances", obj_attack)) {
         especial = true;
         forte = true;
+        quebra_escudo = true;
         damage = 2;
         knockback = 28;
         image_xscale = 2.4;

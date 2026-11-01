@@ -55,6 +55,9 @@ switch (state) {
         image_blend = acordado ? c_red : c_white;
 
         if (acordado && vendo) {
+            if (elite == "invocacao") {
+                invocar_passo();
+            }
             // com parede no meio nao ataca: o golpe nao passaria. Sem a vez, espera
             if (_dist <= ataque.gatilho && collision_line(x, y, obj_player.x, obj_player.y, obj_wall, false, true) == noone && vez_pegar()) {
                 state = 1;

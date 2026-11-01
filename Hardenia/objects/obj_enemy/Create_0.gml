@@ -15,6 +15,12 @@ ataque = {
     recarga: 40,
     avanco: 0,
 };
+// elite: "escudo", "explosao" ou "invocacao" (elites_aplicar, em scr_inimigos)
+elite = "";
+escudo = false;
+invocados = [];
+invocar_timer = 120;
+invocar_total = 0;
 zona = undefined; // onde o ataque atual cai; existe do aviso em diante
 zona_fixa = false; // nao acompanha o inimigo empurrado durante o aviso
 // pose de ataque, para quem tem: folha com ataque_frames por linha, aviso e golpe nela

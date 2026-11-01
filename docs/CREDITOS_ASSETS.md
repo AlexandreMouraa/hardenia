@@ -11,6 +11,8 @@ Tudo o que veio de fora do grupo, com origem e licença. Asset novo: acrescente 
 | `snd_morte_jogador` | `impactBell_heavy_000.ogg` | [Impact Sounds](https://kenney.nl/assets/impact-sounds) | Kenney | CC0 |
 | `snd_dash_negado` | `error_004.ogg` | [Interface Sounds](https://kenney.nl/assets/interface-sounds) | Kenney | CC0 |
 | `snd_magia` | `impactGlass_heavy_000.ogg` | [Impact Sounds](https://kenney.nl/assets/impact-sounds) | Kenney | CC0 |
+| `snd_escudo` | `impactMetal_light_000.ogg` | [Impact Sounds](https://kenney.nl/assets/impact-sounds) | Kenney | CC0 |
+| `snd_explosao` | `impactMining_000.ogg` | [Impact Sounds](https://kenney.nl/assets/impact-sounds) | Kenney | CC0 |
 
 Convertidos para WAV, mono, 44,1 kHz, com o volume médio perto do `snd_attack`.
 

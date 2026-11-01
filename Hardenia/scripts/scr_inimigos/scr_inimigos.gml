@@ -358,6 +358,100 @@ function casa_rumo() {
     return point_direction(x, y, casa_rota[casa_passo][0], casa_rota[casa_passo][1]);
 }
 
+// ---------- elites: qualquer tipo com mais vida, uma marca e uma habilidade ----------
+// indice: qual inimigo daquele tipo na sala, na ordem em que nascem. Valores para ajustar
+// jogando; sala nova: acrescentar aqui
+global.elites_sala = [
+    { sala: Room_Tunel, objeto: obj_enemy, indice: 0, habilidade: "invocacao" },
+    { sala: Room_Tunel, objeto: obj_enemy, indice: 1, habilidade: "explosao" },
+    { sala: Room_Tunel, objeto: obj_enemy_wight, indice: 0, habilidade: "escudo" },
+    { sala: Room2, objeto: obj_enemy_ghoul, indice: 0, habilidade: "explosao" },
+    { sala: Room3, objeto: obj_enemy_wight, indice: 0, habilidade: "escudo" },
+    { sala: Room3, objeto: obj_enemy_wight, indice: 2, habilidade: "invocacao" },
+];
+
+// chamada no primeiro frame da sala (obj_player, Step)
+function elites_aplicar() {
+    for (var _e = 0; _e < array_length(global.elites_sala); _e++) {
+        var _def = global.elites_sala[_e];
+        if (_def.sala == room) {
+            var _n = 0;
+            with (_def.objeto) {
+                // with no pai passa pelos filhos tambem: aqui so o tipo exato
+                if (object_index == _def.objeto) {
+                    if (_n == _def.indice) {
+                        elite_tornar(_def.habilidade);
+                    }
+                    _n += 1;
+                }
+            }
+        }
+    }
+}
+
+function elite_tornar(_habilidade) {
+    elite = _habilidade;
+    hp += 2;
+    image_xscale *= 1.2;
+    image_yscale *= 1.2;
+    escudo = (_habilidade == "escudo");
+}
+
+// a marca: anel no chao, na cor da habilidade, e o escudo em volta enquanto existir
+function elite_desenhar() {
+    var _cor = make_colour_rgb(110, 230, 120);
+    if (elite == "escudo") {
+        _cor = make_colour_rgb(120, 220, 255);
+    } else if (elite == "explosao") {
+        _cor = make_colour_rgb(255, 150, 40);
+    }
+    var _pulso = 0.5 + 0.5 * sin(current_time / 200);
+    draw_set_color(_cor);
+    draw_set_alpha(0.35 + 0.35 * _pulso);
+    draw_ellipse(x - 30, y + 14, x + 30, y + 40, false);
+    if (escudo) {
+        draw_set_alpha(0.5 + 0.3 * _pulso);
+        draw_circle(x, y, 44, true);
+        draw_circle(x, y, 43, true);
+    }
+    draw_set_alpha(1);
+    draw_set_color(c_white);
+}
+
+// invocacao: ate 2 fracos vivos ao mesmo tempo, e 6 no total, para a sala poder terminar.
+// Lados fixos em volta dele, sem sorteio: o robo depende da sequencia aleatoria
+function invocar_passo() {
+    invocar_timer -= 1;
+    if (invocar_timer > 0) {
+        return;
+    }
+    invocar_timer = 300;
+    var _vivos = [];
+    for (var _i = 0; _i < array_length(invocados); _i++) {
+        if (instance_exists(invocados[_i])) {
+            array_push(_vivos, invocados[_i]);
+        }
+    }
+    invocados = _vivos;
+    var _vagas = min(2 - array_length(invocados), 6 - invocar_total);
+    for (var _k = 0; _k < _vagas; _k++) {
+        var _ang = invocar_total * 137;
+        var _mx = x + lengthdir_x(80, _ang);
+        var _my = y + lengthdir_y(80, _ang);
+        invocar_total += 1;
+        // nao nasce dentro da parede
+        if (collision_circle(_mx, _my, 24, obj_wall, false, true) == noone) {
+            var _dono = id;
+            with (instance_create_layer(_mx, _my, "Instances", obj_invocacao)) {
+                dono = _dono;
+            }
+        }
+    }
+    if (_vagas > 0) {
+        som(snd_magia, 0.7);
+    }
+}
+
 // ate onde uma linha reta vai antes de bater na parede, de 16 em 16 px
 function linha_ate_parede(_x, _y, _dir, _max) {
     for (var _d = 16; _d < _max; _d += 16) {

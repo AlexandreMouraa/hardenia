@@ -10,3 +10,5 @@ pode_pular = 25;
 saindo = false;
 // golpe de inimigo que ainda estava no ar nao acerta durante a transicao
 instance_destroy(obj_enemy_attack);
+instance_destroy(obj_flecha);
+instance_destroy(obj_explosao);

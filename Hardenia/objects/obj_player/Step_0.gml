@@ -239,6 +239,7 @@ especial_buffer = max(0, especial_buffer - 1);
 // as paredes, e nao da tranco na primeira perseguicao
 if (tempo_na_sala == 0) {
     campo_preparar();
+    elites_aplicar();
 }
 tempo_na_sala += 1;
 
