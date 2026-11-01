@@ -235,6 +235,11 @@ if (especial_buffer > 0 && !is_dashing) {
 }
 especial_buffer = max(0, especial_buffer - 1);
 
+// mede a sala no primeiro frame, com a tela ainda escurecida: a mascara de colisao ja criou
+// as paredes, e nao da tranco na primeira perseguicao
+if (tempo_na_sala == 0) {
+    campo_preparar();
+}
 tempo_na_sala += 1;
 
 if (_dash_apertado && dash_charges == 0 && !is_dashing) {

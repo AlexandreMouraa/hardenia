@@ -70,6 +70,7 @@ grupo_parede = noone;
 grupo_a = noone;
 grupo_dir = 0;
 grupo_ok = 0;
+grupo_chegou = false;
 // -horda: joga as 3 ondas da sala de teste, com a vida sempre cheia (aqui a pergunta
 // e se o fluxo funciona, nao o balanceamento). Depois mede o limite do aparelho a 60 fps,
 // parado, e registra o fps a cada segundo. Rodar com -Runs 1
@@ -318,7 +319,8 @@ testar_zonas = function() {
 
 // -grupo. Passo 0: visao e alerta na hora, e comeca a memoria com uma parede no meio.
 // Passo 1: quem perdeu o jogador foi ate a memoria e desistiu; todos acordam longe.
-// Passo 2: os 4 chegam, cada um de um lado. Erro vira FALHA no log
+// Passo 2: com uma parede grande no meio, ele da a volta e chega a ver o jogador.
+// Passo 3: os 4 chegam, cada um de um lado. Erro vira FALHA no log
 grupo_conferir = function(_p) {
     grupo_tempo -= 1;
     switch (grupo_passo) {
@@ -328,13 +330,13 @@ grupo_conferir = function(_p) {
             var _c = instance_find(obj_enemy, 2);
             var _dir = -1;
             for (var _d = 0; _d < 360 && _dir < 0; _d += 30) {
-                if (collision_line(_p.x, _p.y, _p.x + lengthdir_x(230, _d), _p.y + lengthdir_y(230, _d), obj_wall, false, true) == noone) {
+                if (collision_line(_p.x, _p.y, _p.x + lengthdir_x(280, _d), _p.y + lengthdir_y(280, _d), obj_wall, false, true) == noone) {
                     _dir = _d;
                 }
             }
             if (_dir < 0) {
                 log("FALHA_grupo", "sem lado livre em volta do jogador");
-                grupo_passo = 3;
+                grupo_passo = 4;
                 return;
             }
             with (obj_enemy) {
@@ -402,6 +404,46 @@ grupo_conferir = function(_p) {
                     log("FALHA_grupo", "sem ver o jogador, nao desistiu depois da memoria");
                 }
                 instance_destroy(grupo_parede);
+                // parede de 160 x 160 entre os dois, atravessando a linha de visao
+                with (obj_enemy) {
+                    x = home_x;
+                    y = home_y;
+                    acordado = false;
+                }
+                var _meio_x = _p.x + lengthdir_x(120, grupo_dir);
+                var _meio_y = _p.y + lengthdir_y(120, grupo_dir);
+                grupo_parede = instance_create_layer(_meio_x - 80, _meio_y - 80, "Instances", obj_wall);
+                grupo_parede.image_xscale = 160 / sprite_get_width(grupo_parede.sprite_index);
+                grupo_parede.image_yscale = 160 / sprite_get_height(grupo_parede.sprite_index);
+                global.campo.sala = -1;
+                grupo_a.x = _p.x + lengthdir_x(250, grupo_dir);
+                grupo_a.y = _p.y + lengthdir_y(250, grupo_dir);
+                grupo_a.vendo = false;
+                grupo_a.acordado = true;
+                grupo_a.memoria_x = _p.x;
+                grupo_a.memoria_y = _p.y;
+                grupo_a.procura = grupo_a.procura_max;
+                with (grupo_a) {
+                    campo_ver(_p.x, _p.y);
+                }
+                grupo_tempo = 900;
+                grupo_passo = 2;
+            }
+            break;
+
+        case 2:
+            with (grupo_a) {
+                other.grupo_chegou = inimigo_ve_jogador();
+            }
+            if (grupo_chegou || grupo_tempo <= 0) {
+                if (grupo_chegou) {
+                    log("contorno", "viu o jogador depois de " + string(900 - grupo_tempo) + " frames");
+                } else {
+                    log("FALHA_grupo", "nao deu a volta na parede");
+                }
+                pedir_print("contorno");
+                instance_destroy(grupo_parede);
+                global.campo.sala = -1;
                 // todos juntos no mesmo lado: o cerco e que tem de espalhar
                 var _k = 0;
                 var _lado = grupo_dir;
@@ -418,11 +460,11 @@ grupo_conferir = function(_p) {
                     _k += 1;
                 }
                 grupo_tempo = 220;
-                grupo_passo = 2;
+                grupo_passo = 3;
             }
             break;
 
-        case 2:
+        case 3:
             // 220 frames: tempo de um inimigo dar a volta ate o lado oposto
             if (grupo_tempo <= 0) {
                 var _n = instance_number(obj_enemy);
@@ -450,7 +492,7 @@ grupo_conferir = function(_p) {
                 }
                 pedir_print("cerco");
                 grupo_ok = 1;
-                grupo_passo = 3;
+                grupo_passo = 4;
             }
             break;
     }

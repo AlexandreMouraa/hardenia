@@ -171,6 +171,193 @@ function inimigo_ve_jogador() {
         && collision_line(x, y, obj_player.x, obj_player.y, obj_wall, false, true) == noone;
 }
 
+// ---------- caminho em volta da parede ----------
+// Um mapa so para todos, em vez de um caminho por inimigo, pensando em horda: a sala
+// vira uma grade, e cada celula guarda a quantos passos esta do ultimo lugar onde alguem
+// viu o jogador. Quem nao ve o jogador anda para a celula vizinha mais perto dali.
+#macro CAMPO_CELULA 32
+// meio inimigo: as mascaras vao ate 50 x 63 (ghoul). Menos que isso e ele prende na quina
+// de uma celula "livre". Com essa folga, corredor de 96 px ainda tem uma celula livre
+#macro CAMPO_FOLGA_X 26
+#macro CAMPO_FOLGA_Y 32
+// recalcula no maximo a cada 15 frames, e so se o alvo mudou de celula
+#macro CAMPO_INTERVALO 15
+
+global.campo = { sala: -1, alvo_x: -1, alvo_y: -1, visto_em: 0, grade: -1, caminho: path_add() };
+
+// mede a sala uma vez: as paredes nao mudam, e reiniciar a sala aproveita a mesma medida
+function campo_preparar() {
+    if (global.campo.sala == room) {
+        return;
+    }
+    if (global.campo.grade != -1) {
+        mp_grid_destroy(global.campo.grade);
+    }
+    var _w = ceil(room_width / CAMPO_CELULA);
+    var _h = ceil(room_height / CAMPO_CELULA);
+    var _n = _w * _h;
+    var _livre = array_create(_n, false);
+    var _grade = mp_grid_create(0, 0, _w, _h, CAMPO_CELULA, CAMPO_CELULA);
+    for (var _j = 0; _j < _h; _j++) {
+        for (var _i = 0; _i < _w; _i++) {
+            var _cx = (_i + 0.5) * CAMPO_CELULA;
+            var _cy = (_j + 0.5) * CAMPO_CELULA;
+            var _ok = collision_rectangle(_cx - CAMPO_FOLGA_X, _cy - CAMPO_FOLGA_Y, _cx + CAMPO_FOLGA_X, _cy + CAMPO_FOLGA_Y, obj_wall, false, true) == noone;
+            _livre[@ _j * _w + _i] = _ok;
+            if (!_ok) {
+                mp_grid_add_cell(_grade, _i, _j);
+            }
+        }
+    }
+    global.campo = {
+        sala: room,
+        w: _w,
+        h: _h,
+        livre: _livre,
+        dist: array_create(_n, -1),
+        fila: array_create(_n, 0),
+        alvo_x: -1,
+        alvo_y: -1,
+        visto_em: 0,
+        calculado_cel: -1,
+        calculado_em: -CAMPO_INTERVALO,
+        grade: _grade,
+        caminho: global.campo.caminho,
+    };
+}
+
+// alguem do grupo viu o jogador em _x,_y
+function campo_ver(_x, _y) {
+    campo_preparar();
+    global.campo.alvo_x = _x;
+    global.campo.alvo_y = _y;
+    global.campo.visto_em = global.run_frames;
+}
+
+// busca em largura a partir do alvo. A celula do alvo vale mesmo sem caber um inimigo:
+// o jogador e menor e pode estar encostado na parede
+function campo_calcular() {
+    var _c = global.campo;
+    var _w = _c.w;
+    var _alvo = clamp(floor(_c.alvo_y / CAMPO_CELULA), 0, _c.h - 1) * _w + clamp(floor(_c.alvo_x / CAMPO_CELULA), 0, _w - 1);
+    if (_alvo == _c.calculado_cel || global.run_frames - _c.calculado_em < CAMPO_INTERVALO) {
+        return;
+    }
+    _c.calculado_cel = _alvo;
+    _c.calculado_em = global.run_frames;
+    var _dist = _c.dist;
+    var _fila = _c.fila;
+    var _livre = _c.livre;
+    var _n = _w * _c.h;
+    for (var _i = 0; _i < _n; _i++) {
+        _dist[@ _i] = -1;
+    }
+    _dist[@ _alvo] = 0;
+    _fila[@ 0] = _alvo;
+    var _de = 0;
+    var _ate = 1;
+    while (_de < _ate) {
+        var _k = _fila[_de];
+        _de += 1;
+        var _d = _dist[_k] + 1;
+        var _col = _k mod _w;
+        if (_col > 0 && _livre[_k - 1] && _dist[_k - 1] < 0) {
+            _dist[@ _k - 1] = _d;
+            _fila[@ _ate] = _k - 1;
+            _ate += 1;
+        }
+        if (_col < _w - 1 && _livre[_k + 1] && _dist[_k + 1] < 0) {
+            _dist[@ _k + 1] = _d;
+            _fila[@ _ate] = _k + 1;
+            _ate += 1;
+        }
+        if (_k >= _w && _livre[_k - _w] && _dist[_k - _w] < 0) {
+            _dist[@ _k - _w] = _d;
+            _fila[@ _ate] = _k - _w;
+            _ate += 1;
+        }
+        if (_k + _w < _n && _livre[_k + _w] && _dist[_k + _w] < 0) {
+            _dist[@ _k + _w] = _d;
+            _fila[@ _ate] = _k + _w;
+            _ate += 1;
+        }
+    }
+}
+
+// direcao para a celula vizinha mais perto do alvo; -1 sem caminho ou ja no alvo. Na
+// diagonal, so com os dois lados livres: senao ele corta a quina e trava nela
+function campo_rumo() {
+    campo_preparar();
+    var _c = global.campo;
+    if (_c.alvo_x < 0) {
+        return -1;
+    }
+    campo_calcular();
+    var _w = _c.w;
+    var _h = _c.h;
+    var _dist = _c.dist;
+    var _i = clamp(floor(x / CAMPO_CELULA), 0, _w - 1);
+    var _j = clamp(floor(y / CAMPO_CELULA), 0, _h - 1);
+    var _aqui = _dist[_j * _w + _i];
+    var _melhor = (_aqui >= 0) ? _aqui : 1000000;
+    var _mi = -1;
+    var _mj = -1;
+    for (var _dj = -1; _dj <= 1; _dj++) {
+        for (var _di = -1; _di <= 1; _di++) {
+            var _ni = _i + _di;
+            var _nj = _j + _dj;
+            if ((_di == 0 && _dj == 0) || _ni < 0 || _nj < 0 || _ni >= _w || _nj >= _h) {
+                continue;
+            }
+            var _d = _dist[_nj * _w + _ni];
+            if (_d < 0 || _d >= _melhor) {
+                continue;
+            }
+            if (_di != 0 && _dj != 0 && (_dist[_j * _w + _ni] < 0 || _dist[_nj * _w + _i] < 0)) {
+                continue;
+            }
+            _melhor = _d;
+            _mi = _ni;
+            _mj = _nj;
+        }
+    }
+    if (_mi < 0) {
+        return -1;
+    }
+    campo_passos = _melhor;
+    return point_direction(x, y, (_mi + 0.5) * CAMPO_CELULA, (_mj + 0.5) * CAMPO_CELULA);
+}
+
+// voltando para casa com parede no meio: pede um caminho uma vez so e segue os pontos.
+// Casa inalcancavel: fica morando onde esta, em vez de empurrar a parede para sempre
+function casa_rumo() {
+    if (casa_passo < 0) {
+        if (collision_line(x, y, home_x, home_y, obj_wall, false, true) == noone) {
+            return point_direction(x, y, home_x, home_y);
+        }
+        campo_preparar();
+        var _c = global.campo;
+        if (!mp_grid_path(_c.grade, _c.caminho, x, y, home_x, home_y, true)) {
+            home_x = x;
+            home_y = y;
+            return point_direction(x, y, home_x, home_y);
+        }
+        casa_rota = [];
+        for (var _i = 0; _i < path_get_number(_c.caminho); _i++) {
+            array_push(casa_rota, [path_get_point_x(_c.caminho, _i), path_get_point_y(_c.caminho, _i)]);
+        }
+        casa_passo = 0;
+    }
+    while (casa_passo < array_length(casa_rota) && point_distance(x, y, casa_rota[casa_passo][0], casa_rota[casa_passo][1]) < 12) {
+        casa_passo += 1;
+    }
+    if (casa_passo >= array_length(casa_rota)) {
+        casa_passo = -1;
+        return point_direction(x, y, home_x, home_y);
+    }
+    return point_direction(x, y, casa_rota[casa_passo][0], casa_rota[casa_passo][1]);
+}
+
 // anda para _dir, escorregando na parede
 function inimigo_andar(_dir, _vel) {
     var _mx = lengthdir_x(_vel, _dir);

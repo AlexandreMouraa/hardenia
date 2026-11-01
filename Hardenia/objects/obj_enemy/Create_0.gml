@@ -50,6 +50,7 @@ depois_golpe = "recua";
 
 // viu o jogador ou apanhou: acorda e chama os vizinhos
 acordar = function() {
+    campo_ver(obj_player.x, obj_player.y);
     with (obj_enemy) {
         if (!acordado && point_distance(x, y, other.x, other.y) <= other.raio_alerta) {
             acordado = true;
@@ -63,6 +64,12 @@ acordar = function() {
 
 home_x = x;
 home_y = y;
+// caminho de volta para casa com parede no meio (casa_rumo, em scr_inimigos)
+casa_rota = [];
+casa_passo = -1;
+// ate quando ja seguiu o que o grupo viu (campo_rumo)
+campo_visto = 0;
+campo_passos = 0;
 patrol_dir = 1;
 patrol_speed = 1;
 patrol_range = 64;
