@@ -30,13 +30,20 @@ ataque_sprite = noone;
 ataque_frames = 0;
 // roda na hora de mirar, com attack_dir ja definido (o arqueiro corta a linha na parede)
 ao_mirar = undefined;
+// desenha por cima do corpo (o brilho na ponta da flecha, no arqueiro)
+ao_desenhar = undefined;
 // o que sai quando o aviso acaba. Quem ataca de longe troca este
 disparar = function() {
     var _golpe = instance_create_layer(zona.cx, zona.cy, "Instances", obj_enemy_attack);
     _golpe.dono = id;
     _golpe.zona = zona;
     _golpe.lifetime = ataque.acerto;
+    fx_golpe_inimigo(ataque, x, y, attack_dir);
 };
+// a zona desenhada no chao. Quem nao tem (arqueiro) avisa so com a pose
+zona_visivel = true;
+// frames do "!" depois de acordar
+alerta = 0;
 attack_damage_dealt = false;
 attack_dir = 0;
 
@@ -75,6 +82,7 @@ acordar = function() {
     with (obj_enemy) {
         if (!acordado && point_distance(x, y, other.x, other.y) <= other.raio_alerta) {
             acordado = true;
+            alerta = 30;
             memoria_x = obj_player.x;
             memoria_y = obj_player.y;
             procura = procura_max;

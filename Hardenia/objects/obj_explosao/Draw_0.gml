@@ -1,9 +1,7 @@
-// como o aviso do inimigo: contorno que acende, depois a zona preenchida
-draw_set_color(make_colour_rgb(255, 120, 20));
+// como o aviso do inimigo: enche a zona ate a hora, depois pisca e some
+var _cor = make_colour_rgb(255, 120, 20);
 if (estado == 1) {
-    zona_desenhar(zona, 0.15, 0.3 + 0.7 * (1 - tempo / aviso));
+    zona_aviso_desenhar(zona, 1 - tempo / aviso, _cor);
 } else {
-    zona_desenhar(zona, 0.6 * tempo / duracao, 0);
+    zona_golpe_desenhar(zona, tempo / duracao, _cor);
 }
-draw_set_alpha(1);
-draw_set_color(c_white);

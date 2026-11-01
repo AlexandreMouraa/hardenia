@@ -81,17 +81,22 @@ function zona_posicionar(_z, _x, _y) {
 }
 
 // _fundo: transparencia do preenchimento. _linha: do contorno (0 = sem contorno).
-// A cor vem do draw_set_color de quem chama
-function zona_desenhar(_z, _fundo, _linha) {
+// _escala: tamanho do preenchimento, de 0 a 1, crescendo a partir de onde o golpe sai (o
+// circulo cresce do meio). A cor vem do draw_set_color de quem chama
+function zona_desenhar(_z, _fundo, _linha, _escala = 1) {
     var _v = _z.pontos;
     var _n = array_length(_v);
     if (_fundo > 0) {
+        var _ox = (_z.forma == "circulo") ? _z.cx : _z.ox;
+        var _oy = (_z.forma == "circulo") ? _z.cy : _z.oy;
+        var _p0x = _ox + (_v[0][0] - _ox) * _escala;
+        var _p0y = _oy + (_v[0][1] - _oy) * _escala;
         draw_set_alpha(_fundo);
         draw_primitive_begin(pr_trianglelist);
         for (var _i = 1; _i < _n - 1; _i++) {
-            draw_vertex(_v[0][0], _v[0][1]);
-            draw_vertex(_v[_i][0], _v[_i][1]);
-            draw_vertex(_v[_i + 1][0], _v[_i + 1][1]);
+            draw_vertex(_p0x, _p0y);
+            draw_vertex(_ox + (_v[_i][0] - _ox) * _escala, _oy + (_v[_i][1] - _oy) * _escala);
+            draw_vertex(_ox + (_v[_i + 1][0] - _ox) * _escala, _oy + (_v[_i + 1][1] - _oy) * _escala);
         }
         draw_primitive_end();
     }
@@ -99,8 +104,45 @@ function zona_desenhar(_z, _fundo, _linha) {
         draw_set_alpha(_linha);
         for (var _j = 0; _j < _n; _j++) {
             var _prox = _v[(_j + 1) mod _n];
-            draw_line_width(_v[_j][0], _v[_j][1], _prox[0], _prox[1], 2);
+            draw_line_width(_v[_j][0], _v[_j][1], _prox[0], _prox[1], 1);
         }
+    }
+}
+
+// aviso: contorno fino e um preenchimento que enche a zona ate a hora do golpe. _t de 0 a 1
+function zona_aviso_desenhar(_z, _t, _cor) {
+    draw_set_color(_cor);
+    zona_desenhar(_z, 0.1 + 0.14 * _t, 0.25 + 0.35 * _t, _t);
+    draw_set_alpha(1);
+    draw_set_color(c_white);
+}
+
+// golpe: a zona inteira pisca e some. _t de 1 a 0
+function zona_golpe_desenhar(_z, _t, _cor) {
+    draw_set_color(_cor);
+    zona_desenhar(_z, 0.32 * _t, 0);
+    draw_set_alpha(1);
+    draw_set_color(c_white);
+}
+
+// o corte de quem bate de perto: arco do tamanho da zona, vermelho, para nao confundir com o
+// do jogador. Linha e circulo tem o proprio efeito (rastro do bote, explosao)
+function fx_golpe_inimigo(_ataque, _x, _y, _dir) {
+    if (_ataque.forma != "arco" && _ataque.forma != "quadrado") {
+        return;
+    }
+    var _arco = (_ataque.forma == "arco");
+    var _r = _arco ? _ataque.alcance : _ataque.alcance + _ataque.tamanho;
+    with (instance_create_depth(_x, _y, depth - 1, obj_fx)) {
+        tipo = "arco";
+        dir = _dir;
+        raio = _r - 2;
+        abertura = _arco ? 2 * _ataque.tamanho : 110;
+        espessura = clamp(_r * 0.3, 14, 40);
+        cor = make_colour_rgb(200, 30, 30);
+        borda = make_colour_rgb(255, 130, 100);
+        vida_max = 12;
+        vida = vida_max;
     }
 }
 
