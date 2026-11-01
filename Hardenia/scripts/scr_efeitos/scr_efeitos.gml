@@ -7,6 +7,21 @@ global.hitstop = 0;
 // amplitude do tremor da camera, em pixels; decai sozinho (obj_player, End Step)
 global.tremor = 0;
 
+// efeito sonoro com o tom variando um pouco, sem random (o robo depende do RNG). No
+// mesmo instante toca um so: uma horda morrendo de uma vez viraria um estouro, e no
+// navegador cada som pesa. current_time e do relogio, nao entra na conta do jogo
+global.som_contador = 0;
+global.som_ultimo = {};
+function som(_som, _ganho = 1) {
+    var _nome = audio_get_name(_som);
+    if (variable_struct_exists(global.som_ultimo, _nome) && current_time - variable_struct_get(global.som_ultimo, _nome) < 50) {
+        exit;
+    }
+    variable_struct_set(global.som_ultimo, _nome, current_time);
+    global.som_contador += 1;
+    audio_play_sound(_som, 1, false, _ganho, 0, 1 + 0.06 * sin(global.som_contador * 2.4));
+}
+
 function impacto(_hitstop, _tremor) {
     global.hitstop = max(global.hitstop, _hitstop);
     global.tremor = max(global.tremor, _tremor);

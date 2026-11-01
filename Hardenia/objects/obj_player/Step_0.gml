@@ -239,6 +239,7 @@ tempo_na_sala += 1;
 
 if (_dash_apertado && dash_charges == 0 && !is_dashing) {
     dash_negado = 14;
+    som(snd_dash_negado);
 }
 if (dash_buffer > 0 && !is_dashing && dash_charges > 0) {
     dash_buffer = 0;
@@ -372,6 +373,7 @@ if (hp <= 0) {
     rede_evento("morte", { x: round(x), y: round(y), tentativa: global.tentativas, tempo_ms: frames_para_ms(tempo_na_sala) });
     is_dead = true;
     frase_morte = frase_de_morte(morto_por);
+    som(snd_morte_jogador);
     cancelar_carga();
     brilho = 0;
     impacto(8, 9);

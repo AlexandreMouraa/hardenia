@@ -14,6 +14,7 @@ acertar = function(_enemy) {
         acordar();
     }
     var _dir_golpe = instance_exists(obj_player) ? point_direction(obj_player.x, obj_player.y, _enemy.x, _enemy.y) : 0;
+    som(_enemy.hp <= 0 ? snd_morte_inimigo : snd_acerto);
     if (_enemy.hp <= 0) {
         // golpe que mata: pausa e tremor maiores, faiscas vermelhas. Inimigo de horda
         // morre sem isso: a cada golpe morrem varios, e o jogo ficaria parando
