@@ -85,14 +85,19 @@ if (_p.hp < vida_antes) {
 }
 vida_antes = _p.hp;
 
+// modos que testam o fluxo de um ataque, nao o balanceamento: a vida fica cheia. Os golpes
+// ja entraram em "danos" aqui em cima. Sem isso, o robo chega ferido na sala seguinte, morre
+// no mesmo ponto e repete a run identica ate o limite de tempo: morrer recomeca a run, e o
+// robo e deterministico. O caminho da morte quem testa e o -morrer
+if (vida_cheia && _p.hp < _p.hp_max) {
+    _p.hp = _p.hp_max;
+    global.vida = _p.hp;
+    vida_antes = _p.hp;
+}
+
 // -horda: a medida roda parada, e a 60 fps de verdade. Depois de vencer as ondas
 if (usar_horda && room == Room_Horda) {
     var _h = instance_find(obj_horda, 0);
-    if (_p.hp < _p.hp_max) {
-        _p.hp = _p.hp_max;
-        global.vida = _p.hp;
-        vida_antes = _p.hp;
-    }
     if (_h.medida_fim) {
         log("horda_limite", "inimigos=" + string(_h.medida_limite));
         game_set_speed(velocidade, gamespeed_fps);

@@ -155,8 +155,8 @@ roda 3 runs em velocidade acelerada, sem som e em janela, e termina com `OK` ou
 | `-mouse` | ataca com o clique, mirando no inimigo (testa a mira no mouse) |
 | `-carregar` | segura o ataque depois de cada golpe e solta com a carga cheia (testa o golpe carregado; soma `carregados=N` no resumo) |
 | `-especial` | usa o golpe especial sempre que tem alvo perto e recarga pronta (soma `especiais=N` no resumo e registra os acertos de cada giro) |
-| `-estocar` | com alvo perto e carga de dash, dá o dash e ataca logo depois (soma `estocadas=N` no resumo) |
-| `-formas` | confere a geometria das zonas de golpe e dá uma das 4 formas a cada inimigo, com mais vida (print de cada forma; `formas=8` no resumo quando todas apareceram) |
+| `-estocar` | com alvo perto e carga de dash, dá o dash e ataca logo depois (soma `estocadas=N` no resumo). Vida sempre cheia: testa o fluxo, não o balanceamento |
+| `-formas` | confere a geometria das zonas de golpe e dá uma das 4 formas a cada inimigo, com mais vida (print de cada forma; `formas=8` no resumo quando todas apareceram). Vida sempre cheia, como no `-estocar` |
 | `-grupo` | na primeira sala, fica parado e confere visão, memória, alerta dos vizinhos e cerco (print `cerco`; `grupo=1` no resumo) |
 | `-horda` | joga as 3 ondas da sala de teste e depois mede o limite do aparelho a 60 fps (rodar com `-Runs 1`) |
 | `-desatento 40` | ignora 40% dos avisos, como um jogador distraído |

@@ -125,6 +125,8 @@ for (var _i = 1; _i < parameter_count(); _i++) {
     }
 }
 
+vida_cheia = usar_horda || usar_estocada || testar_formas;
+
 frame = 0;
 run_atual = 0;
 runs_feitas = 0;
