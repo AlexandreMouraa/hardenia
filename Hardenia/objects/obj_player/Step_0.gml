@@ -70,7 +70,7 @@ if (is_dead) {
 }
 
 // ultima sala limpa = fim da run
-if (!venceu && room == room_last && instance_number(obj_enemy) == 0) {
+if (!venceu && room == sala_final() && instance_number(obj_enemy) == 0) {
     venceu = true;
     cancelar_carga();
     brilho = 0;

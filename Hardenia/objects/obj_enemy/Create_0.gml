@@ -20,6 +20,8 @@ attack_damage_dealt = false;
 attack_dir = 0;
 
 hit_flash = 0;
+// morre sem micro-pausa nem faiscas (inimigo de horda)
+leve = false;
 // empurrao do terceiro golpe do combo (obj_attack): desliza e freia a cada frame
 empurrao_x = 0;
 empurrao_y = 0;

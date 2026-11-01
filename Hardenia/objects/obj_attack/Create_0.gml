@@ -15,9 +15,12 @@ acertar = function(_enemy) {
     }
     var _dir_golpe = instance_exists(obj_player) ? point_direction(obj_player.x, obj_player.y, _enemy.x, _enemy.y) : 0;
     if (_enemy.hp <= 0) {
-        // golpe que mata: pausa e tremor maiores, faiscas vermelhas
-        impacto(forte ? 6 : 5, forte ? 8 : 6);
-        fx_faiscas(_enemy.x, _enemy.y, _dir_golpe, c_red, 9);
+        // golpe que mata: pausa e tremor maiores, faiscas vermelhas. Inimigo de horda
+        // morre sem isso: a cada golpe morrem varios, e o jogo ficaria parando
+        if (!_enemy.leve) {
+            impacto(forte ? 6 : 5, forte ? 8 : 6);
+            fx_faiscas(_enemy.x, _enemy.y, _dir_golpe, c_red, 9);
+        }
         with (instance_create_layer(_enemy.x, _enemy.y, "Instances", obj_fx_morte)) {
             sprite_index = _enemy.sprite_index;
             image_index = _enemy.image_index;

@@ -24,3 +24,22 @@ run_zerar();
 
 audio_stop_sound(snd_game_music);
 audio_play_sound(snd_menu_music, 1, true);
+
+// prototipo de horda: H ou clique no texto do canto (obj_menu, Draw GUI). Fica fora do
+// caminho da run: nao conta tempo de ranking nem manda evento ao site
+horda_iniciar = function() {
+    if (instance_exists(obj_mapa)) {
+        return;
+    }
+    audio_play_sound(snd_confirm, 1, false);
+    audio_stop_sound(snd_menu_music);
+    audio_play_sound(snd_game_music, 1, true);
+    global.run_frames = 0;
+    room_goto(Room_Horda);
+};
+botao_horda = function() {
+    var _w = display_get_gui_width();
+    var _h = display_get_gui_height();
+    var _esc = max(1, _h / 540);
+    return [_w - 240 * _esc, 30 * _esc, _w, 70 * _esc];
+};

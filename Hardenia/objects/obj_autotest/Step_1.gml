@@ -46,7 +46,11 @@ if (room == Room_Menu) {
         run_atual += 1;
         log("run_inicio", "");
         with (obj_menu) {
-            event_perform(ev_keypress, vk_enter);
+            if (other.usar_horda) {
+                horda_iniciar();
+            } else {
+                event_perform(ev_keypress, vk_enter);
+            }
         }
     }
     exit;
@@ -71,6 +75,44 @@ if (_p.hp < vida_antes) {
     log("cura", "hp=" + string(_p.hp));
 }
 vida_antes = _p.hp;
+
+// -horda: a medida roda parada, e a 60 fps de verdade. Depois de vencer as ondas
+if (usar_horda && room == Room_Horda) {
+    var _h = instance_find(obj_horda, 0);
+    if (_p.hp < _p.hp_max) {
+        _p.hp = _p.hp_max;
+        global.vida = _p.hp;
+        vida_antes = _p.hp;
+    }
+    if (_h.medida_fim) {
+        log("horda_limite", "inimigos=" + string(_h.medida_limite));
+        game_set_speed(velocidade, gamespeed_fps);
+        vitorias += 1;
+        terminar_run("horda");
+        exit;
+    }
+    if (_h.medindo) {
+        if (_h.tempo mod 60 == 59) {
+            log("horda_fps", "vivos=" + string(instance_number(obj_enemy_horda)) + " fps=" + string(fps) + " fps_real=" + string(round(fps_real)));
+        }
+        if (_h.tempo == 1200 || _h.tempo == 3600) {
+            pedir_print("horda_medindo");
+        }
+        exit;
+    }
+    if (_h.fim) {
+        log("horda_vencida", "combos=" + string(combos) + " danos=" + string(danos));
+        pedir_print("horda_vencida");
+        game_set_speed(60, gamespeed_fps);
+        with (_h) {
+            medir();
+        }
+        exit;
+    }
+    if (_h.onda >= 0 && tempo_sala mod 240 == 0) {
+        pedir_print("horda_onda");
+    }
+}
 
 var _n = instance_number(obj_enemy);
 if (_n < inimigos_antes) {
@@ -231,7 +273,7 @@ if (_p.venceu) {
     exit;
 }
 
-if (tempo_sala > 60 * 150) {
+if (tempo_sala > 60 * 150 && room != Room_Horda) {
     log("FALHA_timeout_sala", "150s sem sair da sala");
     pedir_print("timeout");
     terminar_run("timeout");

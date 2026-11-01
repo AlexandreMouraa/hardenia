@@ -32,6 +32,12 @@ function mapa_indice(_sala) {
     return -1;
 }
 
+// ultima sala do caminho: limpar ela encerra a run. room_last nao serve, porque a
+// sala de teste da horda fica depois dela na lista de salas
+function sala_final() {
+    return global.mapa_fases[array_length(global.mapa_fases) - 1].sala;
+}
+
 // usado pelos portoes e pelo menu: indo para a frente, mostra o mapa antes de
 // trocar de sala; voltando, troca direto
 function ir_para_sala(_sala) {
