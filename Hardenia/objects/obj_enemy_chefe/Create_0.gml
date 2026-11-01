@@ -13,6 +13,7 @@ hp = hp_max;
 move_speed = 1.3;
 imovel = true;
 depois_golpe = "parado";
+som_golpe = noone;
 // a sala inteira e dele
 visao = 2000;
 raio_alerta = 0;
@@ -66,6 +67,7 @@ ao_mirar = function() {
         ataque.alcance = linha_ate_parede(x, y, attack_dir, 520);
     } else if (ataque.forma == "circulo") {
         ataque.alcance = point_distance(x, y, obj_player.x, obj_player.y);
+        som(snd_bomba_cai);
         // em volta do jogador, em lados fixos; na furia, dois a mais
         var _n = metade ? 4 : 2;
         for (var _i = 0; _i < _n; _i++) {
@@ -92,9 +94,9 @@ disparar = function() {
         zona.ox = zona.cx;
         zona.oy = zona.cy;
         fx_explosao(zona.cx, zona.cy, ataque.tamanho);
-        som(snd_magia);
+        som(snd_explosao);
     } else {
-        audio_play_sound(snd_attack, 1, false, 1, 0, 0.6);
+        audio_play_sound(snd_golpe_forte, 1, false, 1, 0, 0.7);
     }
     disparar_golpe();
 };

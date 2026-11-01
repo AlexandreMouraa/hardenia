@@ -244,7 +244,8 @@ golpear = function(_carregado = false) {
     }
     is_attacking = true;
     attack_anim_timer = attack_anim_duration;
-    audio_play_sound(snd_attack, 1, false, 1, 0, _forte ? 0.85 : (golpe_atual == 2 ? 1.08 : 1));
+    // segundo golpe mais agudo, para o combo ter um ritmo de ouvido
+    audio_play_sound(_forte ? snd_golpe_forte : snd_attack, 1, false, 1, 0, golpe_atual == 2 ? 1.12 : 1);
 };
 
 // estocada: atacar no dash ou logo no fim dele (dash_freio) sai para o lado do
@@ -285,7 +286,7 @@ estocar = function() {
     attack_anim_duration = 12;
     attack_anim_timer = attack_anim_duration;
     is_attacking = true;
-    audio_play_sound(snd_attack, 1, false, 1, 0, 1.2);
+    audio_play_sound(snd_estocada, 1, false);
 };
 
 // golpe especial (clique direito ou K): giro que acerta todos em volta, para
@@ -331,7 +332,7 @@ girar = function() {
     attack_anim_duration = 14;
     attack_anim_timer = attack_anim_duration;
     is_attacking = true;
-    audio_play_sound(snd_attack, 1, false, 1, 0, 0.7);
+    audio_play_sound(snd_giro, 1, false);
 };
 
 is_dead = false;
