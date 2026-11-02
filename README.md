@@ -57,6 +57,7 @@ estão no [CONTRIBUTING.md](CONTRIBUTING.md).
 | Golpe carregado (anda devagar enquanto carrega) | Segurar o ataque e soltar quando o personagem piscar |
 | Estocada (golpe mais comprido) | Atacar durante o dash ou logo no fim dele |
 | Golpe especial (acerta todos em volta, recarga de 3 s) | Clique direito ou `K` |
+| Giro Furioso (com a barra de Fúria cheia) | Segurar o clique direito ou `K` |
 | Dash (2 cargas, invencível durante o impulso) | `Espaço` |
 | Pausar / continuar | `Esc` |
 | Voltar ao menu (na pausa) | `M` |

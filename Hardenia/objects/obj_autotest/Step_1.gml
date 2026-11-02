@@ -21,6 +21,8 @@ bot_dash = false;
 bot_enter = false;
 bot_clique = false;
 bot_especial = false;
+bot_especial_preso = (furia_frames > 0);
+furia_frames = max(0, furia_frames - 1);
 segurar_frames = max(0, segurar_frames - 1);
 bot_segurar = (segurar_frames > 0);
 
@@ -64,6 +66,9 @@ if (room == Room_Menu) {
                 log("FALHA_vida", "-morrer nao viu a cura");
             }
             log("tecnica_usos", json_stringify(global.tecnica_usos));
+            if (!usar_horda && global.giros_furiosos == 0) {
+                log("FALHA_furia", "a Furia encheu e o Giro Furioso nunca saiu");
+            }
             if (todas_tecnicas && variable_struct_names_count(global.tecnica_usos) < array_length(global.tecnicas_lista)) {
                 log("FALHA_tecnica", "so estas fizeram efeito: " + json_stringify(global.tecnica_usos));
             }
@@ -76,7 +81,7 @@ if (room == Room_Menu) {
             if (!usar_horda && variable_struct_names_count(elites_vistas) < 3) {
                 log("FALHA_elite", "so " + string(variable_struct_names_count(elites_vistas)) + " habilidades apareceram");
             }
-            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes) + " danos=" + string(danos) + " avisos_max=" + string(avisos_max) + " combos=" + string(combos) + " elites=" + string(variable_struct_names_count(elites_vistas)) + (carregar ? " carregados=" + string(carregados) : "") + (usar_especial ? " especiais=" + string(especiais) : "") + (usar_estocada ? " estocadas=" + string(estocadas) : "") + (testar_formas ? " formas=" + string(variable_struct_names_count(formas_vistas)) : "") + (testar_grupo ? " grupo=" + string(grupo_ok) : "") + (usar_toque ? " toque=1" : "") + " tecnicas=" + string(variable_struct_names_count(global.tecnica_usos)));
+            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes) + " danos=" + string(danos) + " avisos_max=" + string(avisos_max) + " combos=" + string(combos) + " elites=" + string(variable_struct_names_count(elites_vistas)) + (carregar ? " carregados=" + string(carregados) : "") + (usar_especial ? " especiais=" + string(especiais) : "") + (usar_estocada ? " estocadas=" + string(estocadas) : "") + (testar_formas ? " formas=" + string(variable_struct_names_count(formas_vistas)) : "") + (testar_grupo ? " grupo=" + string(grupo_ok) : "") + (usar_toque ? " toque=1" : "") + " tecnicas=" + string(variable_struct_names_count(global.tecnica_usos)) + " furia=" + string(global.giros_furiosos));
             encerrar(0);
             exit;
         }
@@ -605,6 +610,13 @@ for (var _dh = -1; _dh <= 1; _dh++) {
 if (_quer_morrer && _alvo != noone && (_esperando_grupo || point_distance(_p.x, _p.y, _alvo.x, _alvo.y) < 36)) {
     _mh = 0;
     _mv = 0;
+}
+
+// ---------- Furia cheia e alvo perto: aperta e continua segurando o giro ----------
+if (global.furia >= FURIA_MAX && furia_frames <= 0 && _alvo != noone && !_ameacado && !_quer_morrer && point_distance(_p.x, _p.y, _alvo.x, _alvo.y) < 130) {
+    furia_frames = 26;
+    bot_especial = _p.especial_recarga <= 0;
+    bot_especial_preso = true;
 }
 
 // ---------- ataque: vira para o alvo e bate quando ele esta no alcance ----------

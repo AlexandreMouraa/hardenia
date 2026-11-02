@@ -201,6 +201,9 @@ bot_enter = false;
 bot_clique = false;
 bot_segurar = false;
 bot_especial = false;
+bot_especial_preso = false;
+// segura o especial por tantos frames quando a Furia enche e tem alvo perto
+furia_frames = 0;
 
 encerrar = function(_codigo) {
     if (encerrando) {
@@ -580,7 +583,7 @@ toque_sintetizar = function(_mh, _mv) {
     if (bot_dash) {
         bot_dedos[2] = [_b.dash.x, _b.dash.y];
     }
-    if (bot_especial) {
+    if (bot_especial || bot_especial_preso) {
         bot_dedos[3] = [_b.especial.x, _b.especial.y];
     }
 };

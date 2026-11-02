@@ -1,3 +1,14 @@
+// segurando o especial com a Furia cheia: um anel fecha em volta do corpo
+if (especial_carga > 0) {
+    var _fecha = especial_carga / especial_carga_max;
+    draw_set_color(make_colour_rgb(255, 120, 60));
+    draw_set_alpha(0.3 + 0.6 * _fecha);
+    draw_circle(x, y, 70 - 40 * _fecha, true);
+    draw_circle(x, y, 69 - 40 * _fecha, true);
+    draw_set_alpha(1);
+    draw_set_color(c_white);
+}
+
 // estica na direcao do dash e achata um pouco ao frear. So no desenho: a
 // mascara de colisao continua a mesma. Brilho branco ao arrancar e quando a
 // carga do dash volta

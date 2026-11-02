@@ -16,6 +16,8 @@ global.toque = {
     ataque_preso: false,
     dash_novo: false,
     especial_novo: false,
+    especial_preso: false,
+    dedo_especial: -1,
     pausa_novo: false,
     qualquer_novo: false,
     dedo_direcional: -1,
@@ -195,6 +197,7 @@ function toque_ler() {
             _t.dash_novo = true;
         } else if (toque_no_botao(_x, _y, _b.especial)) {
             _t.especial_novo = true;
+            _t.dedo_especial = _d;
         } else if (toque_no_botao(_x, _y, _b.pausa)) {
             _t.pausa_novo = true;
         } else if (_t.dedo_direcional < 0 && _x < display_get_gui_width() * 0.5) {
@@ -209,6 +212,10 @@ function toque_ler() {
         _t.dedo_ataque = -1;
     }
     _t.ataque_preso = (_t.dedo_ataque >= 0);
+    if (_t.dedo_especial >= 0 && !toque_dedo_preso(_t.dedo_especial)) {
+        _t.dedo_especial = -1;
+    }
+    _t.especial_preso = (_t.dedo_especial >= 0);
 
     _t.h = 0;
     _t.v = 0;
@@ -257,7 +264,7 @@ function toque_desenhar(_dash, _especial) {
     draw_set_valign(fa_middle);
     toque_circulo(_b.ataque, _t.ataque_preso, true);
     toque_circulo(_b.dash, false, _dash);
-    toque_circulo(_b.especial, false, _especial);
+    toque_circulo(_b.especial, _t.especial_preso, _especial);
     toque_circulo(_b.pausa, false, true);
 
     var _preso = (_t.dedo_direcional >= 0);

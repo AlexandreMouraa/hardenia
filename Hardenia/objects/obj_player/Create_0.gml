@@ -366,6 +366,44 @@ girar = function() {
     audio_play_sound(snd_giro, 1, false);
 };
 
+// Giro Furioso: segurar o especial com a Furia cheia. 20 frames, como quem toma folego. Anda
+// devagar enquanto segura, e por isso nao da para usar sem pensar
+especial_carga = 0;
+especial_carga_max = 20;
+giro_furioso = function() {
+    especial_carga = 0;
+    cancelar_carga();
+    combo_passo = 0;
+    combo_janela = 0;
+    // a barra zera depois de acertar: este golpe nao enche a proxima
+    golpe_em_volta(x, y, 170, 4, 60, true, true);
+    global.furia = 0;
+    global.giros_furiosos += 1;
+    global.lento = max(global.lento, 24);
+    global.flash = max(global.flash, 0.22);
+    invuln_timer = max(invuln_timer, 40);
+    impacto(6, 12);
+    fx_onda(x, y, 190, make_colour_rgb(255, 120, 60));
+    with (instance_create_depth(x, y, depth - 1, obj_fx)) {
+        tipo = "arco";
+        dono = other.id;
+        abertura = 360;
+        raio = 165;
+        espessura = 46;
+        cor = make_colour_rgb(255, 90, 40);
+        borda = make_colour_rgb(255, 210, 140);
+        intensidade = 1.8;
+        vida_max = 18;
+        vida = vida_max;
+    }
+    attack_cooldown = max(attack_cooldown, 20);
+    attack_anim_duration = 14;
+    attack_anim_timer = attack_anim_duration;
+    is_attacking = true;
+    audio_play_sound(snd_giro, 1, false, 1, 0, 0.75);
+    som(snd_explosao, 0.7);
+};
+
 is_dead = false;
 death_timer = 0;
 death_timer_max = 90;

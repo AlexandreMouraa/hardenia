@@ -46,7 +46,10 @@ if (global.toque_ativo) {
 }
 if (_especial && !is_dead && !venceu) {
     if (especial_recarga > 0) {
-        especial_negado = 14;
+        // com a Furia cheia nao e negado: segurando, sai o Giro Furioso
+        if (global.furia < FURIA_MAX) {
+            especial_negado = 14;
+        }
     } else {
         especial_buffer = ataque_buffer_max;
     }
@@ -270,6 +273,19 @@ if (especial_buffer > 0 && !is_dashing) {
     girar();
 }
 especial_buffer = max(0, especial_buffer - 1);
+var _especial_preso = instance_exists(obj_autotest) ? obj_autotest.bot_especial_preso : (mouse_check_button(mb_right) || keyboard_check(ord("K")));
+if (global.toque_ativo) {
+    _especial_preso = global.toque.especial_preso;
+}
+if (_especial_preso && global.furia >= FURIA_MAX && !is_dashing) {
+    especial_carga += 1;
+    brilho = max(brilho, 0.8 * especial_carga / especial_carga_max);
+    if (especial_carga >= especial_carga_max) {
+        giro_furioso();
+    }
+} else {
+    especial_carga = 0;
+}
 
 // mede a sala no primeiro frame, com a tela ainda escurecida: a mascara de colisao ja criou
 // as paredes, e nao da tranco na primeira perseguicao
@@ -326,7 +342,7 @@ if (is_dashing) {
 } else {
     var _norm = (_h != 0 && _v != 0) ? 0.7071 : 1;
     var _passo = move_speed;
-    if (carga > 0) {
+    if (carga > 0 || especial_carga > 0) {
         _passo *= carga_lentidao;
     } else if (is_attacking) {
         _passo *= golpe_lentidao;

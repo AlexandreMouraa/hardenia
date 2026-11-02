@@ -20,6 +20,15 @@ global.tecnicas_lista = [
     { chave: "ultimo_instante", caido: "sentinela", nome: "ULTIMO INSTANTE", texto: "Dash na hora do golpe inimigo: o tempo desacelera e o proximo golpe dobra." },
     { chave: "retribuicao", caido: "sentinela", nome: "RETRIBUICAO", texto: "Ao levar um golpe, uma onda fere e empurra todos em volta." },
 ];
+// Furia: acertar enche a barra, que passa de uma sala para a outra e zera com a morte. Cheia,
+// continuar segurando o especial solta o Giro Furioso, mesmo com o giro em recarga
+#macro FURIA_MAX 100
+function furia_ganhar(_quanto) {
+    global.furia = min(FURIA_MAX, global.furia + _quanto);
+}
+// giros furiosos nesta sessao (o robo registra)
+global.giros_furiosos = 0;
+
 // quantas vezes cada tecnica fez efeito, nesta sessao (o robo registra)
 global.tecnica_usos = {};
 

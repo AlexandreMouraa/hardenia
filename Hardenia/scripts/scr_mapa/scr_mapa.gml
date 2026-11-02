@@ -23,6 +23,7 @@ global.runs_zeradas = 0;
 function run_zerar() {
     global.vida = VIDA_MAX;
     global.fase_curada = -1;
+    global.furia = 0;
     global.tecnicas = [];
     global.tecnica_inicio = true;
     global.runs_zeradas += 1;
