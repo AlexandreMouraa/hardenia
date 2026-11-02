@@ -78,7 +78,8 @@ if (room == Room_Menu) {
             if (!usar_horda && !chefe_metade_vista) {
                 log("FALHA_chefe", "nao viu a mudanca na metade da vida");
             }
-            if (!usar_horda && variable_struct_names_count(elites_vistas) < 3) {
+            // com todas as tecnicas (-tecnicas), a elite morre antes de mostrar a habilidade
+            if (!usar_horda && !todas_tecnicas && variable_struct_names_count(elites_vistas) < 3) {
                 log("FALHA_elite", "so " + string(variable_struct_names_count(elites_vistas)) + " habilidades apareceram");
             }
             log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes) + " danos=" + string(danos) + " avisos_max=" + string(avisos_max) + " combos=" + string(combos) + " elites=" + string(variable_struct_names_count(elites_vistas)) + (carregar ? " carregados=" + string(carregados) : "") + (usar_especial ? " especiais=" + string(especiais) : "") + (usar_estocada ? " estocadas=" + string(estocadas) : "") + (testar_formas ? " formas=" + string(variable_struct_names_count(formas_vistas)) : "") + (testar_grupo ? " grupo=" + string(grupo_ok) : "") + (usar_toque ? " toque=1" : "") + " tecnicas=" + string(variable_struct_names_count(global.tecnica_usos)) + " furia=" + string(global.giros_furiosos));

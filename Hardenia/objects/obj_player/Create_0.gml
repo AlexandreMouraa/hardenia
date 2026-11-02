@@ -209,7 +209,7 @@ golpear = function(_carregado = false) {
             // no alvo; sem alvo, a frente, sem cair dentro da parede
             var _ate = golpe_mirado ? point_distance(x, y, _alvo.x, _alvo.y) : 150;
             _ate = linha_ate_parede(x, y, _dir, _ate);
-            bomba_jogador(x, y, x + lengthdir_x(_ate, _dir), y + lengthdir_y(_ate, _dir), 24, 0, 2);
+            bomba_jogador(x, y, x + lengthdir_x(_ate, _dir), y + lengthdir_y(_ate, _dir), 24, 0, 1);
             tecnica_contar("bomba_combo");
         }
     }
@@ -376,20 +376,20 @@ giro_furioso = function() {
     combo_passo = 0;
     combo_janela = 0;
     // a barra zera depois de acertar: este golpe nao enche a proxima
-    golpe_em_volta(x, y, 170, 4, 60, true, true);
+    golpe_em_volta(x, y, 140, 3, 60, true, true);
     global.furia = 0;
     global.giros_furiosos += 1;
     global.lento = max(global.lento, 24);
     global.flash = max(global.flash, 0.22);
     invuln_timer = max(invuln_timer, 40);
     impacto(6, 12);
-    fx_onda(x, y, 190, make_colour_rgb(255, 120, 60));
+    fx_onda(x, y, 160, make_colour_rgb(255, 120, 60));
     with (instance_create_depth(x, y, depth - 1, obj_fx)) {
         tipo = "arco";
         dono = other.id;
         abertura = 360;
-        raio = 165;
-        espessura = 46;
+        raio = 138;
+        espessura = 40;
         cor = make_colour_rgb(255, 90, 40);
         borda = make_colour_rgb(255, 210, 140);
         intensidade = 1.8;
