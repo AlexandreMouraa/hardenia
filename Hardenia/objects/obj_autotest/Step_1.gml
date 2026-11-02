@@ -134,6 +134,10 @@ if (room == Room_Menu) {
             if (!usar_horda && !global.abertura_vista) {
                 log("FALHA_abertura", "a abertura nao apareceu");
             }
+            // as dicas dependem do que acontece na run; 8 das 12 aparecem em qualquer modo
+            if (!usar_horda && variable_struct_names_count(global.salvo.dicas) < 8) {
+                log("FALHA_dicas", "so estas apareceram: " + json_stringify(global.salvo.dicas));
+            }
             if (!usar_horda && !chefe_metade_vista) {
                 log("FALHA_chefe", "nao viu a segunda fase");
             }
@@ -468,6 +472,12 @@ if (instance_exists(obj_enemy_chefe)) {
     chefe_vivo = false;
     chefe_vencido += 1;
     log("chefe_vencido", "tempo_sala=" + string(round(tempo_sala / 60)) + "s danos=" + string(danos));
+}
+
+// dicas: um print de cada, na primeira run
+if (global.dica_agora != "" && global.dica_tempo == 30 && run_atual == 1) {
+    log("dica", global.dica_agora);
+    pedir_print("dica_" + global.dica_agora);
 }
 
 // duelo: registra quem apareceu e quando caiu

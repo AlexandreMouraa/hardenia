@@ -39,7 +39,13 @@ itens = [
         nome: "Dicas",
         tipo: "texto",
         ler: function() { return global.op_dicas ? "Ligadas" : "Desligadas"; },
-        mudar: function(_d) { global.op_dicas = !global.op_dicas; },
+        mudar: function(_d) {
+            global.op_dicas = !global.op_dicas;
+            // ligar de novo mostra todas outra vez: outra pessoa pode estar jogando
+            if (global.op_dicas) {
+                global.salvo.dicas = {};
+            }
+        },
     },
     {
         nome: "Tela cheia",

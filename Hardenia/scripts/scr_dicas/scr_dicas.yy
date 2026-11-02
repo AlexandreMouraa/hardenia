@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_dicas",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_dicas",
+  "parent":{
+    "name":"Hardenia",
+    "path":"Hardenia.yyp",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

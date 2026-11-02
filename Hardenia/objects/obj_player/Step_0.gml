@@ -334,6 +334,7 @@ if (tempo_na_sala == 0) {
     dificuldade_aplicar();
 }
 tempo_na_sala += 1;
+dicas_passo();
 
 // o rei morto se apresenta. Morrer volta ao comeco: da segunda vez em diante, mais curto
 if (tempo_na_sala == 2 && instance_exists(obj_enemy_chefe)) {

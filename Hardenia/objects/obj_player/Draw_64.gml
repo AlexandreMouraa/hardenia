@@ -213,9 +213,14 @@ if (room == room_next(room_first) && global.tentativas == 1 && tempo_na_sala < 3
     draw_set_alpha(min(1, (300 - tempo_na_sala) / 60));
     draw_set_color(c_white);
     texto(_w / 2, _h * 0.2, "DERROTE TODOS OS INIMIGOS PARA ABRIR O PORTÃO", _esc, _esc, 0);
-    draw_set_color(c_ltgray);
-    texto(_w / 2, _h * 0.2 + 24 * _esc, global.toque_ativo ? "Saia da área vermelha antes do golpe.   Esquerda da tela: andar.   Direita: botões." : "Saia da área vermelha antes do golpe.   ESC: pausa e controles", _esc * 0.8, _esc * 0.8, 0);
     draw_set_alpha(1);
+}
+
+if (!global.game_paused && !instance_exists(obj_mapa) && !instance_exists(obj_tecnicas) && !instance_exists(obj_cena)) {
+    dica_desenhar();
+    draw_set_halign(fa_center);
+    draw_set_valign(fa_middle);
+    draw_set_color(c_white);
 }
 
 if (is_dead) {
