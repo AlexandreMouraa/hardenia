@@ -1,4 +1,4 @@
-if (global.game_paused || is_dead || venceu || instance_exists(obj_mapa)) {
+if (global.game_paused || is_dead || venceu || instance_exists(obj_mapa) || instance_exists(obj_tecnicas)) {
     exit;
 }
 

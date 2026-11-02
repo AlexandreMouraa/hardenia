@@ -129,6 +129,11 @@ Ali, `L` ou um toque no botão de baixo mede quantos inimigos o aparelho aguenta
   perto, vai para onde ele está virado. Alvo na beira do alcance ganha um passo
   curto até ele. O cursor do sistema some durante o jogo. O robô tem `-mouse` para
   testar o caminho do clique.
+- **Técnicas dos Caídos** (`scripts/scr_tecnicas`, `obj_bau`, `obj_tecnicas`): uma
+  escolha entre 3 ao começar a run e outra em cada sala limpa, no baú que o último inimigo
+  deixa. O portão espera o baú. Valem até a próxima morte, e nada passa para a run
+  seguinte. O sorteio usa gerador próprio, para não mexer na sequência aleatória de que o
+  robô depende. Técnica nova: acrescentar em `global.tecnicas_lista` e tratar o efeito.
 - **Mapa de progresso** (`scripts/scr_mapa`, `obj_mapa`): ao entrar numa fase
   nova, o guerreiro anda no mapa até ela (2,5 s, Enter ou clique pula); a pausa mostra
   onde você está. As fases ficam em `global.mapa_fases` (fase nova: acrescentar
@@ -155,6 +160,7 @@ roda 3 runs em velocidade acelerada, sem som e em janela, e termina com `OK` ou
 |---|---|
 | `-morrer` | morre uma vez em cada sala na 1ª run (testa morte, volta ao começo da run e a vida) |
 | `-mouse` | ataca com o clique em vez do `J` (testa o caminho do clique; o golpe é o mesmo) |
+| `-tecnicas` | começa a run com todas as técnicas e reprova se alguma não fizer efeito (soma `tecnicas=N` no resumo) |
 | `-carregar` | segura o ataque depois de cada golpe e solta com a carga cheia (testa o golpe carregado; soma `carregados=N` no resumo) |
 | `-especial` | usa o golpe especial sempre que tem alvo perto e recarga pronta (soma `especiais=N` no resumo e registra os acertos de cada giro) |
 | `-estocar` | com alvo perto e carga de dash, dá o dash e ataca logo depois (soma `estocadas=N` no resumo). Vida sempre cheia: testa o fluxo, não o balanceamento |

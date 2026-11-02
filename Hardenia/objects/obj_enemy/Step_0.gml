@@ -8,6 +8,16 @@ if (hit_flash > 0) {
 if (alerta > 0) {
     alerta -= 1;
 }
+if (sangra > 0) {
+    sangra_timer -= 1;
+    if (sangra_timer <= 0) {
+        sangra -= 1;
+        sangra_timer = 60;
+        if (sangria_tique()) {
+            exit;
+        }
+    }
+}
 
 // empurrao do terceiro golpe: de 1 em 1 px para encostar na parede sem atravessar
 if (abs(empurrao_x) + abs(empurrao_y) > 0.1) {

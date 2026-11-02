@@ -39,6 +39,20 @@ if (instance_exists(obj_mapa)) {
     exit;
 }
 
+// escolha de tecnica: fica com a primeira carta; print na primeira vez
+if (instance_exists(obj_tecnicas)) {
+    var _carta = instance_find(obj_tecnicas, 0);
+    if (_carta.tempo == 24 && !viu_tecnicas) {
+        viu_tecnicas = true;
+        pedir_print("tecnicas");
+    }
+    if (_carta.tempo == 30 && _carta.escolhido < 0) {
+        log("tecnica", _carta.oferta[0].chave);
+        _carta.escolher(0);
+    }
+    exit;
+}
+
 if (room == Room_Menu) {
     espera += 1;
     if (espera == 20 && run_atual == 0) {
@@ -49,6 +63,10 @@ if (room == Room_Menu) {
             if (morrer && curas == 0) {
                 log("FALHA_vida", "-morrer nao viu a cura");
             }
+            log("tecnica_usos", json_stringify(global.tecnica_usos));
+            if (todas_tecnicas && variable_struct_names_count(global.tecnica_usos) < array_length(global.tecnicas_lista)) {
+                log("FALHA_tecnica", "so estas fizeram efeito: " + json_stringify(global.tecnica_usos));
+            }
             if (!usar_horda && chefe_vencido < vitorias) {
                 log("FALHA_chefe", "vitorias=" + string(vitorias) + " chefe vencido=" + string(chefe_vencido));
             }
@@ -58,7 +76,7 @@ if (room == Room_Menu) {
             if (!usar_horda && variable_struct_names_count(elites_vistas) < 3) {
                 log("FALHA_elite", "so " + string(variable_struct_names_count(elites_vistas)) + " habilidades apareceram");
             }
-            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes) + " danos=" + string(danos) + " avisos_max=" + string(avisos_max) + " combos=" + string(combos) + " elites=" + string(variable_struct_names_count(elites_vistas)) + (carregar ? " carregados=" + string(carregados) : "") + (usar_especial ? " especiais=" + string(especiais) : "") + (usar_estocada ? " estocadas=" + string(estocadas) : "") + (testar_formas ? " formas=" + string(variable_struct_names_count(formas_vistas)) : "") + (testar_grupo ? " grupo=" + string(grupo_ok) : "") + (usar_toque ? " toque=1" : ""));
+            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes) + " danos=" + string(danos) + " avisos_max=" + string(avisos_max) + " combos=" + string(combos) + " elites=" + string(variable_struct_names_count(elites_vistas)) + (carregar ? " carregados=" + string(carregados) : "") + (usar_especial ? " especiais=" + string(especiais) : "") + (usar_estocada ? " estocadas=" + string(estocadas) : "") + (testar_formas ? " formas=" + string(variable_struct_names_count(formas_vistas)) : "") + (testar_grupo ? " grupo=" + string(grupo_ok) : "") + (usar_toque ? " toque=1" : "") + " tecnicas=" + string(variable_struct_names_count(global.tecnica_usos)));
             encerrar(0);
             exit;
         }
@@ -81,6 +99,13 @@ if (!instance_exists(obj_player)) {
 
 var _p = instance_find(obj_player, 0);
 tempo_sala += 1;
+
+if (todas_tecnicas && array_length(global.tecnicas) == 0) {
+    global.tecnica_inicio = false;
+    for (var _t = 0; _t < array_length(global.tecnicas_lista); _t++) {
+        tecnica_ganhar(global.tecnicas_lista[_t].chave);
+    }
+}
 
 // ---------- eventos para o log ----------
 if (_p.hp < vida_antes) {
@@ -480,6 +505,9 @@ var _gy = _p.y;
 if (_alvo != noone) {
     _gx = _alvo.x;
     _gy = _alvo.y;
+} else if (instance_exists(obj_bau) && !instance_find(obj_bau, 0).aberto) {
+    _gx = instance_find(obj_bau, 0).x;
+    _gy = instance_find(obj_bau, 0).y;
 } else {
     var _s = saida_adiante();
     if (_s != noone) {

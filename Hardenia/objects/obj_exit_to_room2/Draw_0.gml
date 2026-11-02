@@ -1,5 +1,5 @@
 // aberto e levando adiante: luz quente pulsando no arco (voltar nao e destacado)
-if (instance_number(obj_enemy) == 0 && room_next(room) == Room2) {
+if (portao_aberto() && room_next(room) == Room2) {
     var _pulso = 0.5 + 0.5 * sin(current_time / 250);
     gpu_set_blendmode(bm_add);
     draw_set_alpha(0.25 + 0.35 * _pulso);

@@ -17,8 +17,8 @@ if (global.game_paused) {
     exit;
 }
 
-// mapa da proxima fase aberto (obj_mapa): parado, e o tempo nao conta
-if (instance_exists(obj_mapa)) {
+// mapa da proxima fase ou escolha de tecnica abertos: parado, e o tempo nao conta
+if (instance_exists(obj_mapa) || instance_exists(obj_tecnicas)) {
     exit;
 }
 
@@ -128,6 +128,12 @@ if (!sala_limpa_enviada && instance_number(obj_enemy) == 0) {
             hp += 1;
             global.vida = hp;
             hud_cura = hud_cura_max;
+        }
+        // o bau da proxima tecnica, onde o ultimo caiu. O chefe nao deixa: a run acabou
+        if (room != sala_final() && tecnicas_restantes() > 0) {
+            // o portao depende dele: encostado em parede pode ficar fora do alcance, entao vem para ca
+            var _encosta = collision_circle(global.morto_x, global.morto_y, 28, obj_wall, false, true) != noone;
+            instance_create_layer(_encosta ? x : global.morto_x, _encosta ? y : global.morto_y, "Instances", obj_bau);
         }
     }
 }
@@ -273,6 +279,13 @@ if (tempo_na_sala == 0) {
 }
 tempo_na_sala += 1;
 
+// a primeira tecnica da run, antes de qualquer luta
+if (global.tecnica_inicio && mapa_indice(room) == 0) {
+    global.tecnica_inicio = false;
+    instance_create_depth(0, 0, -2000, obj_tecnicas);
+    exit;
+}
+
 if (_dash_apertado && dash_charges == 0 && !is_dashing) {
     dash_negado = 14;
     som(snd_dash_negado);
@@ -293,6 +306,13 @@ if (dash_buffer > 0 && !is_dashing && dash_charges > 0) {
     audio_play_sound(snd_dash, 1, false, 1, 0, 1 + 0.05 * sin(dash_contador * 2.4));
     brilho = 1;
     fx_dash_arrancada(x, y, point_direction(0, 0, dash_dir_x, dash_dir_y));
+    if (tem_tecnica("ultimo_instante") && perigo_iminente()) {
+        golpe_dobrado = true;
+        global.lento = max(global.lento, 36);
+        fx_onda(x, y, 130, global.caidos.sentinela.cor);
+        som(snd_escudo, 1.2);
+        tecnica_contar("ultimo_instante");
+    }
 }
 dash_buffer = max(0, dash_buffer - 1);
 
@@ -350,6 +370,20 @@ if (is_dashing) {
         vida = vida_max;
     }
     fx_risco(_de_x, _de_y, x, y, make_colour_rgb(255, 120, 110));
+    if (tem_tecnica("passo_cortante")) {
+        var _cortados = ds_list_create();
+        var _nc = instance_place_list(x, y, obj_enemy, _cortados, false);
+        for (var _c = 0; _c < _nc; _c++) {
+            var _e = _cortados[| _c];
+            // um corte por dash em cada um
+            if (_e.corte_dash != dash_contador) {
+                _e.corte_dash = dash_contador;
+                golpe_acertar(_e, 1, 6, false, false);
+                tecnica_contar("passo_cortante");
+            }
+        }
+        ds_list_destroy(_cortados);
+    }
     dash_timer -= 1;
     if (dash_timer <= 0) {
         is_dashing = false;
