@@ -15,6 +15,10 @@ if (!instance_exists(obj_autotest) && !variable_global_exists("tela_cheia_aplica
     window_set_fullscreen(true);
 }
 
+// opcoes e recordes do aparelho (nao vale para o robo)
+salvo_ler();
+volumes_aplicar();
+
 // no menu o cursor do sistema volta (no jogo ele fica escondido)
 window_set_cursor(cr_default);
 
@@ -28,6 +32,46 @@ musica(snd_menu_music);
 som_fundo(-1);
 coracao_atualizar(false);
 
+// o menu: o que cada item faz. O robo aperta Enter no primeiro
+cursor = 0;
+mouse_antes_x = -1;
+mouse_antes_y = -1;
+itens = [
+    { nome: "Jogar", acao: "jogar" },
+    { nome: "Como jogar", acao: "como_jogar" },
+    { nome: "Opções", acao: "opcoes" },
+    { nome: "Créditos", acao: "creditos" },
+];
+// no navegador nao ha janela para fechar
+if (os_browser == browser_not_a_browser) {
+    array_push(itens, { nome: "Sair", acao: "sair" });
+}
+acionar = function(_acao) {
+    switch (_acao) {
+        case "jogar":
+            event_perform(ev_keypress, vk_enter);
+            break;
+        case "sair":
+            game_end();
+            break;
+        default:
+            sfx(snd_confirm, 1, false);
+            with (instance_create_depth(0, 0, -9500, obj_opcoes)) {
+                modo = _acao;
+            }
+            break;
+    }
+};
+// [esquerda, cima, direita, baixo] do item, na tela
+item_ret = function(_i) {
+    var _w = display_get_gui_width();
+    var _h = display_get_gui_height();
+    var _esc = max(1, _h / 540);
+    var _y = _h * 0.5 + _i * 34 * _esc;
+    return [_w * 0.56, _y, _w * 0.8, _y + 32 * _esc];
+};
+// o primeiro item e sempre o Enter: o robo e quem ja sabe jogar comecam direto
+
 // comeca a run: zera o tempo e avisa o site (estatisticas de partidas)
 comecar_run = function() {
     global.run_frames = 0;
@@ -38,7 +82,7 @@ comecar_run = function() {
 // prototipo de horda: H ou clique no texto do canto (obj_menu, Draw GUI). Fica fora do
 // caminho da run: nao conta tempo de ranking nem manda evento ao site
 horda_iniciar = function() {
-    if (instance_exists(obj_mapa) || instance_exists(obj_abertura)) {
+    if (instance_exists(obj_mapa) || instance_exists(obj_abertura) || instance_exists(obj_opcoes)) {
         return;
     }
     sfx(snd_confirm, 1, false);

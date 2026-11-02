@@ -7,14 +7,14 @@ var _piscar = 0.4 + 0.6 * (0.5 + 0.5 * sin(current_time / 200));
 
 // golpe que pegou: a tela fica vermelha e volta
 if (hud_dano > 0) {
-    draw_set_alpha(0.3 * hud_dano / hud_dano_max);
+    draw_set_alpha((global.op_flash ? 0.3 : 0.12) * hud_dano / hud_dano_max);
     draw_set_color(c_red);
     draw_rectangle(0, 0, _w, _h, false);
     draw_set_alpha(1);
 }
 
 // o golpe que limpou a sala
-if (global.flash > 0) {
+if (global.flash > 0 && global.op_flash) {
     draw_set_alpha(global.flash);
     draw_set_color(make_colour_rgb(255, 245, 225));
     draw_rectangle(0, 0, _w, _h, false);
@@ -258,7 +258,7 @@ if (is_dead) {
             toque_botao_ret(_botoes_nome.pular);
         } else {
             draw_set_alpha(_piscar);
-            texto(_w / 2, _y + 172 * _esc, "ENTER: ENVIAR    (VAZIO: PULAR)", _esc * 0.9, _esc * 0.9, 0);
+            texto(_w / 2, _y + 172 * _esc, (global.ultimo_aparelho == "controle") ? "Y: ESCREVER    A: ENVIAR    (VAZIO: PULAR)" : "ENTER: ENVIAR    (VAZIO: PULAR)", _esc * 0.9, _esc * 0.9, 0);
             draw_set_alpha(1);
         }
     } else if (vitoria_estado == "enviando") {
@@ -322,19 +322,27 @@ if (global.game_paused) {
         // os controles de toque no lugar dos de teclado
         var _botoes_pausa = toque_botoes_pausa();
         toque_botao_ret(_botoes_pausa.continuar);
+        toque_botao_ret(_botoes_pausa.opcoes);
         toque_botao_ret(_botoes_pausa.menu);
         texto(_w / 2, _h / 2, "ESQUERDA DA TELA: andar    ATACAR: golpe (3 seguidos: combo)    DASH: esquiva", _esc, _esc, 0);
         texto(_w / 2, _h / 2 + 22 * _esc, "SEGURAR ATACAR: golpe carregado    ATACAR NO DASH: estocada    GIRO: especial", _esc, _esc, 0);
         draw_set_color(c_ltgray);
         texto(_w / 2, _h / 2 + 42 * _esc, "O golpe vira sozinho para o inimigo mais perto    FÚRIA CHEIA: segure o giro", _esc * 0.85, _esc * 0.85, 0);
         draw_set_color(c_white);
+    } else if (global.ultimo_aparelho == "controle") {
+        texto(_w / 2, _h / 2, "ALAVANCA: mover    RB ou X: atacar (3 seguidos: combo)    A ou LB: dash", _esc, _esc, 0);
+        texto(_w / 2, _h / 2 + 22 * _esc, "SEGURAR O ATAQUE: golpe carregado    ATACAR NO DASH: estocada    B: giro", _esc, _esc, 0);
+        draw_set_color(c_ltgray);
+        texto(_w / 2, _h / 2 + 42 * _esc, "O golpe vira sozinho para o inimigo mais perto    FÚRIA CHEIA: segure o giro", _esc * 0.85, _esc * 0.85, 0);
+        draw_set_color(c_white);
+        texto(_w / 2, _h / 2 + 62 * _esc, "START ou B: CONTINUAR    Y: OPÇÕES    SELECT: VOLTAR AO MENU", _esc, _esc, 0);
     } else {
     texto(_w / 2, _h / 2, "WASD / SETAS: mover    CLIQUE ou J: atacar (3 seguidos: combo)    ESPAÇO: dash", _esc, _esc, 0);
     texto(_w / 2, _h / 2 + 22 * _esc, "SEGURAR O ATAQUE: golpe carregado    ATACAR NO DASH: estocada    CLIQUE DIREITO ou K: giro", _esc, _esc, 0);
     draw_set_color(c_ltgray);
     texto(_w / 2, _h / 2 + 42 * _esc, "O golpe vira sozinho para o inimigo mais perto    FÚRIA CHEIA: segure o giro", _esc * 0.85, _esc * 0.85, 0);
     draw_set_color(c_white);
-    texto(_w / 2, _h / 2 + 62 * _esc, "ESC: CONTINUAR    M: VOLTAR AO MENU", _esc, _esc, 0);
+    texto(_w / 2, _h / 2 + 62 * _esc, "ESC: CONTINUAR    O: OPÇÕES    M: VOLTAR AO MENU", _esc, _esc, 0);
     }
     // onde voce esta no caminho ate o fim
     var _fase_mapa = mapa_indice(room);
