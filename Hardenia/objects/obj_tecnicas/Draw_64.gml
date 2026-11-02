@@ -10,9 +10,9 @@ draw_set_alpha(_surgir);
 draw_set_halign(fa_center);
 draw_set_valign(fa_top);
 draw_set_color(c_white);
-titulo(_w / 2, _h / 2 - 158 * _esc, "O que os Caídos deixaram", _esc * 1.7);
+titulo(_w / 2, _h / 2 - 158 * _esc, (caido_def != undefined) ? "O que " + string_lower(string_char_at(caido_def.titulo, 1)) + string_delete(caido_def.titulo, 1, 1) + " deixou" : "O que os Caídos deixaram", _esc * 1.7);
 draw_set_color(c_ltgray);
-texto(_w / 2, _h / 2 - 122 * _esc, "Vale até a próxima morte. Fique com uma.", _esc * 0.85, _esc * 0.85, 0);
+texto(_w / 2, _h / 2 - 122 * _esc, (caido_def != undefined) ? "\"" + caido_def.adeus + "\"   Vale até a próxima morte." : "Vale até a próxima morte. Fique com uma.", _esc * 0.85, _esc * 0.85, 0);
 
 for (var _i = 0; _i < array_length(oferta); _i++) {
     var _r = carta(_i);

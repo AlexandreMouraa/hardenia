@@ -506,20 +506,24 @@ zoom = 1; // aperta na camera lenta (so na tela: a conta do jogo nao usa a camer
 posicionar_camera = function(_na_hora) {
     var _cam = view_camera[0];
     zoom = lerp(zoom, (global.lento > 0) ? 0.86 : 1, 0.14);
+    // na cena, a camera vai devagar ate quem esta se apresentando
+    var _cena = instance_exists(obj_cena);
+    var _fx = _cena ? obj_cena.alvo_x : x;
+    var _fy = _cena ? obj_cena.alvo_y : y;
     if (abs(zoom - 1) < 0.002) {
         zoom = 1;
     }
     var _cw = 2 * round(cam_w * zoom / 2);
     var _ch = 2 * round(cam_h * zoom / 2);
     camera_set_view_size(_cam, _cw, _ch);
-    var _ax = clamp(x - _cw / 2, 0, room_width - _cw);
-    var _ay = clamp(y - _ch / 2, 0, room_height - _ch);
+    var _ax = clamp(_fx - _cw / 2, 0, room_width - _cw);
+    var _ay = clamp(_fy - _ch / 2, 0, room_height - _ch);
     if (_na_hora) {
         cam_x = _ax;
         cam_y = _ay;
     } else {
-        cam_x = lerp(cam_x, _ax, 0.2);
-        cam_y = lerp(cam_y, _ay, 0.2);
+        cam_x = lerp(cam_x, _ax, _cena ? 0.06 : 0.2);
+        cam_y = lerp(cam_y, _ay, _cena ? 0.06 : 0.2);
     }
     var _cx = cam_x + global.chute_x;
     var _cy = cam_y + global.chute_y;

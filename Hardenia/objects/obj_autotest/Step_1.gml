@@ -41,6 +41,14 @@ if (instance_exists(obj_mapa)) {
     exit;
 }
 
+// cena de apresentacao: espera, com um print de cada uma na primeira run
+if (instance_exists(obj_cena)) {
+    if (run_atual == 1 && obj_cena.tempo == 60) {
+        pedir_print("cena");
+    }
+    exit;
+}
+
 // escolha de tecnica: fica com a primeira carta; print na primeira vez
 if (instance_exists(obj_tecnicas)) {
     var _carta = instance_find(obj_tecnicas, 0);
@@ -76,13 +84,19 @@ if (room == Room_Menu) {
                 log("FALHA_chefe", "vitorias=" + string(vitorias) + " chefe vencido=" + string(chefe_vencido));
             }
             if (!usar_horda && !chefe_metade_vista) {
-                log("FALHA_chefe", "nao viu a mudanca na metade da vida");
+                log("FALHA_chefe", "nao viu a segunda fase");
+            }
+            if (!usar_horda && !chefe_fase3_vista) {
+                log("FALHA_chefe", "nao viu a terceira fase");
+            }
+            if (!usar_horda && runs_feitas >= 3 && variable_struct_names_count(duelos_vistos) < 4) {
+                log("FALHA_duelo", "so " + string(variable_struct_names_count(duelos_vistos)) + " Caidos apareceram");
             }
             // com todas as tecnicas (-tecnicas), a elite morre antes de mostrar a habilidade
             if (!usar_horda && !todas_tecnicas && variable_struct_names_count(elites_vistas) < 3) {
                 log("FALHA_elite", "so " + string(variable_struct_names_count(elites_vistas)) + " habilidades apareceram");
             }
-            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes) + " danos=" + string(danos) + " avisos_max=" + string(avisos_max) + " combos=" + string(combos) + " elites=" + string(variable_struct_names_count(elites_vistas)) + (carregar ? " carregados=" + string(carregados) : "") + (usar_especial ? " especiais=" + string(especiais) : "") + (usar_estocada ? " estocadas=" + string(estocadas) : "") + (testar_formas ? " formas=" + string(variable_struct_names_count(formas_vistas)) : "") + (testar_grupo ? " grupo=" + string(grupo_ok) : "") + (usar_toque ? " toque=1" : "") + " tecnicas=" + string(variable_struct_names_count(global.tecnica_usos)) + " furia=" + string(global.giros_furiosos));
+            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes) + " danos=" + string(danos) + " avisos_max=" + string(avisos_max) + " combos=" + string(combos) + " elites=" + string(variable_struct_names_count(elites_vistas)) + (carregar ? " carregados=" + string(carregados) : "") + (usar_especial ? " especiais=" + string(especiais) : "") + (usar_estocada ? " estocadas=" + string(estocadas) : "") + (testar_formas ? " formas=" + string(variable_struct_names_count(formas_vistas)) : "") + (testar_grupo ? " grupo=" + string(grupo_ok) : "") + (usar_toque ? " toque=1" : "") + " tecnicas=" + string(variable_struct_names_count(global.tecnica_usos)) + " furia=" + string(global.giros_furiosos) + " duelos=" + string(duelos_vencidos));
             encerrar(0);
             exit;
         }
@@ -386,10 +400,34 @@ if (instance_exists(obj_enemy_chefe)) {
         log("chefe_metade", "hp=" + string(_ch.hp));
         pedir_print("chefe_metade");
     }
+    if (_ch.fase == 3 && !chefe_fase3_vista) {
+        chefe_fase3_vista = true;
+        log("chefe_fase3", "hp=" + string(_ch.hp));
+        pedir_print("chefe_fase3");
+    }
 } else if (chefe_vivo && room == Room_Trono) {
     chefe_vivo = false;
     chefe_vencido += 1;
     log("chefe_vencido", "tempo_sala=" + string(round(tempo_sala / 60)) + "s danos=" + string(danos));
+}
+
+// duelo: registra quem apareceu e quando caiu
+if (instance_exists(obj_enemy_caido)) {
+    var _cd = instance_find(obj_enemy_caido, 0);
+    if (!duelo_vivo) {
+        duelo_vivo = true;
+        log("duelo", _cd.caido + " hp=" + string(_cd.hp));
+        if (!variable_struct_exists(duelos_vistos, _cd.caido)) {
+            variable_struct_set(duelos_vistos, _cd.caido, true);
+            pedir_print("duelo_" + _cd.caido);
+        }
+    }
+} else if (duelo_vivo) {
+    duelo_vivo = false;
+    if (!_p.is_dead) {
+        duelos_vencidos += 1;
+        log("duelo_vencido", "tempo_sala=" + string(round(tempo_sala / 60)) + "s danos=" + string(danos));
+    }
 }
 
 // ---------- zonas de golpe ativas ----------

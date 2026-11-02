@@ -7,9 +7,11 @@ if (estado == 1) {
     if (tempo <= 0) {
         estado = 2;
         tempo = duracao;
-        som(snd_explosao);
-        impacto(3, 6);
-        fx_explosao(x, y, 90);
+        if (explode) {
+            som(snd_explosao);
+            impacto(3, 6);
+            fx_explosao(x, y, 90);
+        }
     }
     exit;
 }

@@ -6,11 +6,35 @@
 // Combinacao: tem "requer", e so aparece para quem ja tem uma de cada grupo. Vem na primeira
 // carta, porque e a recompensa por ter juntado duas tecnicas.
 global.caidos = {
-    carrasco: { nome: "O CARRASCO", cor: make_colour_rgb(225, 70, 70) },
-    batedor: { nome: "O BATEDOR", cor: make_colour_rgb(95, 205, 235) },
-    sapador: { nome: "O SAPADOR", cor: make_colour_rgb(255, 155, 55) },
-    sentinela: { nome: "A SENTINELA", cor: make_colour_rgb(240, 210, 110) },
+    carrasco: {
+        nome: "O CARRASCO", titulo: "O Carrasco", cor: make_colour_rgb(225, 70, 70),
+        fala: "Cortei cem cabeças por este reino. A sua não faz diferença.",
+        de_novo: "Você de novo. Ainda com a cabeça no lugar?",
+        adeus: "Enfim, o machado pesa menos.",
+    },
+    batedor: {
+        nome: "O BATEDOR", titulo: "O Batedor", cor: make_colour_rgb(95, 205, 235),
+        fala: "Fui o primeiro a chegar. Por isso fui o primeiro a cair.",
+        de_novo: "De novo? Você é lento, mas é teimoso.",
+        adeus: "Corre. Eu já não preciso.",
+    },
+    sapador: {
+        nome: "O SAPADOR", titulo: "O Sapador", cor: make_colour_rgb(255, 155, 55),
+        fala: "Este castelo ia cair com uma mecha só. A mecha era eu.",
+        de_novo: "Cuidado onde pisa. Da última vez você não teve.",
+        adeus: "Não olhe para trás. Vai explodir.",
+    },
+    sentinela: {
+        nome: "A SENTINELA", titulo: "A Sentinela", cor: make_colour_rgb(240, 210, 110),
+        fala: "Jurei guardar este caminho. Ninguém me disse que era para sempre.",
+        de_novo: "Ainda de pé. Eu também, infelizmente.",
+        adeus: "Pode passar.",
+    },
 };
+global.fala_rei = "Mais um. O reino ainda tem guerreiros para me mandar?";
+global.fala_rei_de_novo = "Você de novo. Eu também voltei, um dia.";
+global.fala_rei_fase2 = "Levantem-se.";
+global.fala_rei_fase3 = "Eu também fui o último.";
 global.tecnicas_lista = [
     { chave: "sangria", caido: "carrasco", nome: "SANGRIA", texto: "Quem leva um golpe sangra, e perde vida por mais 3 segundos." },
     { chave: "execucao", caido: "carrasco", nome: "EXECUÇÃO", texto: "Golpe forte mata quem ficaria com pouca vida. No chefe, dobra o dano quando ele está no fim." },
@@ -82,7 +106,7 @@ function combinacao_liberada(_def) {
 }
 
 // ate 3 que ele ainda nao tem, de Caidos diferentes quando da. Uma combinacao liberada vem
-// primeiro, no maximo uma por vez
+// primeiro, no maximo uma por vez. Depois de um duelo, o que aquele Caido deixou vem antes do resto
 function tecnicas_sortear() {
     var _resto = [];
     var _combinacoes = [];
@@ -107,9 +131,16 @@ function tecnicas_sortear() {
     if (array_length(_combinacoes) > 0) {
         array_push(_oferta, _combinacoes[tecnica_dado(array_length(_combinacoes))]);
     }
+    if (global.caido_vencido != "") {
+        for (var _i = 0; _i < array_length(_resto) && array_length(_oferta) < 3; _i++) {
+            if (_resto[_i].caido == global.caido_vencido) {
+                array_push(_oferta, _resto[_i]);
+            }
+        }
+    }
     var _vistos = {};
     for (var _i = 0; _i < array_length(_resto) && array_length(_oferta) < 3; _i++) {
-        if (!variable_struct_exists(_vistos, _resto[_i].caido)) {
+        if (!array_contains(_oferta, _resto[_i]) && !variable_struct_exists(_vistos, _resto[_i].caido)) {
             variable_struct_set(_vistos, _resto[_i].caido, true);
             array_push(_oferta, _resto[_i]);
         }

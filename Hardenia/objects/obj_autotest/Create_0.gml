@@ -598,10 +598,16 @@ ver_elite = function(_nome) {
     }
 };
 
-// chefe: conta as vezes que ele caiu e registra as duas fases (print da metade da vida)
+// chefe: conta as vezes que ele caiu e registra as fases (print de cada mudanca)
 chefe_vivo = false;
 chefe_vencido = 0;
 chefe_metade_vista = false;
+chefe_fase3_vista = false;
+// duelos: quais Caidos apareceram e quantos cairam
+duelos_vistos = {};
+duelo_vivo = false;
+duelos_vencidos = 0;
+viu_cena = false;
 
 // estado por sala (zerado no Room Start)
 grade = -1;

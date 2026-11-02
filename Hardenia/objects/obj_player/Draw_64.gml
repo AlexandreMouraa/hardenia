@@ -295,7 +295,7 @@ if (is_dead) {
     }
 }
 
-if (global.toque_ativo && !venceu && !is_dead && !global.game_paused && !instance_exists(obj_mapa)) {
+if (global.toque_ativo && !venceu && !is_dead && !global.game_paused && !instance_exists(obj_mapa) && !instance_exists(obj_cena)) {
     toque_desenhar(dash_charges > 0, especial_recarga <= 0 || global.furia >= FURIA_MAX);
     draw_set_halign(fa_center);
     draw_set_valign(fa_middle);
