@@ -3,6 +3,8 @@ paredes_da_mascara();
 // profundidade entre o chao (100) e os personagens (0), como a poeira do dash
 instance_create_depth(0, 0, 60, obj_marcas);
 instance_create_depth(0, 0, 75, obj_ambiente);
+musica(musica_da_sala());
+som_fundo((ambiente_da_sala() != undefined) ? ambiente_da_sala().fundo : -1);
 
 move_speed = 3;
 
@@ -265,7 +267,7 @@ golpear = function(_carregado = false) {
     is_attacking = true;
     attack_anim_timer = attack_anim_duration;
     // segundo golpe mais agudo, para o combo ter um ritmo de ouvido
-    audio_play_sound(_forte ? snd_golpe_forte : snd_attack, 1, false, 1, 0, golpe_atual == 2 ? 1.12 : 1);
+    sfx(_forte ? snd_golpe_forte : snd_attack, 1, false, 1, 0, golpe_atual == 2 ? 1.12 : 1);
 };
 
 // estocada: atacar no dash ou logo no fim dele (dash_freio) sai para o lado do
@@ -310,7 +312,7 @@ estocar = function() {
     attack_anim_duration = 12;
     attack_anim_timer = attack_anim_duration;
     is_attacking = true;
-    audio_play_sound(snd_estocada, 1, false);
+    sfx(snd_estocada, 1, false);
 };
 
 // golpe especial (clique direito ou K): giro que acerta todos em volta, para
@@ -366,7 +368,7 @@ girar = function() {
     attack_anim_duration = 14;
     attack_anim_timer = attack_anim_duration;
     is_attacking = true;
-    audio_play_sound(snd_giro, 1, false);
+    sfx(snd_giro, 1, false);
 };
 
 // Giro Furioso: segurar o especial com a Furia cheia. 20 frames, como quem toma folego. Anda
@@ -403,7 +405,7 @@ giro_furioso = function() {
     attack_anim_duration = 14;
     attack_anim_timer = attack_anim_duration;
     is_attacking = true;
-    audio_play_sound(snd_giro, 1, false, 1, 0, 0.75);
+    sfx(snd_giro, 1, false, 1, 0, 0.75);
     som(snd_explosao, 0.7);
 };
 

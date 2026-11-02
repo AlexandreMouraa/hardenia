@@ -1,11 +1,11 @@
 // Mapa de progresso: o caminho da run, do comeco ao fim. Aparece ao entrar em
 // cada fase nova (obj_mapa) e na pausa. Fase nova: acrescentar aqui, na ordem.
 global.mapa_fases = [
-    { sala: Room1, nome: "Ruínas", frase: "As ruínas guardam os ossos de quem veio antes de mim." },
-    { sala: Room_Tunel, nome: "Catacumbas", frase: "Aqui embaixo ninguém vem me buscar. Nem eles esperam que eu volte." },
-    { sala: Room2, nome: "Pátio do Castelo", frase: "No pátio, quem fica parado não chega ao castelo." },
-    { sala: Room3, nome: "Cemitério Gelado", frase: "O cemitério tem lugar para mais um. Ainda não." },
-    { sala: Room_Trono, nome: "O Trono", frase: "O trono está logo ali. Ele também morreu um dia." },
+    { sala: Room1, nome: "Ruínas", musica: snd_game_music, frase: "As ruínas guardam os ossos de quem veio antes de mim." },
+    { sala: Room_Tunel, nome: "Catacumbas", musica: snd_musica_catacumbas, frase: "Aqui embaixo ninguém vem me buscar. Nem eles esperam que eu volte." },
+    { sala: Room2, nome: "Pátio do Castelo", musica: snd_musica_patio, frase: "No pátio, quem fica parado não chega ao castelo." },
+    { sala: Room3, nome: "Cemitério Gelado", musica: snd_musica_cemiterio, frase: "O cemitério tem lugar para mais um. Ainda não." },
+    { sala: Room_Trono, nome: "O Trono", musica: -1, frase: "O trono está logo ali. Ele também morreu um dia." },
 ];
 // ponto trancado no fim do caminho, para um lugar que ainda nao existe no jogo. "" = nenhum
 global.mapa_final = "";

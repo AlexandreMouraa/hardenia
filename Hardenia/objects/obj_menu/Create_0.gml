@@ -24,13 +24,12 @@ global.mortes_por_sala = {};
 global.caidos_vistos = {};
 run_zerar();
 
-audio_stop_sound(snd_game_music);
-audio_play_sound(snd_menu_music, 1, true);
+musica(snd_menu_music);
+som_fundo(-1);
+coracao_atualizar(false);
 
 // comeca a run: zera o tempo e avisa o site (estatisticas de partidas)
 comecar_run = function() {
-    audio_stop_sound(snd_menu_music);
-    audio_play_sound(snd_game_music, 1, true);
     global.run_frames = 0;
     rede_evento("inicio");
     ir_para_sala(Room1);
@@ -42,9 +41,7 @@ horda_iniciar = function() {
     if (instance_exists(obj_mapa) || instance_exists(obj_abertura)) {
         return;
     }
-    audio_play_sound(snd_confirm, 1, false);
-    audio_stop_sound(snd_menu_music);
-    audio_play_sound(snd_game_music, 1, true);
+    sfx(snd_confirm, 1, false);
     global.run_frames = 0;
     room_goto(Room_Horda);
 };

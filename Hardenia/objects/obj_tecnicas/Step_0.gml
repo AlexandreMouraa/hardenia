@@ -18,11 +18,11 @@ if (tempo < 20 || instance_exists(obj_autotest)) {
 var _n = array_length(oferta);
 if (keyboard_check_pressed(vk_left) || keyboard_check_pressed(ord("A"))) {
     cursor = (cursor + _n - 1) mod _n;
-    audio_play_sound(snd_dash_negado, 1, false, 0.3);
+    sfx(snd_dash_negado, 1, false, 0.3);
 }
 if (keyboard_check_pressed(vk_right) || keyboard_check_pressed(ord("D"))) {
     cursor = (cursor + 1) mod _n;
-    audio_play_sound(snd_dash_negado, 1, false, 0.3);
+    sfx(snd_dash_negado, 1, false, 0.3);
 }
 for (var _i = 0; _i < _n; _i++) {
     if (keyboard_check_pressed(ord("1") + _i)) {

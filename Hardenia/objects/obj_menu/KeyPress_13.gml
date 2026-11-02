@@ -2,7 +2,7 @@
 if (instance_exists(obj_mapa) || instance_exists(obj_abertura)) {
     exit;
 }
-audio_play_sound(snd_confirm, 1, false);
+sfx(snd_confirm, 1, false);
 // a abertura aparece uma vez a cada vez que o jogo abre
 if (!global.abertura_vista) {
     global.abertura_vista = true;

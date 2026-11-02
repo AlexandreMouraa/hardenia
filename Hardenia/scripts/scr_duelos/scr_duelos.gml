@@ -97,7 +97,7 @@ function rodizio_disparar() {
             break;
 
         default:
-            audio_play_sound(snd_golpe_forte, 1, false, 1, 0, 0.7);
+            sfx(snd_golpe_forte, 1, false, 1, 0, 0.7);
             break;
     }
 }
@@ -230,7 +230,8 @@ function duelo_tentar() {
     }
     fx_onda(_lugar[0], _lugar[1], 120, _def.cor);
     fx_faiscas(_lugar[0], _lugar[1], 90, _def.cor, 12);
-    som(snd_magia);
+    sfx(snd_sino, 3, false, 0.8);
+    musica(snd_musica_duelo, 400);
     var _visto = variable_struct_exists(global.caidos_vistos, _chave);
     variable_struct_set(global.caidos_vistos, _chave, true);
     cena_abrir(_lugar[0], _lugar[1], _def.titulo, _visto ? _def.de_novo : _def.fala, _def.cor, _visto ? 110 : 190);

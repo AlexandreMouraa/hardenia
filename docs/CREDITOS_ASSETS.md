@@ -18,6 +18,21 @@ Convertidos para WAV, mono, 44,1 kHz. No `snd_acerto` entra por cima uma ponta s
 
 Os outros sons de combate (`snd_attack`, `snd_golpe_forte`, `snd_giro`, `snd_estocada`, `snd_inimigo_golpe`, `snd_flecha`, `snd_bomba_cai` e `snd_explosao`) foram gerados em `tools/gerar_sons_combate.py`, sem som de terceiros.
 
+Passos (`snd_passo_*`) e sino (`snd_sino`): [Impact Sounds](https://kenney.nl/assets/impact-sounds), de Kenney (CC0). Clique do menu (`snd_menu_mover`): [Interface Sounds](https://kenney.nl/assets/interface-sounds), de Kenney (CC0). Sons de fundo (`snd_amb_*`) e coração (`snd_coracao`): gerados em `tools/gerar_sons_ambiente.py`.
+
+## Músicas
+
+Todas de Kevin MacLeod ([incompetech.com](https://incompetech.com)), sob licença [Creative Commons: By Attribution 4.0](https://creativecommons.org/licenses/by/4.0/). Os trechos e os loops saem de `tools/gerar_musicas.py`, e foi só isso que mudou nelas.
+
+| No jogo | Faixa |
+|---|---|
+| `snd_musica_catacumbas` | "Ossuary 1 - A Beginning" |
+| `snd_musica_patio` | "Gathering Darkness" |
+| `snd_musica_cemiterio` | "Ossuary 6 - Air" |
+| `snd_musica_duelo` | "Unholy Knight" |
+| `snd_musica_rei` | "Five Armies" |
+| `snd_musica_final` | "Lost Time" |
+
 ## Fontes
 
 | No jogo | Fonte | Autores | Licença |

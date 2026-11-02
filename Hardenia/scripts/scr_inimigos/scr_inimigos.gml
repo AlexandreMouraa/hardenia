@@ -317,6 +317,7 @@ function inimigo_morrer(_enemy, _dir, _forte) {
     // o Caido que cai deixa a tecnica no bau da sala (obj_tecnicas)
     if (_enemy.object_index == obj_enemy_caido) {
         global.caido_vencido = _enemy.caido;
+        musica(musica_da_sala(), 2000);
     }
     // a bomba espera um instante: pode pegar outro que sangra, e a corrente cresce sem recursao
     if (_enemy.sangra > 0 && tem_tecnica("sangue_polvora")) {

@@ -22,7 +22,7 @@ escolher = function(_i) {
     }
     escolhido = _i;
     tecnica_ganhar(oferta[_i].chave);
-    audio_play_sound(snd_confirm, 1, false);
+    sfx(snd_confirm, 1, false);
     // alguns frames para ver a escolha, e para o mesmo aperto nao virar um golpe no jogo
     saindo = 16;
 };
