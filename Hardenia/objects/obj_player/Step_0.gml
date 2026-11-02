@@ -330,6 +330,7 @@ if (_especial_preso && global.furia >= FURIA_MAX && !is_dashing) {
 // as paredes, e nao da tranco na primeira perseguicao
 if (tempo_na_sala == 0) {
     campo_preparar();
+    arranjo_aplicar();
     elites_aplicar();
     dificuldade_aplicar();
 }

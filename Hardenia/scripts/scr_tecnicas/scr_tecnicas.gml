@@ -108,6 +108,10 @@ function combinacao_liberada(_def) {
 // ate 3 que ele ainda nao tem, de Caidos diferentes quando da. Uma combinacao liberada vem
 // primeiro, no maximo uma por vez. Depois de um duelo, o que aquele Caido deixou vem antes do resto
 function tecnicas_sortear() {
+    // cada oferta sai da semente da run, sem depender de quantas vezes o dado rodou antes
+    global.ofertas_feitas += 1;
+    global.tecnica_semente = ((global.run_semente + global.ofertas_feitas * 7919) mod 2147483646) + 1;
+    tecnica_dado(2);
     var _resto = [];
     var _combinacoes = [];
     for (var _i = 0; _i < array_length(global.tecnicas_lista); _i++) {

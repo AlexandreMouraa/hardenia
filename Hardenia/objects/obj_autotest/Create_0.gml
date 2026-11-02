@@ -79,6 +79,8 @@ grupo_chegou = false;
 // e se o fluxo funciona, nao o balanceamento). Depois mede o limite do aparelho a 60 fps,
 // parado, e registra o fps a cada segundo. Rodar com -Runs 1
 usar_horda = false;
+// -desafio: joga o desafio do dia (com -api, testa o ranking dele)
+usar_desafio = false;
 // -toque: joga pelos controles de toque, com dedos de mentira (scr_toque), e reprova se o
 // direcional nao andar para onde o robo mandou
 usar_toque = false;
@@ -127,6 +129,9 @@ for (var _i = 1; _i <= parameter_count(); _i++) {
     }
     if (parameter_string(_i) == "-toque") {
         usar_toque = true;
+    }
+    if (parameter_string(_i) == "-desafio") {
+        usar_desafio = true;
     }
 }
 for (var _i = 1; _i < parameter_count(); _i++) {

@@ -156,6 +156,7 @@ enviar_nome = function() {
         nome: _nome,
         tentativas: global.tentativas,
         tempo_ms: frames_para_ms(global.run_frames),
+        desafio: global.desafio ? global.desafio_dia : "",
     });
     vitoria_estado = "enviando";
     vitoria_nome_recusado = false;

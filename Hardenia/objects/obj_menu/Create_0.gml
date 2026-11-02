@@ -26,6 +26,7 @@ window_set_cursor(cr_default);
 global.tentativas = 1;
 global.mortes_por_sala = {};
 global.caidos_vistos = {};
+global.desafio = false;
 run_zerar();
 
 musica(snd_menu_music);
@@ -38,6 +39,7 @@ mouse_antes_x = -1;
 mouse_antes_y = -1;
 itens = [
     { nome: "Jogar", acao: "jogar" },
+    { nome: "Desafio do dia", acao: "desafio" },
     { nome: "Como jogar", acao: "como_jogar" },
     { nome: "Opções", acao: "opcoes" },
     { nome: "Créditos", acao: "creditos" },
@@ -50,6 +52,12 @@ acionar = function(_acao) {
     switch (_acao) {
         case "jogar":
             event_perform(ev_keypress, vk_enter);
+            break;
+        case "desafio":
+            global.desafio = true;
+            global.desafio_dia = desafio_hoje();
+            run_zerar();
+            comecar();
             break;
         case "sair":
             game_end();
@@ -67,10 +75,22 @@ item_ret = function(_i) {
     var _w = display_get_gui_width();
     var _h = display_get_gui_height();
     var _esc = max(1, _h / 540);
-    var _y = _h * 0.5 + _i * 34 * _esc;
+    var _y = _h * 0.46 + _i * 34 * _esc;
     return [_w * 0.56, _y, _w * 0.8, _y + 32 * _esc];
 };
 // o primeiro item e sempre o Enter: o robo e quem ja sabe jogar comecam direto
+
+// a abertura aparece so na primeira vez
+comecar = function() {
+    sfx(snd_confirm, 1, false);
+    if (!global.abertura_vista) {
+        global.abertura_vista = true;
+        salvo_gravar();
+        instance_create_depth(0, 0, -9000, obj_abertura);
+    } else {
+        comecar_run();
+    }
+};
 
 // comeca a run: zera o tempo e avisa o site (estatisticas de partidas)
 comecar_run = function() {
