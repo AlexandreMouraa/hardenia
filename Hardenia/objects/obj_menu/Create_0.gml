@@ -27,10 +27,19 @@ run_zerar();
 audio_stop_sound(snd_game_music);
 audio_play_sound(snd_menu_music, 1, true);
 
+// comeca a run: zera o tempo e avisa o site (estatisticas de partidas)
+comecar_run = function() {
+    audio_stop_sound(snd_menu_music);
+    audio_play_sound(snd_game_music, 1, true);
+    global.run_frames = 0;
+    rede_evento("inicio");
+    ir_para_sala(Room1);
+};
+
 // prototipo de horda: H ou clique no texto do canto (obj_menu, Draw GUI). Fica fora do
 // caminho da run: nao conta tempo de ranking nem manda evento ao site
 horda_iniciar = function() {
-    if (instance_exists(obj_mapa)) {
+    if (instance_exists(obj_mapa) || instance_exists(obj_abertura)) {
         return;
     }
     audio_play_sound(snd_confirm, 1, false);

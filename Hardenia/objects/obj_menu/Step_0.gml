@@ -1,7 +1,7 @@
 toque_detectar();
 
-// mapa da fase 1 aberto: quem cuida do clique e o obj_mapa
-if (instance_exists(obj_mapa)) {
+// mapa da fase 1 ou abertura na tela: quem cuida do clique sao eles
+if (instance_exists(obj_mapa) || instance_exists(obj_abertura)) {
     exit;
 }
 

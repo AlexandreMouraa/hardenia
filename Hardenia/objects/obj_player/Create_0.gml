@@ -1,5 +1,7 @@
 // a sala com mascara de colisao cria as paredes aqui (scr_mapa)
 paredes_da_mascara();
+// profundidade entre o chao (100) e os personagens (0), como a poeira do dash
+instance_create_depth(0, 0, 60, obj_marcas);
 
 move_speed = 3;
 
@@ -409,6 +411,9 @@ death_timer = 0;
 death_timer_max = 90;
 
 venceu = false;
+// depois do rei cair: frames ate o texto do final, e uma folga depois dele
+final_espera = 0;
+final_pausa = 0;
 
 // escurecido que some ao entrar na sala (troca de sala e reinicio apos morrer)
 fade = 1;

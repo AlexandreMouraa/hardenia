@@ -62,6 +62,10 @@ function frase_de_morte(_causa) {
         _ali += variable_struct_get(global.mortes_por_sala, _nome);
     }
     variable_struct_set(global.mortes_por_sala, _nome, _ali);
+    var _marco = frase_de_marco(global.tentativas);
+    if (_marco != "") {
+        return _marco;
+    }
     var _fase = mapa_indice(room);
     var _inimigo = variable_struct_exists(global.frases_inimigo, _causa);
     if (_ali >= 5) {
