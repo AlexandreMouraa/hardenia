@@ -2,6 +2,7 @@
 paredes_da_mascara();
 // profundidade entre o chao (100) e os personagens (0), como a poeira do dash
 instance_create_depth(0, 0, 60, obj_marcas);
+instance_create_depth(0, 0, 75, obj_ambiente);
 
 move_speed = 3;
 
