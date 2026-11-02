@@ -5,7 +5,6 @@
 // Tecnica nova: acrescentar aqui e tratar o efeito (para ver onde, busque a chave no projeto).
 // Combinacao: tem "requer", e so aparece para quem ja tem uma de cada grupo. Vem na primeira
 // carta, porque e a recompensa por ter juntado duas tecnicas.
-// Textos sem acento: a fonte do jogo nao tem esses caracteres
 global.caidos = {
     carrasco: { nome: "O CARRASCO", cor: make_colour_rgb(225, 70, 70) },
     batedor: { nome: "O BATEDOR", cor: make_colour_rgb(95, 205, 235) },
@@ -14,18 +13,18 @@ global.caidos = {
 };
 global.tecnicas_lista = [
     { chave: "sangria", caido: "carrasco", nome: "SANGRIA", texto: "Quem leva um golpe sangra, e perde vida por mais 3 segundos." },
-    { chave: "execucao", caido: "carrasco", nome: "EXECUCAO", texto: "Golpe forte mata quem ficaria com pouca vida. No chefe, dobra o dano quando ele esta no fim." },
+    { chave: "execucao", caido: "carrasco", nome: "EXECUÇÃO", texto: "Golpe forte mata quem ficaria com pouca vida. No chefe, dobra o dano quando ele está no fim." },
     { chave: "passo_cortante", caido: "batedor", nome: "PASSO CORTANTE", texto: "O dash corta todo inimigo que ele atravessa." },
-    { chave: "folego", caido: "batedor", nome: "FOLEGO", texto: "Uma carga de dash a mais, e as cargas voltam mais rapido." },
-    { chave: "bomba_combo", caido: "sapador", nome: "BOMBA DE MAO", texto: "Golpe forte tambem arremessa uma bomba no alvo." },
-    { chave: "polvora", caido: "sapador", nome: "RASTRO DE POLVORA", texto: "O giro deixa quatro bombas em volta, que explodem logo depois." },
-    { chave: "ultimo_instante", caido: "sentinela", nome: "ULTIMO INSTANTE", texto: "Dash na hora do golpe inimigo: o tempo desacelera e o proximo golpe dobra." },
-    { chave: "retribuicao", caido: "sentinela", nome: "RETRIBUICAO", texto: "Ao levar um golpe, uma onda fere e empurra todos em volta." },
+    { chave: "folego", caido: "batedor", nome: "FÔLEGO", texto: "Uma carga de dash a mais, e as cargas voltam mais rápido." },
+    { chave: "bomba_combo", caido: "sapador", nome: "BOMBA DE MÃO", texto: "Golpe forte também arremessa uma bomba no alvo." },
+    { chave: "polvora", caido: "sapador", nome: "RASTRO DE PÓLVORA", texto: "O giro deixa quatro bombas em volta, que explodem logo depois." },
+    { chave: "ultimo_instante", caido: "sentinela", nome: "ÚLTIMO INSTANTE", texto: "Dash na hora do golpe inimigo: o tempo desacelera e o próximo golpe dobra." },
+    { chave: "retribuicao", caido: "sentinela", nome: "RETRIBUIÇÃO", texto: "Ao levar um golpe, uma onda fere e empurra todos em volta." },
     { chave: "hora_certa", caido: "sentinela", nome: "HORA CERTA", texto: "Golpe em inimigo apagado, logo depois do ataque dele, vale o dobro." },
-    { chave: "sangue_polvora", caido: "carrasco", caido2: "sapador", nome: "SANGUE E POLVORA", texto: "Quem morre sangrando explode e fere quem esta perto.", requer: [["sangria"], ["bomba_combo", "polvora"]] },
+    { chave: "sangue_polvora", caido: "carrasco", caido2: "sapador", nome: "SANGUE E PÓLVORA", texto: "Quem morre sangrando explode e fere quem está perto.", requer: [["sangria"], ["bomba_combo", "polvora"]] },
     { chave: "rastilho", caido: "batedor", caido2: "sapador", nome: "RASTILHO", texto: "Cada dash deixa uma bomba no lugar de onde saiu.", requer: [["passo_cortante", "folego"], ["bomba_combo", "polvora"]] },
-    { chave: "sentenca", caido: "carrasco", caido2: "sentinela", nome: "SENTENCA", texto: "Todo golpe em quem esta sangrando tira 1 a mais.", requer: [["sangria"], ["ultimo_instante", "retribuicao", "hora_certa"]] },
-    { chave: "contra_passo", caido: "batedor", caido2: "sentinela", nome: "CONTRA-PASSO", texto: "Desviar no ultimo instante devolve a carga do dash e enche um quarto da Furia.", requer: [["ultimo_instante"], ["passo_cortante", "folego"]] },
+    { chave: "sentenca", caido: "carrasco", caido2: "sentinela", nome: "SENTENÇA", texto: "Todo golpe em quem está sangrando tira 1 a mais.", requer: [["sangria"], ["ultimo_instante", "retribuicao", "hora_certa"]] },
+    { chave: "contra_passo", caido: "batedor", caido2: "sentinela", nome: "CONTRA-PASSO", texto: "Desviar no último instante devolve a carga do dash e enche um quarto da Fúria.", requer: [["ultimo_instante"], ["passo_cortante", "folego"]] },
 ];
 // Furia: acertar enche a barra, que passa de uma sala para a outra e zera com a morte. Cheia,
 // continuar segurando o especial solta o Giro Furioso, mesmo com o giro em recarga

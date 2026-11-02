@@ -68,7 +68,7 @@ if (alerta > 0) {
     draw_set_valign(fa_bottom);
     draw_set_color(make_colour_rgb(255, 210, 90));
     draw_set_alpha(min(1, alerta / 10));
-    draw_text_transformed(x, bbox_top - 2 - (30 - alerta) * 0.3, "!", 2, 2, 0);
+    texto(x, bbox_top - 2 - (30 - alerta) * 0.3, "!", 2, 2, 0);
     draw_set_alpha(1);
     draw_set_color(c_white);
     draw_set_halign(fa_left);

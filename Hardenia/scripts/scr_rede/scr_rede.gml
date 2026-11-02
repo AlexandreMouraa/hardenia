@@ -66,13 +66,12 @@ function tempo_texto(_ms) {
     return string(_s div 60) + ":" + (_seg < 10 ? "0" : "") + string(_seg);
 }
 
-// nome do ranking: letras sem acento, numeros, espaco, ponto e traco, ate 16.
-// Sem acento porque a fonte padrao do jogo nao tem esses caracteres
+// nome do ranking: letras, com ou sem acento, numeros, espaco, ponto e traco, ate 16
 function nome_filtrado(_texto) {
     var _ok = "";
     for (var _i = 1; _i <= string_length(_texto) && string_length(_ok) < 16; _i++) {
         var _c = string_char_at(_texto, _i);
-        if (string_lettersdigits(_c) != "" || _c == " " || _c == "." || _c == "-" || _c == "_") {
+        if (string_lettersdigits(_c) != "" || string_pos(_c, FONTE_ACENTOS) > 0 || _c == " " || _c == "." || _c == "-" || _c == "_") {
             _ok += _c;
         }
     }

@@ -251,7 +251,7 @@ function toque_circulo(_b, _aceso, _pronto) {
     draw_set_color(c_white);
     draw_circle(_b.x, _b.y, _b.r, true);
     draw_circle(_b.x, _b.y, _b.r - 1, true);
-    draw_text_transformed(_b.x, _b.y, _b.texto, toque_escala() * 0.8, toque_escala() * 0.8, 0);
+    texto(_b.x, _b.y, _b.texto, toque_escala() * 0.8, toque_escala() * 0.8, 0);
     draw_set_alpha(1);
 }
 
@@ -299,5 +299,5 @@ function toque_botao_ret(_r) {
     draw_set_alpha(1);
     draw_set_color(c_white);
     draw_rectangle(_r[0], _r[1], _r[2], _r[3], true);
-    draw_text_transformed((_r[0] + _r[2]) / 2, (_r[1] + _r[3]) / 2, _r[4], _e * 0.9, _e * 0.9, 0);
+    texto((_r[0] + _r[2]) / 2, (_r[1] + _r[3]) / 2, _r[4], _e * 0.9, _e * 0.9, 0);
 }

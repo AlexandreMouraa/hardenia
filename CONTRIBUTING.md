@@ -69,6 +69,9 @@ Por isso:
 
 - Comentários em português, sem acento, explicando o porquê (como no resto do
   código). Nomes novos em português.
+- Texto na tela: com acento, pelas funções `texto()` e `titulo()` de `scr_fonte`.
+  A fonte só tem os acentos do português: caractere novo pede a folha nova
+  (`tools/gerar_fontes.py`).
 - Número de balanceamento com comentário dizendo de onde veio (ex.: "mesma
   recarga do ataque antigo (20 frames)").
 - Mexeu em tela, mouse ou teclado: teste também no navegador

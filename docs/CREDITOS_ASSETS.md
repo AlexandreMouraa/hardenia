@@ -18,6 +18,15 @@ Convertidos para WAV, mono, 44,1 kHz. No `snd_acerto` entra por cima uma ponta s
 
 Os outros sons de combate (`snd_attack`, `snd_golpe_forte`, `snd_giro`, `snd_estocada`, `snd_inimigo_golpe`, `snd_flecha`, `snd_bomba_cai` e `snd_explosao`) foram gerados em `tools/gerar_sons_combate.py`, sem som de terceiros.
 
+## Fontes
+
+| No jogo | Fonte | Autores | Licença |
+|---|---|---|---|
+| `spr_fonte_texto` | [Grenze](https://github.com/Omnibus-Type/Grenze), peso 500 | The Grenze Project Authors | SIL OFL 1.1 |
+| `spr_fonte_titulo` | [Grenze Gotisch](https://github.com/Omnibus-Type/Grenze-Gotisch), peso 700 | The Grenze Gotisch Project Authors | SIL OFL 1.1 |
+
+As folhas de letras saem de `tools/gerar_fontes.py`.
+
 ## Sprites
 
 Inimigos montados com peças do [Universal LPC Spritesheet Character Generator](https://github.com/LiberatedPixelCup/Universal-LPC-Spritesheet-Character-Generator), em `tools/gerar_sprites_lpc.py`. O projeto usa as peças sob CC-BY-SA 3.0, que é a licença comum a todas elas, e as folhas montadas ficam sob a mesma licença.
