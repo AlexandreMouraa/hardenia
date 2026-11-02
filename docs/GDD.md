@@ -40,10 +40,26 @@ leitura de padrão), Hollow Knight (precisão de movimento 2D), Hades
    necessariamente itens/status).
 4. Repetição até dominar o encontro e avançar.
 
+## História (rascunho, para o grupo ajustar)
+
+O texto na tela fica em `scripts/scr_historia` e em `scripts/scr_tecnicas`.
+
+- **O Rei Morto** é o responsável: ele também veio ao trono um dia, para acabar com a
+  guerra, e foi o último da sua vez. Era forte, mas não soube voltar.
+- **Os Caídos** são os guerreiros mandados antes: o Carrasco, o Batedor, o Sapador e a
+  Sentinela. O rei levanta cada um contra quem vem depois. Vencer um deles liberta o
+  guerreiro, e ele deixa a técnica que sabia.
+- **O guerreiro** é o mais fraco de todos, e o único que não para de voltar. O final
+  muda com o número de tentativas e fecha nessa ideia.
+
+## Estrutura da run
+
+- Cinco salas em sequência, com 3 arranjos de inimigos cada, sorteados por run. Duelos
+  nas Catacumbas e no Cemitério, e o Rei Morto, em 3 fases, no Trono.
+- Morrer zera a run. No aparelho ficam só opções e recordes: o que passa de uma run
+  para a outra continua sendo só o que o jogador aprendeu.
+- Desafio do dia: a mesma run para todo mundo, com ranking próprio.
+
 ## Em aberto
 
-- Estrutura de níveis: linear por fases vs. runs proceduralmente geradas
-  (roguelike de verdade) vs. souslike com mundo fixo.
-- O que persiste entre mortes (permadeath total? checkpoints? meta-progressão
-  leve?).
-- Boss final: quem é o "responsável pela destruição do reino"?
+- Confirmar com o grupo a história acima e os nomes da equipe (issue #13).
