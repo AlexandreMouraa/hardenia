@@ -75,6 +75,40 @@ switch (tipo) {
         gpu_set_blendmode(bm_normal);
         break;
 
+    case "numero":
+        // aparece grande, encolhe logo e sobe freando; contorno preto para ler em qualquer chao
+        var _idade = 1 - _t;
+        var _esc = 1.3 + 0.9 * max(0, 1 - _idade * 6);
+        var _ny = y - 34 * (1 - power(1 - _idade, 2));
+        draw_set_halign(fa_center);
+        draw_set_valign(fa_middle);
+        draw_set_alpha(min(1, _t * 3));
+        draw_set_colour(c_black);
+        draw_text_transformed(x - 2, _ny, texto, _esc, _esc, 0);
+        draw_text_transformed(x + 2, _ny, texto, _esc, _esc, 0);
+        draw_text_transformed(x, _ny - 2, texto, _esc, _esc, 0);
+        draw_text_transformed(x, _ny + 2, texto, _esc, _esc, 0);
+        draw_set_colour(cor);
+        draw_text_transformed(x, _ny, texto, _esc, _esc, 0);
+        draw_set_alpha(1);
+        draw_set_colour(c_white);
+        draw_set_halign(fa_left);
+        draw_set_valign(fa_top);
+        break;
+
+    case "onda":
+        var _ro = raio * (1 - _t * _t * _t);
+        var _eo = 2 + 12 * _t;
+        gpu_set_blendmode(bm_add);
+        draw_primitive_begin(pr_trianglestrip);
+        for (var _a = 0; _a <= 360; _a += 12) {
+            draw_vertex_colour(x + lengthdir_x(max(0, _ro - _eo), _a), y + lengthdir_y(max(0, _ro - _eo), _a), cor, 0);
+            draw_vertex_colour(x + lengthdir_x(_ro, _a), y + lengthdir_y(_ro, _a), cor, 0.8 * _t);
+        }
+        draw_primitive_end();
+        gpu_set_blendmode(bm_normal);
+        break;
+
     case "corte":
         // risco fino que cresce rapido e apaga: mostra quem levou o golpe
         var _meia = raio * min(1, (1 - _t) * 3 + 0.3);

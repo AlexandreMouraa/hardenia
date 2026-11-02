@@ -6,6 +6,13 @@
 global.hitstop = 0;
 // amplitude do tremor da camera, em pixels; decai sozinho (obj_player, End Step)
 global.tremor = 0;
+// camera lenta: frames que ainda faltam (obj_player, Step)
+global.lento = 0;
+// clarao na tela inteira, de 0 a 1; apaga sozinho (obj_player, Step e Draw GUI)
+global.flash = 0;
+// empurrao da camera na direcao do golpe, em pixels; volta sozinho (obj_player, End Step)
+global.chute_x = 0;
+global.chute_y = 0;
 
 // efeito sonoro com o tom variando um pouco, sem random (o robo depende do RNG). No
 // mesmo instante toca um so: uma horda morrendo de uma vez viraria um estouro, e no
@@ -25,6 +32,45 @@ function som(_som, _ganho = 1) {
 function impacto(_hitstop, _tremor) {
     global.hitstop = max(global.hitstop, _hitstop);
     global.tremor = max(global.tremor, _tremor);
+}
+
+function chute_camera(_dir, _forca) {
+    global.chute_x = lengthdir_x(_forca, _dir);
+    global.chute_y = lengthdir_y(_forca, _dir);
+}
+
+// o golpe que limpou a sala: tempo lento, zoom e clarao. _peso 1 na sala comum, 2 no chefe
+function momento_final(_x, _y, _peso) {
+    global.lento = max(global.lento, 40 * _peso);
+    global.flash = max(global.flash, 0.3 * _peso);
+    fx_onda(_x, _y, 150 * _peso, make_colour_rgb(255, 225, 180));
+    audio_play_sound(snd_golpe_forte, 1, false, 1, 0, 0.55);
+}
+
+// numero do dano, subindo e sumindo. O lado alterna para dois seguidos nao ficarem um em
+// cima do outro (contador, sem random)
+global.numero_lado = 1;
+function fx_numero(_x, _y, _valor, _cor) {
+    global.numero_lado *= -1;
+    var _lado = global.numero_lado;
+    with (instance_create_depth(_x + 14 * _lado, _y - 24, -1001, obj_fx)) {
+        tipo = "numero";
+        texto = string(_valor);
+        cor = _cor;
+        vida_max = 34;
+        vida = vida_max;
+    }
+}
+
+// onda que abre ate _raio e some: fim do combo, e o golpe que limpa a sala
+function fx_onda(_x, _y, _raio, _cor) {
+    with (instance_create_depth(_x, _y, -999, obj_fx)) {
+        tipo = "onda";
+        raio = _raio;
+        cor = _cor;
+        vida_max = 16;
+        vida = vida_max;
+    }
 }
 
 // faiscas saindo de (x, y); _dir e para onde o golpe empurrou

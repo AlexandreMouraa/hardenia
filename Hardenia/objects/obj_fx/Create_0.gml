@@ -4,6 +4,8 @@
 //   "anel" e "poeira": arrancada do dash (ver fx_dash_arrancada)
 //   "arco":   arco de corte, na direcao do golpe
 //   "corte":  risco de luz em cima de quem levou o golpe (ver fx_corte)
+//   "numero": dano subindo (ver fx_numero)
+//   "onda":   anel que abre rapido (ver fx_onda)
 //   "estocada": ponta do golpe que sai do dash
 //   "faisca": linhas saindo do ponto de impacto (ver fx_faiscas)
 //   "explosao": bomba e elite que explode (ver fx_explosao)
@@ -22,6 +24,7 @@ sentido = 1;
 abertura = 140;
 espessura = 9;
 intensidade = 1; // acima de 1: o arco demora mais para apagar
+texto = "";
 angulos = [];
 distancias = [];
 x2 = x;
