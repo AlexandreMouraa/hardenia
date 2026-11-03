@@ -257,6 +257,7 @@ function golpe_acertar(_enemy, _dano, _knockback, _forte, _quebra) {
         fx_faiscas(_enemy.x, _enemy.y, _dir_escudo, make_colour_rgb(120, 220, 255), 12);
     }
     _dano = tecnicas_no_golpe(_enemy, _dano, _forte);
+    furia_ganhar(_forte ? 10 : 5);
     _enemy.hp -= _dano;
     _enemy.hit_flash = 8;
     var _dir_golpe = instance_exists(obj_player) ? point_direction(obj_player.x, obj_player.y, _enemy.x, _enemy.y) : 0;
@@ -320,6 +321,7 @@ function inimigo_morrer(_enemy, _dir, _forte) {
         chute_camera(_dir, _forte ? 10 : 6);
         fx_faiscas(_enemy.x, _enemy.y, _dir, c_red, 9);
         fx_corte(_enemy.x, _enemy.y, _dir, make_colour_rgb(255, 120, 90), _forte ? 56 : 46);
+        furia_ganhar(5);
         // o bau da sala aparece onde o ultimo caiu
         global.morto_x = _enemy.x;
         global.morto_y = _enemy.y;

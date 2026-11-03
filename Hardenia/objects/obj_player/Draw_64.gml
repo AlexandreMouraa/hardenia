@@ -115,11 +115,23 @@ if (especial_pronto > 0) {
 draw_set_color(c_ltgray);
 draw_text_transformed(16 * _esc + dash_charges_max * 16 * _esc + 4 * _esc, 65 * _esc, "ESPECIAL", _esc * 0.7, _esc * 0.7, 0);
 
+// Furia, embaixo do especial: cheia, pulsa e o nome acende
+var _fy = 82 * _esc;
+var _fcheia = (global.furia >= FURIA_MAX);
+draw_set_color(c_dkgray);
+draw_rectangle(16 * _esc, _fy, 16 * _esc + _ew, _fy + 6 * _esc, false);
+draw_set_color(make_colour_rgb(255, 110, 50));
+draw_set_alpha(_fcheia ? _piscar : 1);
+draw_rectangle(16 * _esc, _fy, 16 * _esc + _ew * global.furia / FURIA_MAX, _fy + 6 * _esc, false);
+draw_set_alpha(1);
+draw_set_color(_fcheia ? make_colour_rgb(255, 170, 90) : c_ltgray);
+draw_text_transformed(16 * _esc + dash_charges_max * 16 * _esc + 4 * _esc, 79 * _esc, _fcheia ? "FURIA: SEGURE O GIRO" : "FURIA", _esc * 0.7, _esc * 0.7, 0);
+
 // as tecnicas da run: um quadradinho para cada uma, na cor de quem ensinou (nomes na pausa)
 for (var _i = 0; _i < array_length(global.tecnicas); _i++) {
     var _def = tecnica_def(global.tecnicas[_i]);
     draw_set_color(variable_struct_get(global.caidos, _def.caido).cor);
-    draw_rectangle(16 * _esc + _i * 12 * _esc, 80 * _esc, 16 * _esc + _i * 12 * _esc + 8 * _esc, 88 * _esc, false);
+    draw_rectangle(16 * _esc + _i * 12 * _esc, 96 * _esc, 16 * _esc + _i * 12 * _esc + 8 * _esc, 104 * _esc, false);
 }
 
 // HUD: fase atual; fora do caminho da run, sala de teste
@@ -284,7 +296,7 @@ if (is_dead) {
 }
 
 if (global.toque_ativo && !venceu && !is_dead && !global.game_paused && !instance_exists(obj_mapa)) {
-    toque_desenhar(dash_charges > 0, especial_recarga <= 0);
+    toque_desenhar(dash_charges > 0, especial_recarga <= 0 || global.furia >= FURIA_MAX);
     draw_set_halign(fa_center);
     draw_set_valign(fa_middle);
 }
@@ -314,13 +326,13 @@ if (global.game_paused) {
         draw_text_transformed(_w / 2, _h / 2, "ESQUERDA DA TELA: andar    ATACAR: golpe (3 seguidos: combo)    DASH: esquiva", _esc, _esc, 0);
         draw_text_transformed(_w / 2, _h / 2 + 22 * _esc, "SEGURAR ATACAR: golpe carregado    ATACAR NO DASH: estocada    GIRO: especial", _esc, _esc, 0);
         draw_set_color(c_ltgray);
-        draw_text_transformed(_w / 2, _h / 2 + 42 * _esc, "O golpe vira sozinho para o inimigo mais perto", _esc * 0.85, _esc * 0.85, 0);
+        draw_text_transformed(_w / 2, _h / 2 + 42 * _esc, "O golpe vira sozinho para o inimigo mais perto    FURIA CHEIA: segure o giro", _esc * 0.85, _esc * 0.85, 0);
         draw_set_color(c_white);
     } else {
     draw_text_transformed(_w / 2, _h / 2, "WASD / SETAS: mover    CLIQUE ou J: atacar (3 seguidos: combo)    ESPACO: dash", _esc, _esc, 0);
-    draw_text_transformed(_w / 2, _h / 2 + 22 * _esc, "SEGURAR O ATAQUE: golpe carregado    ATACAR NO DASH: estocada    CLIQUE DIREITO ou K: especial", _esc, _esc, 0);
+    draw_text_transformed(_w / 2, _h / 2 + 22 * _esc, "SEGURAR O ATAQUE: golpe carregado    ATACAR NO DASH: estocada    CLIQUE DIREITO ou K: giro", _esc, _esc, 0);
     draw_set_color(c_ltgray);
-    draw_text_transformed(_w / 2, _h / 2 + 42 * _esc, "O golpe vira sozinho para o inimigo mais perto", _esc * 0.85, _esc * 0.85, 0);
+    draw_text_transformed(_w / 2, _h / 2 + 42 * _esc, "O golpe vira sozinho para o inimigo mais perto    FURIA CHEIA: segure o giro", _esc * 0.85, _esc * 0.85, 0);
     draw_set_color(c_white);
     draw_text_transformed(_w / 2, _h / 2 + 62 * _esc, "ESC: CONTINUAR    M: VOLTAR AO MENU", _esc, _esc, 0);
     }
