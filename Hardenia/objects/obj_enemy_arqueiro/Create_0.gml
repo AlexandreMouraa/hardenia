@@ -33,6 +33,7 @@ ataque = {
 // a linha para na parede: o aviso mostra ate onde a flecha vai de verdade
 ao_mirar = function() {
     ataque.alcance = linha_ate_parede(x, y, attack_dir, 480);
+    som(snd_arco_tensao, 0.5);
 };
 // brilho na ponta da flecha, logo antes do tiro: mostra para onde e quando
 ao_desenhar = function() {
@@ -57,5 +58,5 @@ disparar = function() {
         zona = other.zona;
         causa = _nome;
     }
-    audio_play_sound(snd_attack, 1, false, 0.7, 0, 1.4);
+    som(snd_flecha);
 };

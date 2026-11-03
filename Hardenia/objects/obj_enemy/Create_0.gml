@@ -33,6 +33,8 @@ ataque_frames = 0;
 ataque_solta = -1;
 // roda na hora de mirar, com attack_dir ja definido (o arqueiro corta a linha na parede)
 ao_mirar = undefined;
+// som do golpe; quem tem o proprio coloca noone
+som_golpe = snd_inimigo_golpe;
 // desenha por cima do corpo (o brilho na ponta da flecha, no arqueiro)
 ao_desenhar = undefined;
 // o que sai quando o aviso acaba. Quem ataca de longe troca este
@@ -41,6 +43,9 @@ disparar = function() {
     _golpe.dono = id;
     _golpe.zona = zona;
     _golpe.lifetime = ataque.acerto;
+    if (som_golpe != noone) {
+        som(som_golpe, 0.8);
+    }
     fx_golpe_inimigo(ataque, x, y, attack_dir);
 };
 // a zona desenhada no chao. Quem nao tem (arqueiro) avisa so com a pose

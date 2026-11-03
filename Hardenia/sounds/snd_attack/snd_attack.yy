@@ -10,7 +10,7 @@
   "compression":0,
   "compressionQuality":4,
   "conversionMode":0,
-  "duration":1.3312472,
+  "duration":0.17000000,
   "exportDir":"",
   "name":"snd_attack",
   "parent":{
