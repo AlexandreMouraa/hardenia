@@ -431,10 +431,18 @@ mover_eixo = function(_d, _no_x, _reto) {
 tremor_fase = 0;
 cam_x = 0;
 cam_y = 0;
+cam_w = camera_get_view_width(view_camera[0]);
+cam_h = camera_get_view_height(view_camera[0]);
+zoom = 1; // aperta na camera lenta (so na tela: a conta do jogo nao usa a camera)
 posicionar_camera = function(_na_hora) {
     var _cam = view_camera[0];
-    var _cw = camera_get_view_width(_cam);
-    var _ch = camera_get_view_height(_cam);
+    zoom = lerp(zoom, (global.lento > 0) ? 0.86 : 1, 0.14);
+    if (abs(zoom - 1) < 0.002) {
+        zoom = 1;
+    }
+    var _cw = 2 * round(cam_w * zoom / 2);
+    var _ch = 2 * round(cam_h * zoom / 2);
+    camera_set_view_size(_cam, _cw, _ch);
     var _ax = clamp(x - _cw / 2, 0, room_width - _cw);
     var _ay = clamp(y - _ch / 2, 0, room_height - _ch);
     if (_na_hora) {
@@ -444,8 +452,10 @@ posicionar_camera = function(_na_hora) {
         cam_x = lerp(cam_x, _ax, 0.2);
         cam_y = lerp(cam_y, _ay, 0.2);
     }
-    var _cx = cam_x;
-    var _cy = cam_y;
+    var _cx = cam_x + global.chute_x;
+    var _cy = cam_y + global.chute_y;
+    global.chute_x *= 0.75;
+    global.chute_y *= 0.75;
     if (global.tremor > 0) {
         tremor_fase += 1;
         _cx += sin(tremor_fase * 1.7) * global.tremor;
@@ -457,6 +467,10 @@ posicionar_camera = function(_na_hora) {
 camera_set_view_target(view_camera[0], noone);
 global.hitstop = 0;
 global.tremor = 0;
+global.lento = 0;
+global.flash = 0;
+global.chute_x = 0;
+global.chute_y = 0;
 posicionar_camera(true);
 
 global.game_paused = false;

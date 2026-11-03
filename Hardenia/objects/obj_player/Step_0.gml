@@ -65,6 +65,16 @@ if (_dash_apertado) {
 // a reacao do HUD anda mesmo com o mundo parado
 hud_dano = max(0, hud_dano - 1);
 hud_cura = max(0, hud_cura - 1);
+global.flash = max(0, global.flash - 0.03);
+
+// camera lenta: o mundo para 2 de cada 3 frames, pela mesma micro-pausa dos golpes. Os
+// efeitos (obj_fx) continuam em tempo normal, e por isso a cena fica mais bonita
+if (global.lento > 0) {
+    global.lento -= 1;
+    if (global.lento mod 3 == 0) {
+        global.hitstop = max(global.hitstop, 2);
+    }
+}
 
 // micro-pausa do impacto: o mundo congela uns frames (inimigos e golpes param
 // junto, ver scr_efeitos)

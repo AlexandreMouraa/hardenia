@@ -29,6 +29,10 @@ acertar = function(_enemy) {
     _enemy.hit_flash = 8;
     var _dir_golpe = instance_exists(obj_player) ? point_direction(obj_player.x, obj_player.y, _enemy.x, _enemy.y) : 0;
     som(_enemy.hp <= 0 ? snd_morte_inimigo : snd_acerto);
+    // dez vezes o dano: 1 e 2 nao dizem muito na tela. Na horda seria uma chuva de numeros
+    if (!_enemy.leve) {
+        fx_numero(_enemy.x, _enemy.bbox_top, damage * 10, forte ? make_colour_rgb(255, 190, 70) : c_white);
+    }
     if (_enemy.hp <= 0) {
         if (_enemy.bomba && _enemy.state == 1) {
             bomba_apagar(_enemy.zona.cx, _enemy.zona.cy, 1 - _enemy.state_timer / _enemy.ataque.aviso);
@@ -39,9 +43,14 @@ acertar = function(_enemy) {
         // golpe que mata: pausa e tremor maiores, faiscas vermelhas. Inimigo de horda
         // morre sem isso: a cada golpe morrem varios, e o jogo ficaria parando
         if (!_enemy.leve) {
-            impacto(forte ? 6 : 5, forte ? 8 : 6);
+            impacto(forte ? 7 : 5, forte ? 9 : 6);
+            chute_camera(_dir_golpe, forte ? 10 : 6);
             fx_faiscas(_enemy.x, _enemy.y, _dir_golpe, c_red, 9);
             fx_corte(_enemy.x, _enemy.y, _dir_golpe, make_colour_rgb(255, 120, 90), forte ? 56 : 46);
+        }
+        // ultimo da sala: _enemy ainda conta, ele so some no fim deste bloco
+        if (!_enemy.leve && instance_number(obj_enemy) == 1) {
+            momento_final(_enemy.x, _enemy.y, _enemy.imovel ? 2 : 1);
         }
         with (instance_create_layer(_enemy.x, _enemy.y, "Instances", obj_fx_morte)) {
             sprite_index = _enemy.sprite_index;
@@ -52,7 +61,10 @@ acertar = function(_enemy) {
         // quem nao se move leva o golpe, mas nao e empurrado
         var _kb = _enemy.imovel ? 0 : knockback;
         if (forte) {
-            impacto(4, 4);
+            // fim do combo: pausa maior, empurrao na camera e uma onda em volta de quem levou
+            impacto(6, 6);
+            chute_camera(_dir_golpe, 9);
+            fx_onda(_enemy.x, _enemy.y, 58, make_colour_rgb(255, 180, 90));
             fx_faiscas(_enemy.x, _enemy.y, _dir_golpe, make_colour_rgb(255, 200, 120), 8);
             fx_corte(_enemy.x, _enemy.y, _dir_golpe, make_colour_rgb(255, 170, 80), 50);
         } else {

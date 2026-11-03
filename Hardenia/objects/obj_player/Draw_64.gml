@@ -13,6 +13,14 @@ if (hud_dano > 0) {
     draw_set_alpha(1);
 }
 
+// o golpe que limpou a sala
+if (global.flash > 0) {
+    draw_set_alpha(global.flash);
+    draw_set_color(make_colour_rgb(255, 245, 225));
+    draw_rectangle(0, 0, _w, _h, false);
+    draw_set_alpha(1);
+}
+
 // HUD: tentativa, vida e cargas de dash
 draw_set_halign(fa_left);
 draw_set_valign(fa_top);
