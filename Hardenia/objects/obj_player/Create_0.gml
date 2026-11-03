@@ -202,20 +202,26 @@ golpear = function(_carregado = false) {
     }
     // arco de corte desenhado (o golpe em si, obj_attack, e invisivel). O
     // segundo varre ao contrario; o terceiro e mais largo e mais claro
+    // Do tamanho do alcance do golpe (64 e 76 px), e claro, para nao confundir com o vermelho
+    // dos ataques dos inimigos
     with (instance_create_depth(x, y, depth - 1, obj_fx)) {
         tipo = "arco";
         dir = _dir;
+        dono = other.id;
         if (_forte) {
-            abertura = 220;
-            raio = 44;
-            espessura = 14;
-            cor = make_colour_rgb(255, 150, 40);
+            abertura = 230;
+            raio = 74;
+            espessura = 24;
+            cor = make_colour_rgb(255, 160, 60);
             intensidade = 1.6;
-            vida_max = 12;
+            vida_max = 13;
         } else {
+            abertura = 150;
+            raio = 62;
+            espessura = 18;
             sentido = (other.combo_passo == 2) ? -1 : 1;
-            cor = (other.combo_passo == 2) ? make_colour_rgb(255, 110, 80) : make_colour_rgb(255, 70, 70);
-            vida_max = 9;
+            cor = (other.combo_passo == 2) ? make_colour_rgb(255, 215, 180) : make_colour_rgb(190, 210, 240);
+            vida_max = 10;
         }
         vida = vida_max;
     }
@@ -268,6 +274,7 @@ estocar = function() {
     with (instance_create_depth(x, y, depth - 1, obj_fx)) {
         tipo = "estocada";
         dir = _dir;
+        dono = other.id;
         raio = 96;
         espessura = 8;
         cor = make_colour_rgb(255, 110, 80);
@@ -310,9 +317,10 @@ girar = function() {
     }
     with (instance_create_depth(x, y, depth - 1, obj_fx)) {
         tipo = "arco";
+        dono = other.id;
         abertura = 360;
-        raio = 70;
-        espessura = 14;
+        raio = 75;
+        espessura = 22;
         cor = make_colour_rgb(120, 200, 255);
         intensidade = 1.6;
         vida_max = 14;

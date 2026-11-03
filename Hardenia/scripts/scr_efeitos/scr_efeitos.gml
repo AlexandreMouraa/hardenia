@@ -42,6 +42,22 @@ function fx_faiscas(_x, _y, _dir, _cor, _qtd) {
     }
 }
 
+// risco de luz atravessando quem levou o golpe. _dir e o rumo do golpe: o risco fica de
+// atravessado. O lado alterna para dois golpes seguidos nao riscarem igual (contador, sem random)
+global.corte_lado = 1;
+function fx_corte(_x, _y, _dir, _cor, _meia) {
+    global.corte_lado *= -1;
+    with (instance_create_depth(_x, _y, -1000, obj_fx)) {
+        tipo = "corte";
+        dir = _dir + 65 * global.corte_lado;
+        cor = _cor;
+        raio = _meia;
+        espessura = 5;
+        vida_max = 8;
+        vida = vida_max;
+    }
+}
+
 // arrancada do dash: anel no chao e poeira saindo para tras. _dir e para onde
 // o dash vai. Angulos e distancias fixos (sem random: o robo depende do RNG).
 // Profundidade 50: entre o fundo (100) e os personagens (0)

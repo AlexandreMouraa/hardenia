@@ -49,19 +49,46 @@ switch (tipo) {
         break;
 
     case "arco":
-        // varre a abertura na primeira metade da vida, depois so apaga;
-        // mais grosso no meio do arco, como o rastro de uma lamina
+        // varre a abertura na primeira metade da vida, depois so apaga; mais grosso
+        // no meio do arco e mais forte na ponta, como o rastro de uma lamina
         var _varrido = abertura * min(1, (1 - _t) * 2 + 0.25);
         var _ini = dir + abertura / 2 * sentido;
         gpu_set_blendmode(bm_add);
-        draw_primitive_begin(pr_trianglestrip);
-        for (var _a = 0; _a <= _varrido; _a += 7) {
-            var _ang = _ini - _a * sentido;
-            var _esp = 2 + espessura * sin(pi * _a / abertura);
-            var _brilho = min(1, intensidade * _t);
-            draw_vertex_colour(x + lengthdir_x(raio - _esp, _ang), y + lengthdir_y(raio - _esp, _ang), cor, _brilho);
-            draw_vertex_colour(x + lengthdir_x(raio + 2, _ang), y + lengthdir_y(raio + 2, _ang), c_white, _brilho);
+        // duas tiras: a de dentro some no centro, a de fora e a lamina
+        for (var _tira = 0; _tira < 2; _tira++) {
+            draw_primitive_begin(pr_trianglestrip);
+            for (var _a = 0; _a <= _varrido; _a += 7) {
+                var _ang = _ini - _a * sentido;
+                var _esp = 2 + espessura * sin(pi * _a / abertura);
+                var _brilho = min(1, intensidade * _t) * (0.3 + 0.7 * _a / max(1, _varrido));
+                var _meio = raio - _esp * 0.35;
+                if (_tira == 0) {
+                    draw_vertex_colour(x + lengthdir_x(raio - _esp, _ang), y + lengthdir_y(raio - _esp, _ang), cor, 0);
+                    draw_vertex_colour(x + lengthdir_x(_meio, _ang), y + lengthdir_y(_meio, _ang), cor, _brilho);
+                } else {
+                    draw_vertex_colour(x + lengthdir_x(_meio, _ang), y + lengthdir_y(_meio, _ang), cor, _brilho);
+                    draw_vertex_colour(x + lengthdir_x(raio + 2, _ang), y + lengthdir_y(raio + 2, _ang), borda, _brilho);
+                }
+            }
+            draw_primitive_end();
         }
+        gpu_set_blendmode(bm_normal);
+        break;
+
+    case "corte":
+        // risco fino que cresce rapido e apaga: mostra quem levou o golpe
+        var _meia = raio * min(1, (1 - _t) * 3 + 0.3);
+        var _larg = espessura * _t;
+        var _cx = lengthdir_x(_meia, dir);
+        var _cy = lengthdir_y(_meia, dir);
+        var _lx = lengthdir_x(_larg, dir + 90);
+        var _ly = lengthdir_y(_larg, dir + 90);
+        gpu_set_blendmode(bm_add);
+        draw_primitive_begin(pr_trianglestrip);
+        draw_vertex_colour(x - _cx, y - _cy, cor, 0);
+        draw_vertex_colour(x + _lx, y + _ly, c_white, _t);
+        draw_vertex_colour(x - _lx, y - _ly, c_white, _t);
+        draw_vertex_colour(x + _cx, y + _cy, cor, 0);
         draw_primitive_end();
         gpu_set_blendmode(bm_normal);
         break;
