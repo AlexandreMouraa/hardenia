@@ -228,8 +228,12 @@ if ((state == 1 || state == 2) && ataque_sprite != noone) {
     // a pose avanca durante o aviso e termina no golpe
     sprite_index = ataque_sprite;
     var _quadro = ataque_frames - 1;
+    var _no_golpe = (ataque_solta >= 0) ? ataque_solta : ataque_frames - 1;
     if (state == 1) {
-        _quadro = floor((1 - state_timer / ataque.aviso) * (ataque_frames - 1));
+        _quadro = floor((1 - state_timer / ataque.aviso) * _no_golpe);
+    } else if (ataque_solta >= 0) {
+        // o resto da folha logo depois do golpe, sem o ultimo quadro (ja volta a pegar flecha)
+        _quadro = min(ataque_frames - 2, ataque_solta + (ataque.duracao - state_timer) div 4);
     }
     image_index = facing_dir * ataque_frames + _quadro;
 } else {
