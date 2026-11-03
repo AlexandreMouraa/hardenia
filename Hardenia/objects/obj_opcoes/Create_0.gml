@@ -1,5 +1,6 @@
 // Opcoes, como jogar e creditos: a mesma tela por cima do menu ou da pausa. modo: quem cria escolhe
 modo = "opcoes";
+window_set_cursor(cr_default);
 cursor = 0;
 tempo = 0;
 mudou = false;
@@ -71,6 +72,9 @@ item_ret = function(_i) {
 fechar = function() {
     if (mudou) {
         salvo_gravar();
+    }
+    if (instance_exists(obj_player)) {
+        window_set_cursor(cr_none);
     }
     instance_destroy();
 };

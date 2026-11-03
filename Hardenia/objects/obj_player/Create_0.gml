@@ -454,6 +454,7 @@ image_index = facing_dir * idle_frames;
 // vitoria_estado: "fim" (sem rede) ou "nome" -> "enviando" -> "enviado" / "falhou"
 // (nome recusado pela API volta de "enviando" para "nome")
 sala_limpa_enviada = false;
+duelo_curou = false; // nas salas de duelo, a cura de limpar a sala ja veio antes dele
 vitoria_estado = "fim";
 vitoria_nome = "";
 vitoria_nome_recusado = false;

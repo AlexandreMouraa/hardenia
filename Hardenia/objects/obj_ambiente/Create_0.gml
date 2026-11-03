@@ -4,3 +4,6 @@ def = ambiente_da_sala();
 clima = (def != undefined) ? clima_def(def.clima) : undefined;
 // metade do tamanho da camera: luz e borrada de qualquer jeito, e pesa menos
 superficie = -1;
+// aparelho lento: conta segundos seguidos abaixo de 40 fps (Draw End)
+lento_segundos = 0;
+lento_olhou = current_time;

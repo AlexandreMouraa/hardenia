@@ -33,6 +33,7 @@ function dica_texto(_k) {
         case "furia": return "Fúria cheia: segure " + dica_botao("giro") + " para soltar o Giro Furioso.";
         case "bau": return "Encoste no baú para ver o que os Caídos deixaram.";
         case "portao": return "O portão abriu. A seta amarela aponta para ele.";
+        case "leve": return "O aparelho estava lento: ligamos o ambiente leve. Dá para mudar em Opções.";
     }
     return "";
 }

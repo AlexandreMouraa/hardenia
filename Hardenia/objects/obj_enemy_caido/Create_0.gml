@@ -27,8 +27,9 @@ disparar = function() {
 };
 
 // _vida: da sala. Cada um divide ela do seu jeito: quem foge e fragil, quem aguenta e duro
-preparar = function(_chave, _vida) {
+preparar = function(_chave, _vida, _furia) {
     caido = _chave;
+    furia = _furia;
     walk_frames = 8;
     anim_speed = 6;
     var _forca = 1;

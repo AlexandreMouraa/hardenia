@@ -144,7 +144,7 @@ if (!sala_limpa_enviada && instance_number(obj_enemy) == 0 && !duelo_tentar()) {
     var _fase = mapa_indice(room);
     if (_fase > global.fase_curada) {
         global.fase_curada = _fase;
-        if (hp > 0 && hp < hp_max) {
+        if (hp > 0 && hp < hp_max && !duelo_curou) {
             hp += 1;
             global.vida = hp;
             hud_cura = hud_cura_max;

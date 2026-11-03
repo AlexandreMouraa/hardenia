@@ -16,6 +16,7 @@ if (room == Room_Menu) {
 
 tempo_sala = 0;
 espera = 0;
+duelo_vivo = false;
 estava_morto = false;
 sala_limpa_logada = false;
 sem_caminho_logado = false;
