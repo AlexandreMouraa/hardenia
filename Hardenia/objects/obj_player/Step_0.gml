@@ -27,22 +27,14 @@ if (!venceu) {
     global.run_frames += 1;
 }
 
-// clique: ataque mirando no mouse (o J, em KeyPress_74, mira para onde anda).
-// Lido antes da micro-pausa, como o dash: clicar durante ela fica guardado
+// clique: o mesmo ataque do J (KeyPress_74). Lido antes da micro-pausa, como o dash:
+// clicar durante ela fica guardado
 var _clique = instance_exists(obj_autotest) ? obj_autotest.bot_clique : mouse_check_button_pressed(mb_left);
 if (global.toque_ativo) {
-    // o dedo na tela nao e clique: quem ataca e o botao, e o golpe vira para o inimigo perto
-    // (sem mouse nao da para mirar; 140 px: um pouco alem do alcance do golpe forte)
-    _clique = false;
-    if (global.toque.ataque_novo && !is_dead && !venceu) {
-        var _perto = instance_nearest(x, y, obj_enemy);
-        global.mira_mouse = (_perto != noone && point_distance(x, y, _perto.x, _perto.y) < 140);
-        ataque_buffer = ataque_buffer_max;
-        carga_armada = true;
-    }
+    // o dedo na tela nao e clique: quem ataca e o botao
+    _clique = global.toque.ataque_novo;
 }
 if (_clique && !is_dead && !venceu) {
-    global.mira_mouse = true;
     ataque_buffer = ataque_buffer_max;
     carga_armada = true;
 }
@@ -315,7 +307,7 @@ if (is_dashing) {
 // terceiro golpe do combo: passo curto para a frente, que da peso ao golpe
 if (ataque_impulso > 0 && !is_dashing) {
     ataque_impulso -= 1;
-    if (global.mira_mouse) {
+    if (golpe_mirado) {
         // para o lado do golpe; resto de arredondamento vira 0 (lengthdir_x
         // de 270 graus da -0,0000000000000005, que desligaria o escorregao
         // nas quinas em mover_eixo)

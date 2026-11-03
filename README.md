@@ -53,7 +53,7 @@ estão no [CONTRIBUTING.md](CONTRIBUTING.md).
 | Ação | Tecla |
 |---|---|
 | Mover | `WASD` ou setas |
-| Atacar (3 seguidos: combo) | Clique esquerdo (mira no mouse) ou `J` (para onde anda) |
+| Atacar (3 seguidos: combo) | Clique esquerdo ou `J`. O golpe vira sozinho para o inimigo mais perto |
 | Golpe carregado (anda devagar enquanto carrega) | Segurar o ataque e soltar quando o personagem piscar |
 | Estocada (golpe mais comprido) | Atacar durante o dash ou logo no fim dele |
 | Golpe especial (acerta todos em volta, recarga de 3 s) | Clique direito ou `K` |
@@ -123,12 +123,12 @@ Ali, `L` ou um toque no botão de baixo mede quantos inimigos o aparelho aguenta
   (`obj_enemy`, `empurrao_x/y`) e tem recarga maior (36 frames). Os dois
   primeiros mantêm a recarga do ataque antigo (20 frames), então um inimigo
   comum morre no mesmo tempo de antes. Apertar J na recarga fica guardado.
-- **Mira no mouse** (`obj_player`, `golpear` e `mira_alvo`): atacando com o
-  clique, o golpe vai para o mouse em qualquer ângulo, com o mesmo alcance do
-  teclado; com `J`, para onde o jogador anda (vale o último usado,
-  `global.mira_mouse`). O cursor do sistema some e o jogo desenha uma mira. No
-  teclado a conta do golpe é a mesma de antes, bit a bit (ver o comentário em
-  `golpear`). O robô tem `-mouse` para jogar mirando.
+- **Mira automática** (`obj_player`, `golpear` e `mira_alvo`): clique, `J` e toque
+  fazem o mesmo golpe, que vira para o inimigo mais perto até 140 px, sem parede
+  no meio, com preferência para quem está para onde o jogador anda. Sem ninguém
+  perto, vai para onde ele está virado. Alvo na beira do alcance ganha um passo
+  curto até ele. O cursor do sistema some durante o jogo. O robô tem `-mouse` para
+  testar o caminho do clique.
 - **Mapa de progresso** (`scripts/scr_mapa`, `obj_mapa`): ao entrar numa fase
   nova, o guerreiro anda no mapa até ela (2,5 s, Enter ou clique pula); a pausa mostra
   onde você está. As fases ficam em `global.mapa_fases` (fase nova: acrescentar
@@ -154,7 +154,7 @@ roda 3 runs em velocidade acelerada, sem som e em janela, e termina com `OK` ou
 | Opção (`-Extra "..."`) | O que faz |
 |---|---|
 | `-morrer` | morre uma vez em cada sala na 1ª run (testa morte, volta ao começo da run e a vida) |
-| `-mouse` | ataca com o clique, mirando no inimigo (testa a mira no mouse) |
+| `-mouse` | ataca com o clique em vez do `J` (testa o caminho do clique; o golpe é o mesmo) |
 | `-carregar` | segura o ataque depois de cada golpe e solta com a carga cheia (testa o golpe carregado; soma `carregados=N` no resumo) |
 | `-especial` | usa o golpe especial sempre que tem alvo perto e recarga pronta (soma `especiais=N` no resumo e registra os acertos de cada giro) |
 | `-estocar` | com alvo perto e carga de dash, dá o dash e ataca logo depois (soma `estocadas=N` no resumo). Vida sempre cheia: testa o fluxo, não o balanceamento |

@@ -25,8 +25,8 @@ danos = 0;
 curas = 0;
 vida_antes = -1;
 avisos_max = 0;
-// -mouse: ataca com o clique, mirando no inimigo (sem precisar virar), como
-// quem joga com mouse. Sem ela, ataca com J, para onde esta virado
+// -mouse: ataca com o clique em vez do J. O golpe e o mesmo: serve para testar o
+// caminho do clique
 usar_mouse = false;
 // -carregar: segura o ataque depois de cada golpe e solta com a carga cheia
 // (testa o golpe carregado; soma "carregados=N" no resumo)
@@ -182,8 +182,7 @@ exception_unhandled_handler(function(_ex) {
 // Entrada do robo. Teclas simuladas (keyboard_key_press) nao funcionam com a
 // janela sem foco, entao: movimento, dash e Enter da vitoria o obj_player le
 // destas variaveis; ataque, pausa e Enter do menu sao os proprios eventos de
-// tecla, chamados com event_perform. O clique (-mouse) tambem e variavel: o
-// ponto da mira vai em bot_mira_x/y, na sala
+// tecla, chamados com event_perform. O clique (-mouse) tambem e variavel
 bot_h = 0;
 bot_v = 0;
 bot_dash = false;
@@ -191,8 +190,6 @@ bot_enter = false;
 bot_clique = false;
 bot_segurar = false;
 bot_especial = false;
-bot_mira_x = 0;
-bot_mira_y = 0;
 
 encerrar = function(_codigo) {
     if (encerrando) {
