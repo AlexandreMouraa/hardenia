@@ -3,6 +3,8 @@
 // passa de uma run para a outra. Sao uma ao comecar a run e uma por sala limpa, no bau que o
 // ultimo inimigo deixa (obj_bau). A tela de escolha e o obj_tecnicas.
 // Tecnica nova: acrescentar aqui e tratar o efeito (para ver onde, busque a chave no projeto).
+// Combinacao: tem "requer", e so aparece para quem ja tem uma de cada grupo. Vem na primeira
+// carta, porque e a recompensa por ter juntado duas tecnicas.
 // Textos sem acento: a fonte do jogo nao tem esses caracteres
 global.caidos = {
     carrasco: { nome: "O CARRASCO", cor: make_colour_rgb(225, 70, 70) },
@@ -19,6 +21,11 @@ global.tecnicas_lista = [
     { chave: "polvora", caido: "sapador", nome: "RASTRO DE POLVORA", texto: "O giro deixa quatro bombas em volta, que explodem logo depois." },
     { chave: "ultimo_instante", caido: "sentinela", nome: "ULTIMO INSTANTE", texto: "Dash na hora do golpe inimigo: o tempo desacelera e o proximo golpe dobra." },
     { chave: "retribuicao", caido: "sentinela", nome: "RETRIBUICAO", texto: "Ao levar um golpe, uma onda fere e empurra todos em volta." },
+    { chave: "hora_certa", caido: "sentinela", nome: "HORA CERTA", texto: "Golpe em inimigo apagado, logo depois do ataque dele, vale o dobro." },
+    { chave: "sangue_polvora", caido: "carrasco", caido2: "sapador", nome: "SANGUE E POLVORA", texto: "Quem morre sangrando explode e fere quem esta perto.", requer: [["sangria"], ["bomba_combo", "polvora"]] },
+    { chave: "rastilho", caido: "batedor", caido2: "sapador", nome: "RASTILHO", texto: "Cada dash deixa uma bomba no lugar de onde saiu.", requer: [["passo_cortante", "folego"], ["bomba_combo", "polvora"]] },
+    { chave: "sentenca", caido: "carrasco", caido2: "sentinela", nome: "SENTENCA", texto: "Todo golpe em quem esta sangrando tira 1 a mais.", requer: [["sangria"], ["ultimo_instante", "retribuicao", "hora_certa"]] },
+    { chave: "contra_passo", caido: "batedor", caido2: "sentinela", nome: "CONTRA-PASSO", texto: "Desviar no ultimo instante devolve a carga do dash e enche um quarto da Furia.", requer: [["ultimo_instante"], ["passo_cortante", "folego"]] },
 ];
 // Furia: acertar enche a barra, que passa de uma sala para a outra e zera com a morte. Cheia,
 // continuar segurando o especial solta o Giro Furioso, mesmo com o giro em recarga
@@ -61,12 +68,34 @@ function tecnicas_restantes() {
     return array_length(global.tecnicas_lista) - array_length(global.tecnicas);
 }
 
-// ate 3 que ele ainda nao tem, de Caidos diferentes quando da
+// a combinacao pede uma tecnica de cada grupo
+function combinacao_liberada(_def) {
+    for (var _g = 0; _g < array_length(_def.requer); _g++) {
+        var _tem = false;
+        for (var _k = 0; _k < array_length(_def.requer[_g]); _k++) {
+            _tem = _tem || tem_tecnica(_def.requer[_g][_k]);
+        }
+        if (!_tem) {
+            return false;
+        }
+    }
+    return true;
+}
+
+// ate 3 que ele ainda nao tem, de Caidos diferentes quando da. Uma combinacao liberada vem
+// primeiro, no maximo uma por vez
 function tecnicas_sortear() {
     var _resto = [];
+    var _combinacoes = [];
     for (var _i = 0; _i < array_length(global.tecnicas_lista); _i++) {
-        if (!tem_tecnica(global.tecnicas_lista[_i].chave)) {
-            array_push(_resto, global.tecnicas_lista[_i]);
+        var _d = global.tecnicas_lista[_i];
+        if (tem_tecnica(_d.chave)) {
+            continue;
+        }
+        if (!variable_struct_exists(_d, "requer")) {
+            array_push(_resto, _d);
+        } else if (combinacao_liberada(_d)) {
+            array_push(_combinacoes, _d);
         }
     }
     for (var _i = array_length(_resto) - 1; _i > 0; _i--) {
@@ -76,6 +105,9 @@ function tecnicas_sortear() {
         _resto[_j] = _troca;
     }
     var _oferta = [];
+    if (array_length(_combinacoes) > 0) {
+        array_push(_oferta, _combinacoes[tecnica_dado(array_length(_combinacoes))]);
+    }
     var _vistos = {};
     for (var _i = 0; _i < array_length(_resto) && array_length(_oferta) < 3; _i++) {
         if (!variable_struct_exists(_vistos, _resto[_i].caido)) {
@@ -116,6 +148,15 @@ function portao_aberto() {
 
 // o que as tecnicas mudam no golpe que acabou de acertar. Devolve o dano
 function tecnicas_no_golpe(_enemy, _dano, _forte) {
+    if (_enemy.state == 3 && tem_tecnica("hora_certa")) {
+        _dano *= 2;
+        tecnica_contar("hora_certa");
+    }
+    // antes de marcar a sangria: vale para quem ja estava sangrando
+    if (_enemy.sangra > 0 && tem_tecnica("sentenca")) {
+        _dano += 1;
+        tecnica_contar("sentenca");
+    }
     if (tem_tecnica("sangria")) {
         _enemy.sangra = 3;
         _enemy.sangra_timer = 60;
@@ -127,7 +168,7 @@ function tecnicas_no_golpe(_enemy, _dano, _forte) {
                 _dano *= 2;
                 tecnica_contar("execucao");
             }
-        } else if (_enemy.hp - _dano <= 2) {
+        } else if (_enemy.hp - _dano <= 1) {
             _dano = _enemy.hp;
             tecnica_contar("execucao");
         }

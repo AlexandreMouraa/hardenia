@@ -257,7 +257,7 @@ function golpe_acertar(_enemy, _dano, _knockback, _forte, _quebra) {
         fx_faiscas(_enemy.x, _enemy.y, _dir_escudo, make_colour_rgb(120, 220, 255), 12);
     }
     _dano = tecnicas_no_golpe(_enemy, _dano, _forte);
-    furia_ganhar(_forte ? 10 : 5);
+    furia_ganhar(_forte ? 6 : 3);
     _enemy.hp -= _dano;
     _enemy.hit_flash = 8;
     var _dir_golpe = instance_exists(obj_player) ? point_direction(obj_player.x, obj_player.y, _enemy.x, _enemy.y) : 0;
@@ -314,6 +314,11 @@ function inimigo_morrer(_enemy, _dir, _forte) {
     if (_enemy.elite == "explosao") {
         instance_create_layer(_enemy.x, _enemy.y, "Instances", obj_explosao);
     }
+    // a bomba espera um instante: pode pegar outro que sangra, e a corrente cresce sem recursao
+    if (_enemy.sangra > 0 && tem_tecnica("sangue_polvora")) {
+        bomba_jogador(_enemy.x, _enemy.y, _enemy.x, _enemy.y, 1, 8, 1);
+        tecnica_contar("sangue_polvora");
+    }
     // golpe que mata: pausa e tremor maiores, faiscas vermelhas. Inimigo de horda
     // morre sem isso: a cada golpe morrem varios, e o jogo ficaria parando
     if (!_enemy.leve) {
@@ -321,7 +326,7 @@ function inimigo_morrer(_enemy, _dir, _forte) {
         chute_camera(_dir, _forte ? 10 : 6);
         fx_faiscas(_enemy.x, _enemy.y, _dir, c_red, 9);
         fx_corte(_enemy.x, _enemy.y, _dir, make_colour_rgb(255, 120, 90), _forte ? 56 : 46);
-        furia_ganhar(5);
+        furia_ganhar(3);
         // o bau da sala aparece onde o ultimo caiu
         global.morto_x = _enemy.x;
         global.morto_y = _enemy.y;
@@ -543,6 +548,36 @@ global.elites_sala = [
     { sala: Room3, objeto: obj_enemy_wight, indice: 0, habilidade: "escudo" },
     { sala: Room3, objeto: obj_enemy_wight, indice: 2, habilidade: "invocacao" },
 ];
+
+// as tecnicas e a Furia fortalecem o jogador ao longo da run, entao cada sala endurece: mais
+// vida, menos aviso e menos descanso entre um ataque e outro. Medido com -desatento 30, para
+// ajustar jogando. O chefe cuida do proprio aviso, e so ganha vida
+global.dificuldade_salas = [
+    { vida: 0, aviso: 1, recarga: 1 },
+    { vida: 1, aviso: 0.9, recarga: 0.85 },
+    { vida: 2, aviso: 0.85, recarga: 0.75 },
+    { vida: 3, aviso: 0.8, recarga: 0.6 },
+];
+function dificuldade_aplicar() {
+    var _fase = mapa_indice(room);
+    if (_fase < 0) {
+        return;
+    }
+    if (_fase < array_length(global.dificuldade_salas)) {
+        var _d = global.dificuldade_salas[_fase];
+        with (obj_enemy) {
+            if (!leve && !imovel) {
+                hp += _d.vida;
+                ataque.aviso = round(ataque.aviso * _d.aviso);
+                ataque.recarga = round(ataque.recarga * _d.recarga);
+            }
+        }
+    }
+    with (obj_enemy_chefe) {
+        hp_max = 70;
+        hp = hp_max;
+    }
+}
 
 // chamada no primeiro frame da sala (obj_player, Step)
 function elites_aplicar() {

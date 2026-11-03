@@ -19,6 +19,8 @@ for (var _i = 0; _i < array_length(oferta); _i++) {
     var _def = oferta[_i];
     var _cor = variable_struct_get(global.caidos, _def.caido).cor;
     var _caido = variable_struct_get(global.caidos, _def.caido).nome;
+    var _dupla = variable_struct_exists(_def, "caido2");
+    var _cor2 = _dupla ? variable_struct_get(global.caidos, _def.caido2).cor : _cor;
     var _foco = (escolhido >= 0) ? (_i == escolhido) : (_i == cursor);
     var _sobe = _foco ? 6 * _esc : 0;
     var _cx = (_r[0] + _r[2]) / 2;
@@ -31,6 +33,13 @@ for (var _i = 0; _i < array_length(oferta); _i++) {
     draw_set_color(_cor);
     draw_rectangle(_r[0], _top, _r[2], _top + 6 * _esc, false);
     draw_rectangle(_r[0], _top, _r[2], _fim, true);
+    if (_dupla) {
+        // combinacao: as duas cores, e os dois nomes
+        draw_set_color(_cor2);
+        draw_rectangle(_cx, _top, _r[2], _top + 6 * _esc, false);
+        _caido = "COMBINACAO";
+        draw_set_color(c_white);
+    }
     if (_foco) {
         draw_rectangle(_r[0] - 1, _top - 1, _r[2] + 1, _fim + 1, true);
         draw_rectangle(_r[0] - 2, _top - 2, _r[2] + 2, _fim + 2, true);

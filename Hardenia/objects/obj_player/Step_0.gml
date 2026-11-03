@@ -292,6 +292,7 @@ if (_especial_preso && global.furia >= FURIA_MAX && !is_dashing) {
 if (tempo_na_sala == 0) {
     campo_preparar();
     elites_aplicar();
+    dificuldade_aplicar();
 }
 tempo_na_sala += 1;
 
@@ -322,7 +323,16 @@ if (dash_buffer > 0 && !is_dashing && dash_charges > 0) {
     audio_play_sound(snd_dash, 1, false, 1, 0, 1 + 0.05 * sin(dash_contador * 2.4));
     brilho = 1;
     fx_dash_arrancada(x, y, point_direction(0, 0, dash_dir_x, dash_dir_y));
+    if (tem_tecnica("rastilho")) {
+        bomba_jogador(x, y, x, y, 1, 30, 1);
+        tecnica_contar("rastilho");
+    }
     if (tem_tecnica("ultimo_instante") && perigo_iminente()) {
+        if (tem_tecnica("contra_passo")) {
+            dash_charges = min(dash_charges + 1, dash_charges_max);
+            furia_ganhar(25);
+            tecnica_contar("contra_passo");
+        }
         golpe_dobrado = true;
         global.lento = max(global.lento, 36);
         fx_onda(x, y, 130, global.caidos.sentinela.cor);
