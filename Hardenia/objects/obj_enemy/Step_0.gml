@@ -5,6 +5,9 @@ if (global.game_paused || global.hitstop > 0) {
 if (hit_flash > 0) {
     hit_flash -= 1;
 }
+if (alerta > 0) {
+    alerta -= 1;
+}
 
 // empurrao do terceiro golpe: de 1 em 1 px para encostar na parede sem atravessar
 if (abs(empurrao_x) + abs(empurrao_y) > 0.1) {
@@ -52,7 +55,7 @@ switch (state) {
         }
         var _dist = point_distance(x, y, obj_player.x, obj_player.y);
         var _dir = point_direction(x, y, obj_player.x, obj_player.y);
-        image_blend = acordado ? c_red : c_white;
+        image_blend = c_white;
 
         if (acordado && vendo) {
             if (elite == "invocacao") {
@@ -142,11 +145,9 @@ switch (state) {
 
     case 1: // aviso (telegraph)
         state_timer -= 1;
-        image_blend = ((state_timer div 6) mod 2 == 0) ? c_white : c_red;
         if (state_timer <= 0) {
             state = 2;
             state_timer = ataque.duracao;
-            image_blend = c_red;
             disparar();
         }
         break;
