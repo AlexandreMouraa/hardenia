@@ -30,6 +30,9 @@ acertar = function(_enemy) {
     var _dir_golpe = instance_exists(obj_player) ? point_direction(obj_player.x, obj_player.y, _enemy.x, _enemy.y) : 0;
     som(_enemy.hp <= 0 ? snd_morte_inimigo : snd_acerto);
     if (_enemy.hp <= 0) {
+        if (_enemy.bomba && _enemy.state == 1) {
+            bomba_apagar(_enemy.zona.cx, _enemy.zona.cy, 1 - _enemy.state_timer / _enemy.ataque.aviso);
+        }
         if (_enemy.elite == "explosao") {
             instance_create_layer(_enemy.x, _enemy.y, "Instances", obj_explosao);
         }

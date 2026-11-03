@@ -9,12 +9,7 @@ if (estado == 1) {
         tempo = duracao;
         som(snd_explosao);
         impacto(3, 6);
-        with (instance_create_depth(x, y, 50, obj_fx)) {
-            tipo = "anel";
-            cor = make_colour_rgb(255, 150, 40);
-            vida_max = 16;
-            vida = vida_max;
-        }
+        fx_explosao(x, y, 90);
     }
     exit;
 }

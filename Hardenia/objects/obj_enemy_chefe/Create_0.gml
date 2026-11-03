@@ -31,7 +31,7 @@ ataques = [
         sprite: spr_chefe_golpe, quadros: 6,
         ataque: { forma: "linha", gatilho: 420, alcance: 520, tamanho: 34, aviso: 50, duracao: 40, acerto: 24, recarga: 80, avanco: 20 },
     },
-    { // magia: um circulo no jogador e outros em volta (obj_explosao), todos com o mesmo aviso
+    { // bombas: um circulo no jogador e outros em volta (obj_explosao), todos com o mesmo aviso
         sprite: spr_chefe_magia, quadros: 7,
         ataque: { forma: "circulo", gatilho: 600, alcance: 0, tamanho: 80, aviso: 65, duracao: 16, acerto: 6, recarga: 70, avanco: 0 },
     },
@@ -55,6 +55,7 @@ ataque_trocar = function() {
         avanco: _a.ataque.avanco,
     };
     zona_fixa = (ataque.forma == "circulo");
+    bomba = zona_fixa;
     ataque_vez = (ataque_vez + 1) mod array_length(ataques);
 };
 ataque_trocar();
@@ -77,6 +78,7 @@ ao_mirar = function() {
                     causa = "obj_enemy_chefe";
                     aviso = _aviso;
                     tempo = _aviso;
+                    bomba = true;
                 }
             }
         }
@@ -86,9 +88,10 @@ ao_mirar = function() {
 disparar_golpe = disparar;
 disparar = function() {
     if (ataque.forma == "circulo") {
-        // a magia cai do alto: a coluna nao protege
+        // a bomba cai do alto: a coluna nao protege
         zona.ox = zona.cx;
         zona.oy = zona.cy;
+        fx_explosao(zona.cx, zona.cy, ataque.tamanho);
         som(snd_magia);
     } else {
         audio_play_sound(snd_attack, 1, false, 1, 0, 0.6);

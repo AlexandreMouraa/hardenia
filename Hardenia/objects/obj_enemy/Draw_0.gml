@@ -3,6 +3,9 @@
 if (zona_visivel) {
     if (state == 1) {
         zona_aviso_desenhar(zona, 1 - state_timer / ataque.aviso, make_colour_rgb(200, 40, 40));
+        if (bomba) {
+            bomba_sombra_desenhar(zona.cx, zona.cy, 1 - state_timer / ataque.aviso);
+        }
     } else if (state == 2 && ataque.duracao - state_timer < ataque.acerto) {
         zona_golpe_desenhar(zona, 1 - (ataque.duracao - state_timer) / ataque.acerto, make_colour_rgb(220, 50, 40));
     }

@@ -106,6 +106,35 @@ switch (tipo) {
         gpu_set_blendmode(bm_normal);
         break;
 
+    case "explosao":
+        // abre rapido; o clarao apaga logo, a fumaca fica mais um pouco
+        var _abre = 1 - _t * _t * _t;
+        gpu_set_blendmode(bm_add);
+        draw_set_colour(cor);
+        draw_set_alpha(0.7 * _t * _t);
+        draw_circle(x, y, raio * (0.35 + 0.65 * _abre), false);
+        draw_set_colour(make_colour_rgb(255, 235, 190));
+        draw_set_alpha(_t * _t * _t);
+        draw_circle(x, y, raio * 0.45 * _abre, false);
+        var _r2 = raio * _abre;
+        var _esp2 = 2 + 10 * _t;
+        draw_primitive_begin(pr_trianglestrip);
+        for (var _a = 0; _a <= 360; _a += 15) {
+            draw_vertex_colour(x + lengthdir_x(_r2 - _esp2, _a), y + lengthdir_y(_r2 - _esp2, _a), cor, 0);
+            draw_vertex_colour(x + lengthdir_x(_r2, _a), y + lengthdir_y(_r2, _a), cor, 0.9 * _t);
+        }
+        draw_primitive_end();
+        gpu_set_blendmode(bm_normal);
+        draw_set_colour(make_colour_rgb(38, 32, 32));
+        draw_set_alpha(0.5 * _t);
+        for (var _i = 0; _i < array_length(angulos); _i++) {
+            var _d = distancias[_i] * _abre;
+            draw_circle(x + lengthdir_x(_d, angulos[_i]), y + lengthdir_y(_d, angulos[_i]), 7 + 15 * (1 - _t), false);
+        }
+        draw_set_alpha(1);
+        draw_set_colour(c_white);
+        break;
+
     case "faisca":
         var _perto = 4 + 26 * (1 - _t);
         var _longe = _perto + 4 + 10 * _t;

@@ -6,6 +6,7 @@
 //   "corte":  risco de luz em cima de quem levou o golpe (ver fx_corte)
 //   "estocada": ponta do golpe que sai do dash
 //   "faisca": linhas saindo do ponto de impacto (ver fx_faiscas)
+//   "explosao": bomba e elite que explode (ver fx_explosao)
 tipo = "";
 vida_max = 10;
 vida = vida_max;

@@ -58,6 +58,27 @@ function fx_corte(_x, _y, _dir, _cor, _meia) {
     }
 }
 
+// explosao: clarao no chao, anel ate a borda da zona (_raio), faiscas e fumaca que fica depois.
+// So tremor, sem micro-pausa: quem muda o ritmo do jogo nao e efeito
+function fx_explosao(_x, _y, _raio) {
+    impacto(0, 7);
+    with (instance_create_depth(_x, _y, 50, obj_fx)) {
+        tipo = "explosao";
+        raio = _raio;
+        cor = make_colour_rgb(255, 130, 40);
+        vida_max = 26;
+        vida = vida_max;
+        angulos = [];
+        distancias = [];
+        for (var _i = 0; _i < 7; _i++) {
+            angulos[_i] = _i * 360 / 7 + 11 * sin(_i * 2.7);
+            distancias[_i] = _raio * (0.35 + 0.3 * (0.5 + 0.5 * sin(_i * 1.9 + 1)));
+        }
+    }
+    fx_faiscas(_x, _y, 90, make_colour_rgb(255, 200, 110), 10);
+    fx_faiscas(_x, _y, 270, make_colour_rgb(255, 150, 60), 10);
+}
+
 // arrancada do dash: anel no chao e poeira saindo para tras. _dir e para onde
 // o dash vai. Angulos e distancias fixos (sem random: o robo depende do RNG).
 // Profundidade 50: entre o fundo (100) e os personagens (0)
