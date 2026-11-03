@@ -5,8 +5,8 @@
 Um souslike 2D hardcore sobre o guerreiro mais fraco de Hardenia, o último
 enviado para derrotar quem destruiu o reino. Ele não tem poderes, armadura
 lendária, armas mágicas nem habilidades especiais — só persistência. Cada
-morte é uma tentativa a mais de aprender o padrão do inimigo. O jogo não
-fortalece o personagem; fortalece o jogador.
+morte é uma tentativa a mais de aprender o padrão do inimigo. Nada do personagem
+passa de uma run para a outra; quem fica mais forte é o jogador.
 
 ## Pilares
 
@@ -26,6 +26,9 @@ leitura de padrão), Hollow Knight (precisão de movimento 2D), Hades
 ## Protagonista
 
 - Sem poderes especiais, sem armadura lendária, sem armas mágicas.
+- Técnicas dos Caídos: dentro de uma run ele aprende técnicas com os guerreiros que
+  morreram antes. Valem até a próxima morte, sem nenhuma progressão permanente. O que
+  fica de uma run para a outra continua sendo só o que o jogador aprendeu.
 - Kit de combate enxuto (ex: ataque básico, dash/esquiva, talvez um
   bloqueio/parry) — a limitação de ferramentas é proposital.
 

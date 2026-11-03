@@ -64,6 +64,10 @@ ataques_formas = [
 // -grupo: na primeira sala, o robo fica parado e confere o comportamento em grupo:
 // visao, memoria, alerta dos vizinhos e cerco (print "cerco" e "grupo=1" no resumo)
 testar_grupo = false;
+// -tecnicas: comeca a run com todas as tecnicas, para cada efeito rodar e entrar no resumo
+// ("tecnicas=N", quantas fizeram efeito). Sem ela, fica com a primeira carta de cada oferta
+todas_tecnicas = false;
+viu_tecnicas = false;
 grupo_passo = 0;
 grupo_tempo = 0;
 grupo_parede = noone;
@@ -112,6 +116,9 @@ for (var _i = 1; _i <= parameter_count(); _i++) {
     if (parameter_string(_i) == "-formas") {
         testar_formas = true;
     }
+    if (parameter_string(_i) == "-tecnicas") {
+        todas_tecnicas = true;
+    }
     if (parameter_string(_i) == "-grupo") {
         testar_grupo = true;
     }
@@ -137,7 +144,11 @@ for (var _i = 1; _i < parameter_count(); _i++) {
     }
 }
 
-vida_cheia = usar_horda || usar_estocada || testar_formas;
+vida_cheia = usar_horda || usar_estocada || testar_formas || todas_tecnicas;
+// a Retribuicao so age quando ele leva golpe
+if (todas_tecnicas && desatento == 0) {
+    desatento = 40;
+}
 
 frame = 0;
 run_atual = 0;

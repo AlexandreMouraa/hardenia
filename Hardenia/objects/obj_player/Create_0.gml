@@ -66,6 +66,11 @@ levar_dano = function(_dano) {
     if (hp > 0) {
         impacto(5, 7);
     }
+    if (tem_tecnica("retribuicao")) {
+        fx_onda(x, y, 110, global.caidos.sentinela.cor);
+        tecnica_contar("retribuicao");
+        golpe_em_volta(x, y, 110, 1, 30, true, false);
+    }
 };
 
 attack_cooldown = 0;
@@ -113,6 +118,7 @@ cancelar_carga = function() {
 // golpe vai para onde o jogador esta virado. 140 px: um pouco alem do alcance do golpe forte
 mira_raio = 140;
 golpe_mirado = false; // o ultimo golpe virou para um inimigo
+golpe_dobrado = false; // Ultimo Instante: o proximo golpe vale o dobro
 mira_alvo = function() {
     var _rumo = point_direction(0, 0, face_h, face_v);
     var _melhor = noone;
@@ -199,6 +205,17 @@ golpear = function(_carregado = false) {
         _golpe.knockback = 28;
         _golpe.image_xscale = 1.25;
         _golpe.image_yscale = 1.25;
+        if (tem_tecnica("bomba_combo")) {
+            // no alvo; sem alvo, a frente, sem cair dentro da parede
+            var _ate = golpe_mirado ? point_distance(x, y, _alvo.x, _alvo.y) : 150;
+            _ate = linha_ate_parede(x, y, _dir, _ate);
+            bomba_jogador(x, y, x + lengthdir_x(_ate, _dir), y + lengthdir_y(_ate, _dir), 24, 0, 2);
+            tecnica_contar("bomba_combo");
+        }
+    }
+    if (golpe_dobrado) {
+        golpe_dobrado = false;
+        _golpe.damage *= 2;
     }
     // arco de corte desenhado (o golpe em si, obj_attack, e invisivel). O
     // segundo varre ao contrario; o terceiro e mais largo e mais claro
@@ -270,6 +287,10 @@ estocar = function() {
     // 96 de comprimento por 48 de largura; na diagonal, 82 nos dois eixos
     var _golpe = instance_create_layer(x + dash_dir_x * 48, y + dash_dir_y * 48, "Instances", obj_attack);
     _golpe.quebra_escudo = true;
+    if (golpe_dobrado) {
+        golpe_dobrado = false;
+        _golpe.damage *= 2;
+    }
     _golpe.image_xscale = (48 + abs(dash_dir_x) * 48) / sprite_get_width(spr_attack);
     _golpe.image_yscale = (48 + abs(dash_dir_y) * 48) / sprite_get_height(spr_attack);
     with (instance_create_depth(x, y, depth - 1, obj_fx)) {
@@ -315,6 +336,16 @@ girar = function() {
         knockback = 28;
         image_xscale = 2.4;
         image_yscale = 2.4;
+    }
+    if (tem_tecnica("polvora")) {
+        for (var _b = 0; _b < 4; _b++) {
+            var _bx = x + lengthdir_x(62, 45 + _b * 90);
+            var _by = y + lengthdir_y(62, 45 + _b * 90);
+            if (collision_point(_bx, _by, obj_wall, false, true) == noone) {
+                bomba_jogador(x, y, _bx, _by, 10, 30, 1);
+            }
+        }
+        tecnica_contar("polvora");
     }
     with (instance_create_depth(x, y, depth - 1, obj_fx)) {
         tipo = "arco";
@@ -474,3 +505,17 @@ global.chute_y = 0;
 posicionar_camera(true);
 
 global.game_paused = false;
+
+global.morto_x = x;
+global.morto_y = y;
+// o que as tecnicas mudam nos numeros do jogador: ao nascer em cada sala e ao ganhar uma nova
+tecnicas_aplicar = function() {
+    if (tem_tecnica("folego") && dash_charges_max < 3) {
+        dash_charges_max = 3;
+        dash_charges += 1;
+        dash_cooldown_max = 24;
+        hud_recarga = array_create(dash_charges_max, 0);
+        tecnica_contar("folego");
+    }
+};
+tecnicas_aplicar();

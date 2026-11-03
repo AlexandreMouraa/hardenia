@@ -52,6 +52,10 @@ disparar = function() {
 zona_visivel = true;
 // o golpe e uma bomba caindo no meio da zona (conjurador e magia do chefe)
 bomba = false;
+// tecnicas: tiques de sangria que faltam, e o ultimo dash que cortou este inimigo
+sangra = 0;
+sangra_timer = 0;
+corte_dash = -1;
 // frames do "!" depois de acordar
 alerta = 0;
 attack_damage_dealt = false;

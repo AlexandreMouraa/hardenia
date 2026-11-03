@@ -115,6 +115,13 @@ if (especial_pronto > 0) {
 draw_set_color(c_ltgray);
 draw_text_transformed(16 * _esc + dash_charges_max * 16 * _esc + 4 * _esc, 65 * _esc, "ESPECIAL", _esc * 0.7, _esc * 0.7, 0);
 
+// as tecnicas da run: um quadradinho para cada uma, na cor de quem ensinou (nomes na pausa)
+for (var _i = 0; _i < array_length(global.tecnicas); _i++) {
+    var _def = tecnica_def(global.tecnicas[_i]);
+    draw_set_color(variable_struct_get(global.caidos, _def.caido).cor);
+    draw_rectangle(16 * _esc + _i * 12 * _esc, 80 * _esc, 16 * _esc + _i * 12 * _esc + 8 * _esc, 88 * _esc, false);
+}
+
 // HUD: fase atual; fora do caminho da run, sala de teste
 var _fase = mapa_indice(room) + 1;
 draw_set_halign(fa_center);
@@ -130,13 +137,13 @@ if (_inimigos > 0) {
 } else if (_fase > 0 && room != sala_final()) {
     draw_set_color(c_yellow);
     draw_set_alpha(_piscar);
-    draw_text_transformed(_w - 16 * _esc, 12 * _esc, "PORTAO ABERTO", _esc, _esc, 0);
+    draw_text_transformed(_w - 16 * _esc, 12 * _esc, portao_aberto() ? "PORTAO ABERTO" : "ABRA O BAU", _esc, _esc, 0);
     draw_set_alpha(1);
 }
 
 // seta na borda da tela apontando para o portao aberto quando ele esta fora
 // da camera
-if (_inimigos == 0 && _fase > 0 && room != sala_final() && !is_dead && !venceu) {
+if (portao_aberto() && _fase > 0 && room != sala_final() && !is_dead && !venceu) {
     var _saida = noone;
     with (obj_exit_to_room1) {
         if (room_next(room) == Room1) {
@@ -190,7 +197,7 @@ draw_set_halign(fa_center);
 draw_set_valign(fa_middle);
 
 // dica do objetivo nos primeiros segundos da primeira sala, so na 1a tentativa
-if (room == room_next(room_first) && global.tentativas == 1 && tempo_na_sala < 300 && !is_dead) {
+if (room == room_next(room_first) && global.tentativas == 1 && tempo_na_sala < 300 && !is_dead && !instance_exists(obj_tecnicas)) {
     draw_set_alpha(min(1, (300 - tempo_na_sala) / 60));
     draw_set_color(c_white);
     draw_text_transformed(_w / 2, _h * 0.2, "DERROTE TODOS OS INIMIGOS PARA ABRIR O PORTAO", _esc, _esc, 0);
@@ -290,6 +297,15 @@ if (global.game_paused) {
     draw_set_color(c_white);
     draw_text_transformed(_w / 2, _h / 2 - 40 * _esc, "PAUSADO", _esc * 2, _esc * 2, 0);
     draw_set_alpha(1);
+    if (array_length(global.tecnicas) > 0) {
+        var _nomes = "";
+        for (var _i = 0; _i < array_length(global.tecnicas); _i++) {
+            _nomes += (_i > 0 ? "   " : "") + tecnica_def(global.tecnicas[_i]).nome;
+        }
+        draw_set_color(c_ltgray);
+        draw_text_transformed(_w / 2, _h / 2 - 72 * _esc, _nomes, _esc * 0.7, _esc * 0.7, 0);
+        draw_set_color(c_white);
+    }
     if (global.toque_ativo) {
         // os controles de toque no lugar dos de teclado
         var _botoes_pausa = toque_botoes_pausa();

@@ -1,4 +1,4 @@
 // o portao so abre com a sala limpa
-if (instance_number(obj_enemy) == 0) {
+if (portao_aberto()) {
     ir_para_sala(Room2);
 }
