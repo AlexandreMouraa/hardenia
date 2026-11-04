@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_variacao",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_variacao",
+  "parent":{
+    "name":"Hardenia",
+    "path":"Hardenia.yyp",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

@@ -181,6 +181,8 @@ function caidos_sortear() {
         }
         return _lista;
     }
+    global.tecnica_semente = ((global.run_semente * 31) mod 2147483646) + 1;
+    tecnica_dado(2);
     for (var _i = array_length(_lista) - 1; _i > 0; _i--) {
         var _j = tecnica_dado(_i + 1);
         var _troca = _lista[_i];

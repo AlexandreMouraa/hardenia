@@ -160,6 +160,8 @@ if (room == Room_Menu) {
         with (obj_menu) {
             if (other.usar_horda) {
                 horda_iniciar();
+            } else if (other.usar_desafio) {
+                acionar("desafio");
             } else {
                 event_perform(ev_keypress, vk_enter);
             }
@@ -238,6 +240,19 @@ if (usar_horda && room == Room_Horda) {
     }
 }
 
+// o arranjo da sala troca os inimigos no primeiro frame: confere os lugares dele
+if (tempo_sala == 3) {
+    inimigos_antes = instance_number(obj_enemy);
+    log("arranjo", "semente=" + string(global.runs_zeradas) + " inimigos=" + string(inimigos_antes));
+    with (obj_enemy) {
+        if (place_meeting(x, y, obj_wall)) {
+            other.log("FALHA_arranjo", object_get_name(object_index) + " na parede em " + string(x) + "," + string(y));
+        }
+        if (!other.tem_caminho(_p.x, _p.y, x, y)) {
+            other.log("FALHA_arranjo", object_get_name(object_index) + " sem caminho em " + string(x) + "," + string(y));
+        }
+    }
+}
 var _n = instance_number(obj_enemy);
 if (_n < inimigos_antes) {
     log("inimigo_morto", "restam=" + string(_n));
@@ -392,7 +407,7 @@ if (_p.venceu) {
     }
     // ranking: Enter de novo a cada segundo ate voltar ao menu (espera a resposta)
     if (espera > 60 && espera mod 60 == 0) {
-        log("ranking", _p.vitoria_estado + " posicao=" + string(_p.vitoria_posicao) + "/" + string(_p.vitoria_total) + " top=" + string(array_length(_p.vitoria_ranking)));
+        log("ranking", _p.vitoria_estado + " posicao=" + string(_p.vitoria_posicao) + "/" + string(_p.vitoria_total) + " top=" + json_stringify(_p.vitoria_ranking));
         if (espera == 120 && vitorias <= 2) {
             pedir_print("vitoria_ranking");
         }

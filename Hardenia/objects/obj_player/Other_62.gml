@@ -25,7 +25,7 @@ if (_id == req_vitoria) {
         vitoria_posicao = _dados.posicao;
         vitoria_total = _dados.total;
         vitoria_estado = "enviado";
-        req_ranking = http_get(global.api_base + "/api/ranking?limite=5");
+        req_ranking = http_get(global.api_base + "/api/ranking?limite=5" + (global.desafio ? "&desafio=" + global.desafio_dia : ""));
     } else if (vitoria_estado == "enviando") {
         // 422: a API recusou o nome. Nao e falta de internet: volta para o campo
         if (async_load[? "http_status"] == 422) {

@@ -138,7 +138,7 @@ for (var _i = 0; _i < array_length(global.tecnicas); _i++) {
 var _fase = mapa_indice(room) + 1;
 draw_set_halign(fa_center);
 draw_set_color(c_white);
-texto(_w / 2, 12 * _esc, _fase > 0 ? "FASE " + string(_fase) + " / " + string(array_length(global.mapa_fases)) : "TESTE DE HORDA", _esc, _esc, 0);
+texto(_w / 2, 12 * _esc, _fase > 0 ? (global.desafio ? "DESAFIO DO DIA   " : "") + "FASE " + string(_fase) + " / " + string(array_length(global.mapa_fases)) : "TESTE DE HORDA", _esc, _esc, 0);
 draw_set_halign(fa_left);
 
 // HUD: inimigos restantes ou portao aberto
@@ -271,7 +271,7 @@ if (is_dead) {
         texto(_w / 2, _y + 110 * _esc, "ENVIANDO...", _esc, _esc, 0);
     } else if (vitoria_estado == "enviado") {
         draw_set_color(c_yellow);
-        texto(_w / 2, _y + 100 * _esc, "VOCÊ FICOU EM #" + string(vitoria_posicao) + " DE " + string(vitoria_total) + " NO RANKING", _esc, _esc, 0);
+        texto(_w / 2, _y + 100 * _esc, "VOCÊ FICOU EM #" + string(vitoria_posicao) + " DE " + string(vitoria_total) + (global.desafio ? " NO DESAFIO DE HOJE" : " NO RANKING"), _esc, _esc, 0);
         // top 5: posicao e nome a esquerda, tentativas e tempo a direita
         var _n = array_length(vitoria_ranking);
         for (var _i = 0; _i < _n; _i++) {

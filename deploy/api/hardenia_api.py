@@ -7,8 +7,8 @@ para instalar na VPS. IP do jogador nao e gravado; so fica em memoria para o
 limite de requisicoes.
 
   GET  /api/saude
-  GET  /api/ranking?limite=10
-  POST /api/vitoria      {nome, tentativas, tempo_ms, plataforma, sessao}
+  GET  /api/ranking?limite=10            (com &desafio=hoje ou AAAA-MM-DD: o do desafio do dia)
+  POST /api/vitoria      {nome, tentativas, tempo_ms, plataforma, sessao, desafio}
                          (nome com palavrao: 422 {"erro": "nome_proibido"})
   POST /api/evento       {tipo, sala, x, y, tentativa, tempo_ms, plataforma, sessao}
   GET  /api/estatisticas
@@ -25,6 +25,7 @@ import sqlite3
 import threading
 import time
 import unicodedata
+from datetime import datetime, timedelta, timezone
 import urllib.request
 from collections import defaultdict, deque
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -116,17 +117,20 @@ CREATE TABLE IF NOT EXISTS opinioes (
 MIGRACOES = [
     ("opinioes", "tipo", "ALTER TABLE opinioes ADD COLUMN tipo TEXT NOT NULL DEFAULT 'opiniao'"),
     ("opinioes", "versao", "ALTER TABLE opinioes ADD COLUMN versao TEXT"),
+    ("vitorias", "desafio", "ALTER TABLE vitorias ADD COLUMN desafio TEXT NOT NULL DEFAULT ''"),
 ]
 
 # melhor resultado de cada nome (sem diferenciar maiusculas); empate de
-# tentativas decide pelo tempo, depois por quem chegou primeiro
+# tentativas decide pelo tempo, depois por quem chegou primeiro. O parametro e o dia do desafio;
+# vazio e o ranking de sempre, e um nao se mistura com o outro
 RANKING_SQL = """
 SELECT nome, tentativas, tempo_ms, plataforma, criado, id FROM (
     SELECT *, ROW_NUMBER() OVER (
         PARTITION BY lower(nome) ORDER BY tentativas, tempo_ms, id
-    ) AS n FROM vitorias
+    ) AS n FROM vitorias WHERE desafio = ?
 ) WHERE n = 1 ORDER BY tentativas, tempo_ms, id
 """
+DIA_OK = re.compile(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}$")
 
 
 def conectar():
@@ -234,8 +238,28 @@ class Limitador:
 limitador = Limitador()
 
 
-def ranking(con, limite):
-    linhas = con.execute(RANKING_SQL + " LIMIT ?", (limite,)).fetchall()
+def dia_de_hoje():
+    return datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+
+def dia_desafio(valor):
+    """dia do desafio, ou "" fora dele. Aceita ontem, hoje e amanha: o relogio do jogador pode
+    estar um pouco errado, e a run pode terminar depois da meia-noite"""
+    if valor in (None, ""):
+        return ""
+    if valor == "hoje":
+        return dia_de_hoje()
+    if not isinstance(valor, str) or not DIA_OK.match(valor):
+        raise Invalido("desafio")
+    agora = datetime.now(timezone.utc)
+    aceitos = {(agora + timedelta(days=d)).strftime("%Y-%m-%d") for d in (-1, 0, 1)}
+    if valor not in aceitos:
+        raise Invalido("desafio")
+    return valor
+
+
+def ranking(con, limite, desafio=""):
+    linhas = con.execute(RANKING_SQL + " LIMIT ?", (desafio, limite)).fetchall()
     return [
         {"nome": l["nome"], "tentativas": l["tentativas"], "tempo_ms": l["tempo_ms"],
          "plataforma": l["plataforma"], "criado": l["criado"]}
@@ -244,6 +268,7 @@ def ranking(con, limite):
 
 
 def registrar_vitoria(con, dados):
+    desafio = dia_desafio(dados.get("desafio"))
     registro = (
         limpar_nome(dados.get("nome")),
         inteiro(dados, "tentativas", 1, 100000),
@@ -252,12 +277,13 @@ def registrar_vitoria(con, dados):
         texto_opcao(dados, "plataforma", PLATAFORMAS),
         sessao(dados),
         int(time.time()),
+        desafio,
     )
     cur = con.execute(
-        "INSERT INTO vitorias (nome, tentativas, tempo_ms, plataforma, sessao, criado)"
-        " VALUES (?, ?, ?, ?, ?, ?)", registro)
+        "INSERT INTO vitorias (nome, tentativas, tempo_ms, plataforma, sessao, criado, desafio)"
+        " VALUES (?, ?, ?, ?, ?, ?, ?)", registro)
     novo = cur.lastrowid
-    melhores = con.execute(RANKING_SQL).fetchall()
+    melhores = con.execute(RANKING_SQL, (desafio,)).fetchall()
     total = len(melhores)
     # posicao do melhor resultado deste nome (pode nao ser o que acabou de entrar)
     nome = registro[0].lower()
@@ -400,7 +426,8 @@ class Api(BaseHTTPRequestHandler):
                     return self.responder(200, {"ok": True})
                 if url.path == "/api/ranking":
                     limite = max(1, min(50, int(qs.get("limite", ["10"])[0])))
-                    return self.responder(200, {"ranking": ranking(con, limite)})
+                    desafio = dia_desafio(qs.get("desafio", [""])[0])
+                    return self.responder(200, {"ranking": ranking(con, limite, desafio), "desafio": desafio})
                 if url.path == "/api/estatisticas":
                     return self.responder(200, estatisticas(con))
                 if url.path == "/api/mortes":
@@ -429,7 +456,10 @@ class Api(BaseHTTPRequestHandler):
             if not isinstance(dados, dict):
                 raise Invalido("corpo")
             with conectar() as con:
-                return self.responder(200, acoes[rota](con, dados))
+                corpo = acoes[rota](con, dados)
+            # responde depois de gravar: o jogo pede o ranking logo em seguida, e o nome de quem
+            # acabou de vencer ja tem de estar nele
+            return self.responder(200, corpo)
         except NomeProibido:
             # 422 e nao 400: e pelo status que o jogo separa isto de outro erro
             return self.responder(422, {"erro": "nome_proibido"})

@@ -36,6 +36,12 @@ for (var _i = 0; _i < array_length(itens); _i++) {
     titulo(_r[0] + 12 * _esc, _meio, itens[_i].nome, _esc * 1.25);
 }
 
+if (itens[cursor].acao == "desafio") {
+    var _d = item_ret(array_length(itens));
+    draw_set_color(c_ltgray);
+    texto(_d[0], _d[1], "A mesma run para todo mundo hoje, com ranking próprio.", _esc * 0.8, _esc * 0.8, 0);
+}
+
 // recordes do aparelho
 var _s = global.salvo;
 if (_s.mortes_total > 0 || _s.vitorias > 0) {

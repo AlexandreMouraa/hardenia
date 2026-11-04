@@ -112,6 +112,10 @@
   <table class="ranking"><tbody id="ranking"><tr><td colspan="4" class="vazio">Carregando…</td></tr></tbody></table>
   <a class="mais" href="mapa/">Ver o mapa de mortes &rarr;</a>
 
+  <h3>Desafio de hoje</h3>
+  <p>A mesma run para todo mundo, com os mesmos inimigos e as mesmas cartas. Muda à meia-noite de Greenwich (21h em Brasília).</p>
+  <table class="ranking"><tbody id="ranking-desafio"><tr><td colspan="4" class="vazio">Carregando…</td></tr></tbody></table>
+
   <h2>A história</h2>
   <p>Hardenia está em guerra há anos. Todos os guerreiros enviados para derrotar o responsável pela destruição do reino morreram. Você é o último, considerado o mais fraco de todos: sem poderes, sem armadura lendária, sem armas mágicas. Só uma coisa: persistência.</p>
   <p>Cinco golpes derrubam você, e a run recomeça. Cada morte é uma tentativa de descobrir como vencer. Não é o personagem que fica mais forte, é o jogador.</p>
@@ -211,6 +215,27 @@
       });
     }).catch(function () {
       document.getElementById("ranking").innerHTML = '<tr><td class="vazio">Ranking indisponível agora.</td></tr>';
+    });
+
+    fetch("api/ranking?limite=5&desafio=hoje", { cache: "no-store" }).then(function (r) { return r.json(); }).then(function (d) {
+      var corpo = document.getElementById("ranking-desafio");
+      corpo.textContent = "";
+      if (!d.ranking.length) {
+        var vazio = corpo.insertRow();
+        celula(vazio, "Ninguém venceu o desafio de hoje ainda.", "vazio");
+        vazio.cells[0].colSpan = 4;
+        return;
+      }
+      d.ranking.forEach(function (j, i) {
+        var linha = corpo.insertRow();
+        if (i === 0) linha.className = "ouro";
+        celula(linha, (i + 1) + "º");
+        celula(linha, j.nome);
+        celula(linha, j.tentativas + (j.tentativas === 1 ? " tentativa" : " tentativas"), "dir");
+        celula(linha, tempo(j.tempo_ms), "dir");
+      });
+    }).catch(function () {
+      document.getElementById("ranking-desafio").innerHTML = '<tr><td class="vazio">Ranking indisponível agora.</td></tr>';
     });
 
     fetch("api/estatisticas", { cache: "no-store" }).then(function (r) { return r.json(); }).then(function (e) {

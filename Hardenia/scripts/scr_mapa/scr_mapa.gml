@@ -17,8 +17,11 @@ global.mapa_final = "";
 // a vida passa de uma sala para a outra (o obj_player nasce de novo em cada uma).
 // fase_curada: ate onde limpar a fase ja devolveu vida nesta run
 // tecnicas: scr_tecnicas. No jogo a semente vem do relogio: cada run oferece outras. No robo,
-// da contagem de runs: muda a cada run, e a rodada inteira se repete igual
+// da contagem de runs: muda a cada run, e a rodada inteira se repete igual. No desafio do dia, da
+// data: a mesma em toda tentativa, e para todo mundo (scr_variacao)
 global.runs_zeradas = 0;
+global.desafio = false;
+global.desafio_dia = "";
 function run_zerar() {
     global.vida = VIDA_MAX;
     global.fase_curada = -1;
@@ -27,7 +30,15 @@ function run_zerar() {
     global.tecnica_inicio = true;
     duelos_zerar();
     global.runs_zeradas += 1;
-    global.tecnica_semente = instance_exists(obj_autotest) ? 1000 + global.runs_zeradas * 97 : (current_time mod 2147483646) + 1;
+    if (instance_exists(obj_autotest) && !global.desafio) {
+        global.run_semente = 1000 + global.runs_zeradas * 97;
+    } else if (global.desafio) {
+        global.run_semente = desafio_semente();
+    } else {
+        global.run_semente = (current_time mod 2147483646) + 1;
+    }
+    global.tecnica_semente = global.run_semente;
+    global.ofertas_feitas = 0;
 }
 // no codigo solto: a sala aberta direto pela IDE, sem passar pelo menu, tambem funciona
 run_zerar();
