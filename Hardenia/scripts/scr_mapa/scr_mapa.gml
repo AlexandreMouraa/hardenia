@@ -25,6 +25,7 @@ function run_zerar() {
     global.furia = 0;
     global.tecnicas = [];
     global.tecnica_inicio = true;
+    duelos_zerar();
     global.runs_zeradas += 1;
     global.tecnica_semente = instance_exists(obj_autotest) ? 1000 + global.runs_zeradas * 97 : (current_time mod 2147483646) + 1;
 }
@@ -41,6 +42,7 @@ global.frases_inimigo = {
     obj_enemy_conjurador: ["O círculo estava no chão. Eu é que fiquei em cima dele.", "O conjurador de novo. Da próxima eu vou atrás dele primeiro."],
     obj_explosao: ["Ele explodiu depois de morrer. Eu devia ter saído de perto.", "De novo a explosão. Mata e corre."],
     obj_enemy_chefe: ["O rei morto não tem pressa. Eu tive.", "O Trono de novo. A coluna para a investida."],
+    obj_enemy_caido: ["Ele também chegou até aqui. Agora eu sei como ele caiu.", "Esse Caído de novo. Eu já conheço o golpe dele."],
     obj_enemy_horda: ["Eram muitos. Da próxima eu abro caminho com o dash.", "A horda de novo. Parado eu não saio daqui."],
 };
 global.frases_teimoso = [

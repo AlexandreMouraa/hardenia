@@ -1,20 +1,2 @@
-// barra de vida do chefe, no alto da tela. O risco no meio marca onde ele muda
-var _w = display_get_gui_width();
-var _h = display_get_gui_height();
-var _esc = max(1, _h / 540);
-var _lg = 380 * _esc;
-var _x = (_w - _lg) / 2;
-var _y = 44 * _esc;
-var _alt = 12 * _esc;
-draw_set_color(c_black);
-draw_set_alpha(0.7);
-draw_rectangle(_x - 2, _y - 2, _x + _lg + 2, _y + _alt + 2, false);
-draw_set_alpha(1);
-draw_set_color(metade ? make_colour_rgb(230, 60, 30) : make_colour_rgb(170, 20, 30));
-draw_rectangle(_x, _y, _x + _lg * clamp(hp / hp_max, 0, 1), _y + _alt, false);
-draw_set_color(c_white);
-draw_line(_x + _lg / 2, _y - 2, _x + _lg / 2, _y + _alt + 2);
-draw_set_halign(fa_center);
-draw_set_valign(fa_top);
-texto(_w / 2, _y + _alt + 4 * _esc, "O TRONO", _esc * 0.9, _esc * 0.9, 0);
-draw_set_halign(fa_left);
+// barra de vida do chefe, no alto da tela. Os riscos marcam onde ele muda
+barra_chefe("O Rei Morto", hp, hp_max, (fase == 1) ? make_colour_rgb(170, 20, 30) : ((fase == 2) ? make_colour_rgb(205, 40, 30) : make_colour_rgb(240, 80, 30)), [1 / 3, 2 / 3], fala, min(1, fala_tempo / 30));

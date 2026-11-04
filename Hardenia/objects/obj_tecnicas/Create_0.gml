@@ -1,6 +1,9 @@
 // Tela de escolha de tecnica (scr_tecnicas): tres cartas, fica com uma. Enquanto ela esta aberta
 // o mundo para pela mesma micro-pausa dos golpes, e o tempo da run nao conta
 oferta = tecnicas_sortear();
+// depois de um duelo, a tela diz quem deixou
+caido_def = (global.caido_vencido != "") ? variable_struct_get(global.caidos, global.caido_vencido) : undefined;
+global.caido_vencido = "";
 cursor = (array_length(oferta) > 1) ? 1 : 0;
 escolhido = -1;
 tempo = 0;

@@ -17,8 +17,8 @@ if (global.game_paused) {
     exit;
 }
 
-// mapa da proxima fase ou escolha de tecnica abertos: parado, e o tempo nao conta
-if (instance_exists(obj_mapa) || instance_exists(obj_tecnicas)) {
+// mapa da proxima fase, escolha de tecnica ou cena abertos: parado, e o tempo nao conta
+if (instance_exists(obj_mapa) || instance_exists(obj_tecnicas) || instance_exists(obj_cena)) {
     exit;
 }
 
@@ -117,8 +117,9 @@ if (!venceu && room == sala_final() && instance_number(obj_enemy) == 0) {
     }
 }
 
-// sala limpa: quantas tentativas cada sala custou (estatisticas do site)
-if (!sala_limpa_enviada && instance_number(obj_enemy) == 0) {
+// sala limpa: quantas tentativas cada sala custou (estatisticas do site). Nas salas de duelo,
+// ainda falta o Caido (scr_duelos)
+if (!sala_limpa_enviada && instance_number(obj_enemy) == 0 && !duelo_tentar()) {
     sala_limpa_enviada = true;
     rede_evento("sala", { tentativa: global.tentativas, tempo_ms: frames_para_ms(tempo_na_sala) });
     // limpar uma fase pela primeira vez na run devolve 1 de vida. Voltar a uma fase
@@ -295,6 +296,15 @@ if (tempo_na_sala == 0) {
     dificuldade_aplicar();
 }
 tempo_na_sala += 1;
+
+// o rei morto se apresenta. Morrer volta ao comeco: da segunda vez em diante, mais curto
+if (tempo_na_sala == 2 && instance_exists(obj_enemy_chefe)) {
+    var _rei = instance_find(obj_enemy_chefe, 0);
+    var _voltou = variable_struct_exists(global.caidos_vistos, "rei");
+    variable_struct_set(global.caidos_vistos, "rei", true);
+    cena_abrir(_rei.x, _rei.y, "O Rei Morto", _voltou ? global.fala_rei_de_novo : global.fala_rei, make_colour_rgb(235, 60, 50), _voltou ? 110 : 210);
+    exit;
+}
 
 // a primeira tecnica da run, antes de qualquer luta
 if (global.tecnica_inicio && mapa_indice(room) == 0) {

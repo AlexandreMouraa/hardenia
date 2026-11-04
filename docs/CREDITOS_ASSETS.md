@@ -40,6 +40,18 @@ Inimigos montados com peças do [Universal LPC Spritesheet Character Generator](
 | Corpo e cabeça de zumbi | inimigo de horda | bluecarrot16, Benjamin K. Smith (BenCreating), Sander Frenken (castelonia), Stephen Challener (Redshrike) | CC-BY-SA 3.0, GPL 3.0 | [base](https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles), [zumbi](https://opengameart.org/content/lpc-zombie), [bases](https://opengameart.org/content/lpc-character-bases) |
 | Arco e flecha | arqueiro | Johannes Sjölund (wulax), Pierre Vigier (pvigier) | OGA-BY 3.0, CC-BY-SA 3.0, GPL 3.0, CC-BY 4.0 | [fantasia medieval](https://opengameart.org/content/lpc-medieval-fantasy-character-sprites), [andar com arco](https://opengameart.org/content/lpc-walk-animations-for-bows) |
 
+Os quatro Caídos (`spr_caido_*`) saem da mesma ferramenta, tingidos:
+
+| Peça | Usada em | Autores | Licenças | Origem |
+|---|---|---|---|---|
+| Corpo e cabeça de homem e de mulher | todos | bluecarrot16, JaidynReiman, Benjamin K. Smith (BenCreating), Evert, Eliza Wyatt (ElizaWy), TheraHedwig, MuffinElZangano, Durrani, Pierre Vigier (pvigier), Matthew Krohn (makrohn), Johannes Sjölund (wulax), Stephen Challener (Redshrike) | OGA-BY 3.0, CC-BY-SA 3.0, GPL 3.0 | [base](https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles) |
+| Botas e calça | todos, menos a Sentinela na calça | JaidynReiman, bluecarrot16, Nila122, ElizaWy, Matthew Krohn (makrohn), Johannes Sjölund (wulax), Stephen Challener (Redshrike) | OGA-BY 3.0, CC-BY-SA 3.0, GPL 2.0, GPL 3.0 | [roupas](https://opengameart.org/content/lpc-clothes-and-hair) |
+| Armadura de couro | Carrasco, Batedor, Sapador | Johannes Sjölund (wulax), bluecarrot16, JaidynReiman | OGA-BY 3.0, CC-BY-SA 3.0, GPL 3.0 | [fantasia medieval](https://opengameart.org/content/lpc-medieval-fantasy-character-sprites) |
+| Armadura e pernas de placas | Sentinela | JaidynReiman, bluecarrot16, Michael Whitlock (bigbeargames), Matthew Krohn (makrohn), Johannes Sjölund (wulax) | OGA-BY 3.0, CC-BY-SA 3.0, GPL 3.0 | [fantasia medieval](https://opengameart.org/content/lpc-medieval-fantasy-character-sprites) |
+| Elmos | Sapador, Sentinela | bluecarrot16, JaidynReiman, Napsio (Vitruvian Studio) | OGA-BY 3.0, CC-BY 3.0, CC-BY 4.0, GPL 2.0, GPL 3.0 | [elmos](https://opengameart.org/content/lpc-helmets) |
+| Machado e alabarda | Carrasco, Sentinela | Benjamin K. Smith (BenCreating), bluecarrot16, Sander Frenken (castelonia) | CC-BY-SA 3.0, GPL 3.0 | [armas](https://opengameart.org/content/lpc-medieval-weapons) |
+| Adaga | Batedor | bluecarrot16, Johannes Sjölund (wulax), Matthew Krohn (makrohn) | OGA-BY 3.0, CC-BY-SA 3.0, GPL 3.0 | [fantasia medieval](https://opengameart.org/content/lpc-medieval-fantasy-character-sprites) |
+
 A flecha que voa (`spr_flecha`) foi desenhada em `tools/gerar_sprites_lpc.py`, e a bomba (`spr_bomba`), em `tools/gerar_bomba.py`.
 
 Crédito obrigatório: quem publicar o jogo precisa manter esta lista acessível. Ela também aparece no site.

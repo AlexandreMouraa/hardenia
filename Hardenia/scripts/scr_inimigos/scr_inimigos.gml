@@ -314,6 +314,10 @@ function inimigo_morrer(_enemy, _dir, _forte) {
     if (_enemy.elite == "explosao") {
         instance_create_layer(_enemy.x, _enemy.y, "Instances", obj_explosao);
     }
+    // o Caido que cai deixa a tecnica no bau da sala (obj_tecnicas)
+    if (_enemy.object_index == obj_enemy_caido) {
+        global.caido_vencido = _enemy.caido;
+    }
     // a bomba espera um instante: pode pegar outro que sangra, e a corrente cresce sem recursao
     if (_enemy.sangra > 0 && tem_tecnica("sangue_polvora")) {
         bomba_jogador(_enemy.x, _enemy.y, _enemy.x, _enemy.y, 1, 8, 1);
@@ -574,7 +578,7 @@ function dificuldade_aplicar() {
         }
     }
     with (obj_enemy_chefe) {
-        hp_max = 70;
+        hp_max = 80;
         hp = hp_max;
     }
 }

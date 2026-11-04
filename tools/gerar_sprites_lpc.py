@@ -112,6 +112,63 @@ def horda(cache, saida):
     folha(juntar(cache, ["body/bodies/zombie/walk/zombie.png", "head/heads/zombie/adult/walk.png"]), ANDAR).save(saida / "zumbi_andar.png")
 
 
+def grande(cache, camadas, colunas, cel=128):
+    """folha em quadros de 128 x 128, com o corpo no meio: a arma grande dos Caidos nao cabe
+    em 64 e seria cortada. Camadas de tras para a frente, como em juntar"""
+    saida = Image.new("RGBA", (cel * len(colunas), cel * 4), (0, 0, 0, 0))
+    for c in camadas:
+        caminho, cor = c if isinstance(c, tuple) else (c, None)
+        img = peca(cache, caminho)
+        if cor:
+            img = tingir(img, cor)
+        e = img.height // 4
+        m = (cel - e) // 2
+        for l_jogo, l_lpc in enumerate(ORDEM):
+            for c_jogo, c_lpc in enumerate(colunas):
+                q = img.crop((c_lpc * e, l_lpc * e, (c_lpc + 1) * e, (l_lpc + 1) * e))
+                quadro = Image.new("RGBA", (cel, cel), (0, 0, 0, 0))
+                if m >= 0:
+                    quadro.paste(q, (m, m))
+                else:
+                    quadro.paste(q.crop((-m, -m, e + m, e + m)), (0, 0))
+                saida.alpha_composite(quadro, (c_jogo * cel, l_jogo * cel))
+    return saida
+
+
+def caidos(cache, saida):
+    """os guerreiros que vieram antes: corpo acinzentado, de morto, e a cor de cada um na roupa"""
+    cinza = (150, 165, 160)
+    def corpo(acao, tipo="male", pes="male"):
+        return [("body/bodies/%s/%s.png" % (tipo, acao), cinza), ("feet/boots/basic/%s/%s.png" % (pes, acao), (70, 62, 60))]
+    def cabeca(acao, tipo="male"):
+        return [("head/heads/human/%s/%s.png" % (tipo, acao), cinza)]
+
+    def carrasco(a, arma_atras, arma):
+        return [arma_atras] + corpo(a) + [("legs/pants/male/%s.png" % a, (60, 40, 42)), ("torso/armour/leather/male/%s.png" % a, (95, 45, 48))] + cabeca(a) + [("hat/cloth/hood/adult/%s.png" % a, (150, 40, 44)), arma]
+
+    def batedor(a, arma_atras, arma):
+        return [arma_atras] + corpo(a) + [("legs/pants/male/%s.png" % a, (45, 70, 80)), ("torso/armour/leather/male/%s.png" % a, (70, 135, 150))] + cabeca(a) + [("hat/cloth/hood/adult/%s.png" % a, (55, 150, 175)), arma]
+
+    def sapador(a):
+        return corpo(a) + [("legs/pants/male/%s.png" % a, (90, 62, 38)), ("torso/armour/leather/male/%s.png" % a, (190, 110, 45))] + cabeca(a) + [("hat/helmet/barbarian/adult/%s.png" % a, (210, 170, 120))]
+
+    def sentinela(a, arma_atras, arma):
+        return [arma_atras] + corpo(a, "female", "thin") + [("legs/armour/plate/thin/%s.png" % a, (205, 185, 130)), ("torso/armour/plate/female/%s.png" % a, (225, 200, 130))] + cabeca(a, "female") + [("hat/helmet/barbuta/female/%s.png" % a, (235, 210, 130)), arma]
+
+    machado = "weapon/blunt/waraxe/"
+    adaga = "weapon/sword/dagger/"
+    alabarda = "weapon/polearm/halberd/"
+    GOLPE = list(range(6))
+    grande(cache, carrasco("walk", machado + "behind/walk/waraxe.png", machado + "walk/waraxe.png"), ANDAR).save(saida / "caido_carrasco_andar.png")
+    grande(cache, carrasco("slash", machado + "attack_slash/behind/waraxe.png", machado + "attack_slash/waraxe.png"), GOLPE).save(saida / "caido_carrasco_golpe.png")
+    grande(cache, batedor("walk", adaga + "behind/walk/dagger.png", adaga + "walk/dagger.png"), ANDAR).save(saida / "caido_batedor_andar.png")
+    grande(cache, batedor("slash", adaga + "behind/slash/dagger.png", adaga + "slash/dagger.png"), GOLPE).save(saida / "caido_batedor_golpe.png")
+    grande(cache, sapador("walk"), ANDAR).save(saida / "caido_sapador_andar.png")
+    grande(cache, sapador("spellcast"), list(range(7))).save(saida / "caido_sapador_golpe.png")
+    grande(cache, sentinela("walk", alabarda + "behind/walk/halberd.png", alabarda + "walk/halberd.png"), ANDAR).save(saida / "caido_sentinela_andar.png")
+    grande(cache, sentinela("slash", alabarda + "attack_slash/behind/halberd.png", alabarda + "attack_slash/halberd.png"), GOLPE).save(saida / "caido_sentinela_golpe.png")
+
+
 def projeteis(saida):
     """flecha e magia, feitas aqui mesmo: 32 x 32, apontando para a direita (o jogo gira)"""
     f = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
@@ -133,6 +190,7 @@ def principal():
     conjurador(cache, saida)
     chefe(cache, saida)
     horda(cache, saida)
+    caidos(cache, saida)
     projeteis(saida)
 
 
