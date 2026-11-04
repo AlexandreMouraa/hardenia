@@ -3,7 +3,7 @@
 
 // versao mostrada no menu (bug reportado diz em qual versao foi). Ao lancar
 // uma nova, trocar aqui e em deploy/VERSAO, e registrar no site (novidades)
-#macro VERSAO_JOGO "0.8"
+#macro VERSAO_JOGO "0.9"
 
 // no navegador a API fica no mesmo site; o build de Windows usa o endereco
 // publico. -api <url> troca o endereco (teste local) e liga a rede no robo

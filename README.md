@@ -61,10 +61,13 @@ estão no [CONTRIBUTING.md](CONTRIBUTING.md).
 | Dash (2 cargas, invencível durante o impulso) | `Espaço` |
 | Pausar / continuar | `Esc` |
 | Voltar ao menu (na pausa) | `M` |
-| Começar (no menu) | `Enter` ou clique |
+| Opções (na pausa) | `O` |
+| Menu | `W` `S` ou mouse, `Enter` ou clique |
 | Voltar ao menu (na vitória) | `Enter` |
 | Sair do jogo (no menu) | `Esc` |
 | Tela cheia / janela | `Alt+Enter` |
+
+**Controle de videogame:** alavanca ou direcional para andar, `RB`, `RT` ou `X` para atacar (segurar carrega), `A`, `LB` ou `LT` para o dash, `B` para o giro (segurar: Giro Furioso), `Start` para pausar. Nas telas, `A` confirma e `B` volta. O código fica em `scripts/scr_entrada`.
 
 **Tablet e celular:** os controles aparecem no primeiro toque. O polegar na metade esquerda da tela vira o direcional, e os botões ficam à direita: atacar (segurar carrega), dash, giro e pausa. O golpe vira sozinho para o inimigo mais perto. Mexer o mouse ou usar o teclado esconde tudo de novo.
 
@@ -85,7 +88,16 @@ Ali, `L` ou um toque no botão de baixo mede quantos inimigos o aparelho aguenta
 - A barra mostra a **vida**: 5 golpes até morrer. Ela passa de uma sala para a
   outra, e limpar uma fase pela primeira vez na run devolve 1.
 - Ao morrer, a run recomeça na primeira fase, com a vida cheia, e o contador de
-  **tentativas** sobe.
+  **tentativas** sobe. Uma caveira fica no chão onde o guerreiro caiu.
+- **Duelos** (`scripts/scr_duelos`, `obj_enemy_caido`): nas Catacumbas e no
+  Cemitério, quando a sala fica limpa, um dos 4 Caídos aparece, sorteado por run.
+  Cada um tem arte, rodízio de ataques e falas próprios, e o baú que vem depois
+  oferece primeiro as técnicas dele.
+- **O Rei Morto** (`obj_enemy_chefe`): 3 fases, uma a cada terço da vida, com
+  rodízio próprio.
+- **Variação** (`scripts/scr_variacao`): cada sala tem 3 arranjos de inimigos,
+  sorteados por run. O **desafio do dia** usa uma semente que sai da data: mesmos
+  arranjos, Caídos e cartas para todo mundo, com ranking próprio.
 - Todo inimigo avisa antes de atacar: pisca, mostra `!` e desenha no chão a
   zona onde o golpe vai cair. Saia da zona ou atravesse com o dash.
 - Cada tipo age de um jeito. **Esqueleto:** golpe curto. **Ghoul:** rápido e
@@ -97,6 +109,24 @@ Ali, `L` ou um toque no botão de baixo mede quantos inimigos o aparelho aguenta
   chega por um lado e só 2 atacam ao mesmo tempo. Os outros rondam perto.
 - Vencer o Trono encerra a run com a tela de vitória, o total de tentativas
   e o tempo. O jogo pede um nome e manda o resultado para o ranking do site.
+
+## História, clima, som e opções
+
+- **História** (`scripts/scr_historia`, `obj_abertura`, `obj_final`): abertura na
+  primeira vez que o jogo abre, frases a cada tantas mortes e um final que muda
+  com as tentativas. Falas dos Caídos e do rei: em `scripts/scr_tecnicas`. O texto
+  fica junto, para o grupo mexer sem precisar entender o resto.
+- **Clima** (`scripts/scr_ambiente`, `obj_ambiente`): escuridão com luz, sombras,
+  cinza, neve, fagulhas e vinheta. A escuridão cobre só o chão: inimigos e zonas de
+  golpe ficam por cima dela, sempre claros.
+- **Som** (`scripts/scr_som`): `musica()` troca a música suave, `som_fundo()` faz o
+  mesmo com o som de fundo, `sfx()` toca efeito com o volume das opções.
+- **Fontes** (`scripts/scr_fonte`): `texto()` e `titulo()`, com acento, iguais no
+  Windows e no navegador.
+- **Dicas** (`scripts/scr_dicas`): ensinam cada golpe na hora em que serve.
+- **Salvo** (`scripts/scr_salvo`): opções, recordes, dicas vistas e marcas de morte
+  ficam no aparelho. O personagem nunca: morrer continua zerando a run. O robô não
+  lê nem grava esse arquivo.
 
 ## Ranking, mapa de mortes e efeitos
 
@@ -171,11 +201,15 @@ roda 3 runs em velocidade acelerada, sem som e em janela, e termina com `OK` ou
 | `-desatento 40` | ignora 40% dos avisos, como um jogador distraído |
 | `-diag` | registra as decisões do robô a cada segundo |
 | `-toque` | joga pelos controles de toque, com dedos de mentira, e reprova se o direcional não andar para onde o robô mandou (soma `toque=1` no resumo) |
+| `-desafio` | joga o desafio do dia; com `-api`, testa o ranking dele |
 | `-api URL` | liga a rede e manda os eventos para essa API (teste local; sem isso o robô não envia nada) |
 | `-nome X` | com `-api`, digita X na vitória e envia ao ranking |
 
 Na primeira run o robô também confere o level design de cada sala: inimigo
-nascendo dentro de parede, inimigo ou portão sem caminho até o jogador.
+nascendo dentro de parede, inimigo ou portão sem caminho até o jogador. Ele abre
+as telas do menu, passa pela abertura e pelo final, reprova se faltar música na
+sala, se algum dos 4 Caídos não aparecer em 3 runs ou se as 3 fases do rei não
+aparecerem, e confere cada arranjo de inimigos.
 
 O robô só existe quando o jogo abre com `-autotest` (`obj_autotest`); jogando
 normal, nada dele roda. Ele controla o jogador pelas mesmas variáveis que o
