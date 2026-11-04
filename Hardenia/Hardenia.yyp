@@ -159,6 +159,7 @@
     {"id":{"name":"scr_salvo","path":"scripts/scr_salvo/scr_salvo.yy",},},
     {"id":{"name":"scr_entrada","path":"scripts/scr_entrada/scr_entrada.yy",},},
     {"id":{"name":"obj_opcoes","path":"objects/obj_opcoes/obj_opcoes.yy",},},
+    {"id":{"name":"scr_dicas","path":"scripts/scr_dicas/scr_dicas.yy",},},
   ],
   "resourceType":"GMProject",
   "resourceVersion":"2.0",

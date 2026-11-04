@@ -9,6 +9,7 @@ global.salvo = {
     melhor_ms: 0,
     melhor_tentativas: 0,
     caidos_livres: [],
+    dicas: {},
 };
 // opcoes: 1 = normal
 global.op_tremor = 1;
