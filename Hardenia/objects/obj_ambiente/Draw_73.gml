@@ -1,3 +1,15 @@
+// ninguem mediu o clima num iPad ainda: se o aparelho nao aguentar, o jogo desliga sozinho e avisa.
+// O fps do jogo so atualiza uma vez por segundo. O robo fica de fora: ele joga acelerado
+if (global.op_ambiente && !instance_exists(obj_autotest) && current_time - lento_olhou >= 1000) {
+    lento_olhou = current_time;
+    lento_segundos = (fps < 40) ? lento_segundos + 1 : 0;
+    if (lento_segundos >= 8) {
+        global.op_ambiente = false;
+        global.dica_agora = "leve";
+        global.dica_tempo = 0;
+        salvo_gravar();
+    }
+}
 if (!global.op_ambiente || def == undefined) {
     exit;
 }

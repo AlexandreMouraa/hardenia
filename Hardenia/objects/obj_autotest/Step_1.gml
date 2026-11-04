@@ -460,7 +460,7 @@ if (!testou_pausa && room == Room1 && tempo_sala >= 90) {
 
 // -grupo: parado na primeira sala enquanto confere o comportamento em grupo
 var _esperando_grupo = false;
-if (testar_grupo && run_atual == 1 && room == Room1 && grupo_passo < 4) {
+if (testar_grupo && run_atual == 1 && room == Room1 && grupo_passo < 4 && tempo_sala > 3) {
     _esperando_grupo = true;
     grupo_conferir(_p);
 }

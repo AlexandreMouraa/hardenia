@@ -39,7 +39,7 @@ for (var _i = 0; _i < array_length(itens); _i++) {
 if (itens[cursor].acao == "desafio") {
     var _d = item_ret(array_length(itens));
     draw_set_color(c_ltgray);
-    texto(_d[0], _d[1], "A mesma run para todo mundo hoje, com ranking próprio.", _esc * 0.8, _esc * 0.8, 0);
+    texto(_d[0], _d[1] + 10 * _esc, "A mesma run para todo mundo hoje, com ranking próprio.", _esc * 0.8, _esc * 0.8, 0);
 }
 
 // recordes do aparelho

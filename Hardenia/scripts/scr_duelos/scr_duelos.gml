@@ -135,10 +135,12 @@ function barra_chefe(_nome, _hp, _hp_max, _cor, _marcas, _fala, _fala_alfa) {
 }
 
 // ---------- duelos: quando a sala fica limpa, um Caido aparece ----------
-// Os dois da run saem do sorteio, sem repetir. vida: para ajustar jogando
+// Os dois da run saem do sorteio, sem repetir. vida e furia: para ajustar jogando. furia acima de 1
+// da mais aviso e mais recarga: o primeiro duelo vem na segunda sala, com poucas tecnicas. Com
+// tudo igual, o robo desatento (50%) morria 13 vezes ali
 global.duelos = [
-    { sala: Room_Tunel, vida: 26 },
-    { sala: Room3, vida: 40 },
+    { sala: Room_Tunel, vida: 26, furia: 1.25 },
+    { sala: Room3, vida: 40, furia: 1 },
 ];
 global.caidos_chaves = ["carrasco", "batedor", "sapador", "sentinela"];
 global.caidos_ordem = [];
@@ -223,12 +225,19 @@ function duelo_tentar() {
     }
     var _chave = global.caidos_ordem[global.duelos_feitos mod array_length(global.caidos_ordem)];
     var _def = variable_struct_get(global.caidos, _chave);
-    var _vida = duelo_da_sala().vida;
+    var _duelo = duelo_da_sala();
+    // um respiro antes da luta: a cura de limpar a sala vem agora, e nao depois dela
+    if (hp > 0 && hp < hp_max) {
+        hp += 1;
+        global.vida = hp;
+        hud_cura = hud_cura_max;
+    }
+    duelo_curou = true;
     array_push(global.duelos_salas, room);
     global.duelos_feitos += 1;
     var _lugar = duelo_lugar(x, y);
     with (instance_create_layer(_lugar[0], _lugar[1], "Instances", obj_enemy_caido)) {
-        preparar(_chave, _vida);
+        preparar(_chave, _duelo.vida, _duelo.furia);
     }
     fx_onda(_lugar[0], _lugar[1], 120, _def.cor);
     fx_faiscas(_lugar[0], _lugar[1], 90, _def.cor, 12);
