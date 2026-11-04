@@ -10,9 +10,9 @@ draw_set_alpha(_surgir);
 draw_set_halign(fa_center);
 draw_set_valign(fa_top);
 draw_set_color(c_white);
-draw_text_transformed(_w / 2, _h / 2 - 150 * _esc, "O QUE OS CAIDOS DEIXARAM", _esc * 1.5, _esc * 1.5, 0);
+titulo(_w / 2, _h / 2 - 158 * _esc, "O que os Caídos deixaram", _esc * 1.7);
 draw_set_color(c_ltgray);
-draw_text_transformed(_w / 2, _h / 2 - 122 * _esc, "Vale ate a proxima morte. Fique com uma.", _esc * 0.85, _esc * 0.85, 0);
+texto(_w / 2, _h / 2 - 122 * _esc, "Vale até a próxima morte. Fique com uma.", _esc * 0.85, _esc * 0.85, 0);
 
 for (var _i = 0; _i < array_length(oferta); _i++) {
     var _r = carta(_i);
@@ -37,26 +37,26 @@ for (var _i = 0; _i < array_length(oferta); _i++) {
         // combinacao: as duas cores, e os dois nomes
         draw_set_color(_cor2);
         draw_rectangle(_cx, _top, _r[2], _top + 6 * _esc, false);
-        _caido = "COMBINACAO";
+        _caido = "COMBINAÇÃO";
         draw_set_color(c_white);
     }
     if (_foco) {
         draw_rectangle(_r[0] - 1, _top - 1, _r[2] + 1, _fim + 1, true);
         draw_rectangle(_r[0] - 2, _top - 2, _r[2] + 2, _fim + 2, true);
     }
-    draw_text_transformed(_cx, _top + 16 * _esc, _caido, _esc * 0.75, _esc * 0.75, 0);
+    texto(_cx, _top + 16 * _esc, _caido, _esc * 0.75, _esc * 0.75, 0);
     draw_set_color(c_white);
-    draw_text_ext_transformed(_cx, _top + 40 * _esc, _def.nome, 18, (_r[2] - _r[0] - 16 * _esc) / (_esc * 1.05), _esc * 1.05, _esc * 1.05, 0);
+    texto_ext(_cx, _top + 40 * _esc, _def.nome, 18, (_r[2] - _r[0] - 16 * _esc) / (_esc * 1.05), _esc * 1.05, _esc * 1.05, 0);
     draw_set_color(c_ltgray);
-    draw_text_ext_transformed(_cx, _top + 84 * _esc, _def.texto, 19, (_r[2] - _r[0] - 20 * _esc) / (_esc * 0.75), _esc * 0.75, _esc * 0.75, 0);
+    texto_ext(_cx, _top + 84 * _esc, _def.texto, 19, (_r[2] - _r[0] - 20 * _esc) / (_esc * 0.75), _esc * 0.75, _esc * 0.75, 0);
     if (!global.toque_ativo) {
         draw_set_color(c_gray);
-        draw_text_transformed(_cx, _fim - 18 * _esc, string(_i + 1), _esc * 0.8, _esc * 0.8, 0);
+        texto(_cx, _fim - 18 * _esc, string(_i + 1), _esc * 0.8, _esc * 0.8, 0);
     }
 }
 draw_set_alpha(_surgir);
 draw_set_color(c_ltgray);
-draw_text_transformed(_w / 2, _h / 2 + 122 * _esc, global.toque_ativo ? "Toque na tecnica" : "A / D ou 1 2 3 para escolher    ENTER confirma    Tambem da para clicar", _esc * 0.75, _esc * 0.75, 0);
+texto(_w / 2, _h / 2 + 122 * _esc, global.toque_ativo ? "Toque na técnica" : "A / D ou 1 2 3 para escolher    ENTER confirma    Também dá para clicar", _esc * 0.75, _esc * 0.75, 0);
 draw_set_alpha(1);
 draw_set_color(c_white);
 draw_set_halign(fa_left);

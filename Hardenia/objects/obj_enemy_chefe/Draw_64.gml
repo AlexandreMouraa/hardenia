@@ -16,5 +16,5 @@ draw_set_color(c_white);
 draw_line(_x + _lg / 2, _y - 2, _x + _lg / 2, _y + _alt + 2);
 draw_set_halign(fa_center);
 draw_set_valign(fa_top);
-draw_text_transformed(_w / 2, _y + _alt + 4 * _esc, "O TRONO", _esc * 0.9, _esc * 0.9, 0);
+texto(_w / 2, _y + _alt + 4 * _esc, "O TRONO", _esc * 0.9, _esc * 0.9, 0);
 draw_set_halign(fa_left);

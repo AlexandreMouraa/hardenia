@@ -84,12 +84,12 @@ switch (tipo) {
         draw_set_valign(fa_middle);
         draw_set_alpha(min(1, _t * 3));
         draw_set_colour(c_black);
-        draw_text_transformed(x - 2, _ny, texto, _esc, _esc, 0);
-        draw_text_transformed(x + 2, _ny, texto, _esc, _esc, 0);
-        draw_text_transformed(x, _ny - 2, texto, _esc, _esc, 0);
-        draw_text_transformed(x, _ny + 2, texto, _esc, _esc, 0);
+        texto(x - 2, _ny, rotulo, _esc, _esc, 0);
+        texto(x + 2, _ny, rotulo, _esc, _esc, 0);
+        texto(x, _ny - 2, rotulo, _esc, _esc, 0);
+        texto(x, _ny + 2, rotulo, _esc, _esc, 0);
         draw_set_colour(cor);
-        draw_text_transformed(x, _ny, texto, _esc, _esc, 0);
+        texto(x, _ny, rotulo, _esc, _esc, 0);
         draw_set_alpha(1);
         draw_set_colour(c_white);
         draw_set_halign(fa_left);

@@ -22,9 +22,9 @@ draw_set_halign(fa_center);
 draw_set_valign(fa_middle);
 draw_set_colour(c_ltgray);
 draw_set_alpha(_entrada);
-draw_text_transformed(_w / 2, _h * 0.3, "FASE " + string(para + 1) + " DE " + string(array_length(global.mapa_fases)), _esc, _esc, 0);
+texto(_w / 2, _h * 0.3, "FASE " + string(para + 1) + " DE " + string(array_length(global.mapa_fases)), _esc, _esc, 0);
 draw_set_colour(c_white);
-draw_text_transformed(_w / 2, _h * 0.3 + 34 * _esc, global.mapa_fases[para].nome, _esc * 1.8, _esc * 1.8, 0);
+titulo(_w / 2, _h * 0.3 + 40 * _esc, global.mapa_fases[para].nome, _esc * 2.2);
 draw_set_alpha(1);
 
 mapa_desenhar(_h * 0.56, _esc, _pos, _entrada);
@@ -34,7 +34,7 @@ if (tempo > pode_pular) {
     draw_set_valign(fa_middle);
     draw_set_colour(c_gray);
     draw_set_alpha(0.4 + 0.6 * (0.5 + 0.5 * sin(current_time / 200)));
-    draw_text_transformed(_w / 2, _h - 40 * _esc, "ENTER ou CLIQUE: continuar", _esc * 0.8, _esc * 0.8, 0);
+    texto(_w / 2, _h - 40 * _esc, "ENTER ou CLIQUE: continuar", _esc * 0.8, _esc * 0.8, 0);
 }
 
 if (_fim > 0) {

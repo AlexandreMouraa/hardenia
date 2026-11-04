@@ -1,12 +1,11 @@
 // Mapa de progresso: o caminho da run, do comeco ao fim. Aparece ao entrar em
 // cada fase nova (obj_mapa) e na pausa. Fase nova: acrescentar aqui, na ordem.
-// Nomes sem acento: a fonte do jogo nao tem esses caracteres
 global.mapa_fases = [
-    { sala: Room1, nome: "RUINAS", frase: "As ruinas guardam os ossos de quem veio antes de mim." },
-    { sala: Room_Tunel, nome: "CATACUMBAS", frase: "Aqui embaixo ninguem vem me buscar. Nem eles esperam que eu volte." },
-    { sala: Room2, nome: "PATIO DO CASTELO", frase: "No patio, quem fica parado nao chega ao castelo." },
-    { sala: Room3, nome: "CEMITERIO GELADO", frase: "O cemiterio tem lugar para mais um. Ainda nao." },
-    { sala: Room_Trono, nome: "O TRONO", frase: "O trono esta logo ali. Ele tambem morreu um dia." },
+    { sala: Room1, nome: "Ruínas", frase: "As ruínas guardam os ossos de quem veio antes de mim." },
+    { sala: Room_Tunel, nome: "Catacumbas", frase: "Aqui embaixo ninguém vem me buscar. Nem eles esperam que eu volte." },
+    { sala: Room2, nome: "Pátio do Castelo", frase: "No pátio, quem fica parado não chega ao castelo." },
+    { sala: Room3, nome: "Cemitério Gelado", frase: "O cemitério tem lugar para mais um. Ainda não." },
+    { sala: Room_Trono, nome: "O Trono", frase: "O trono está logo ali. Ele também morreu um dia." },
 ];
 // ponto trancado no fim do caminho, para um lugar que ainda nao existe no jogo. "" = nenhum
 global.mapa_final = "";
@@ -35,19 +34,19 @@ run_zerar();
 // Frase da tela de morte: o guerreiro mais fraco aprendendo, sem cutscene. Por inimigo:
 // [primeira vez, voltou a morrer ali]. Inimigo novo: acrescentar aqui, com o nome do objeto
 global.frases_inimigo = {
-    obj_enemy: ["O esqueleto avisou. Eu e que nao sai da frente.", "Esse esqueleto de novo... dessa vez eu desvio."],
-    obj_enemy_ghoul: ["O ghoul so corre em linha reta. Era so sair do caminho.", "Esse ghoul de novo. Agora eu sei onde ele para."],
+    obj_enemy: ["O esqueleto avisou. Eu é que não saí da frente.", "Esse esqueleto de novo... dessa vez eu desvio."],
+    obj_enemy_ghoul: ["O ghoul só corre em linha reta. Era só sair do caminho.", "Esse ghoul de novo. Agora eu sei onde ele para."],
     obj_enemy_wight: ["O wight demora, mas quando varre, varre tudo.", "De novo esse wight. Depois da varredura ele fica exposto."],
-    obj_enemy_arqueiro: ["A flecha avisou antes. Eu e que fiquei na linha.", "Esse arqueiro de novo. Agora eu corro de lado."],
-    obj_enemy_conjurador: ["O circulo estava no chao. Eu e que fiquei em cima dele.", "O conjurador de novo. Da proxima eu vou atras dele primeiro."],
-    obj_explosao: ["Ele explodiu depois de morrer. Eu devia ter saido de perto.", "De novo a explosao. Mata e corre."],
-    obj_enemy_chefe: ["O rei morto nao tem pressa. Eu tive.", "O Trono de novo. A coluna para a investida."],
-    obj_enemy_horda: ["Eram muitos. Da proxima eu abro caminho com o dash.", "A horda de novo. Parado eu nao saio daqui."],
+    obj_enemy_arqueiro: ["A flecha avisou antes. Eu é que fiquei na linha.", "Esse arqueiro de novo. Agora eu corro de lado."],
+    obj_enemy_conjurador: ["O círculo estava no chão. Eu é que fiquei em cima dele.", "O conjurador de novo. Da próxima eu vou atrás dele primeiro."],
+    obj_explosao: ["Ele explodiu depois de morrer. Eu devia ter saído de perto.", "De novo a explosão. Mata e corre."],
+    obj_enemy_chefe: ["O rei morto não tem pressa. Eu tive.", "O Trono de novo. A coluna para a investida."],
+    obj_enemy_horda: ["Eram muitos. Da próxima eu abro caminho com o dash.", "A horda de novo. Parado eu não saio daqui."],
 };
 global.frases_teimoso = [
     "Mais uma. O mais fraco de todos continua voltando.",
-    "Eles nao aprendem. Eu sim.",
-    "Nenhum guerreiro chegou tao longe morrendo tanto.",
+    "Eles não aprendem. Eu sim.",
+    "Nenhum guerreiro chegou tão longe morrendo tanto.",
 ];
 // quantas vezes morreu em cada sala, nesta sessao de jogo (zera no menu)
 global.mortes_por_sala = {};
@@ -257,9 +256,9 @@ function mapa_desenhar(_cy, _esc, _pos, _alpha) {
             draw_line_width(_px, _cy + _r, _px - _r, _cy, 2 * _esc);
             draw_line_width(_px - _r, _cy, _px, _cy - _r, 2 * _esc);
             draw_set_colour(c_gray);
-            draw_text_transformed(_px, _cy + 22 * _esc, global.mapa_final, _esc * 0.8, _esc * 0.8, 0);
+            texto(_px, _cy + 22 * _esc, global.mapa_final, _esc * 0.8, _esc * 0.8, 0);
             draw_set_colour(_apagado);
-            draw_text_transformed(_px, _cy + 40 * _esc, "EM BREVE", _esc * 0.65, _esc * 0.65, 0);
+            texto(_px, _cy + 40 * _esc, "EM BREVE", _esc * 0.65, _esc * 0.65, 0);
             continue;
         }
         if (_aqui) {
@@ -274,7 +273,7 @@ function mapa_desenhar(_cy, _esc, _pos, _alpha) {
         draw_set_colour(_chegou ? c_white : _apagado);
         draw_circle(_px, _cy, _r, true);
         draw_set_colour(_aqui ? c_white : (_chegou ? c_ltgray : c_gray));
-        draw_text_transformed(_px, _cy + 22 * _esc, string(_i + 1) + ". " + global.mapa_fases[_i].nome, _esc * 0.8, _esc * 0.8, 0);
+        texto(_px, _cy + 22 * _esc, string(_i + 1) + ". " + global.mapa_fases[_i].nome, _esc * 0.8, _esc * 0.8, 0);
     }
 
     // o guerreiro andando pela estrada, de frente para a direita

@@ -55,7 +55,7 @@ function fx_numero(_x, _y, _valor, _cor) {
     var _lado = global.numero_lado;
     with (instance_create_depth(_x + 14 * _lado, _y - 24, -1001, obj_fx)) {
         tipo = "numero";
-        texto = string(_valor);
+        rotulo = string(_valor);
         cor = _cor;
         vida_max = 34;
         vida = vida_max;
