@@ -227,6 +227,10 @@ if (run_atual == 1 && sala_limpa_logada && tempo_sala == limpa_desde + 45) {
 if (run_atual == 1 && tempo_sala == 30) {
     pedir_print("inicio");
 }
+// o robo joga sem som, mas a musica da sala tem de estar tocando (o Trono comeca em silencio)
+if (tempo_sala == 60 && global.musica_agora != -1 && !audio_is_playing(global.musica_agora)) {
+    log("FALHA_musica", "nao esta tocando: " + audio_get_name(global.musica_agora));
+}
 if (run_atual == 1 && dash_prints == 0 && _p.is_dashing && _p.dash_timer == 5) {
     dash_prints = 1;
     pedir_print("dash_meio");

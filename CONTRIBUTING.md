@@ -69,6 +69,8 @@ Por isso:
 
 - Comentários em português, sem acento, explicando o porquê (como no resto do
   código). Nomes novos em português.
+- Som: `sfx()` no lugar de `audio_play_sound()`, e `musica()` para música, por causa
+  do volume das opções (`scr_som`).
 - Texto na tela: com acento, pelas funções `texto()` e `titulo()` de `scr_fonte`.
   A fonte só tem os acentos do português: caractere novo pede a folha nova
   (`tools/gerar_fontes.py`).

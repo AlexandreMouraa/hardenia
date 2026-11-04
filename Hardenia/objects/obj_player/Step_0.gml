@@ -65,6 +65,8 @@ if (_dash_apertado) {
     dash_buffer = dash_buffer_max;
 }
 
+coracao_atualizar(hp == 1 && !is_dead && !venceu);
+
 // a reacao do HUD anda mesmo com o mundo parado
 hud_dano = max(0, hud_dano - 1);
 hud_cura = max(0, hud_cura - 1);
@@ -116,6 +118,7 @@ if (!venceu && room == sala_final() && instance_number(obj_enemy) == 0) {
         keyboard_string = "";
     }
     final_espera = 150;
+    musica(snd_musica_final, 3000);
 }
 
 // sala limpa: quantas tentativas cada sala custou (estatisticas do site). Nas salas de duelo,
@@ -319,6 +322,8 @@ if (tempo_na_sala == 2 && instance_exists(obj_enemy_chefe)) {
     var _voltou = variable_struct_exists(global.caidos_vistos, "rei");
     variable_struct_set(global.caidos_vistos, "rei", true);
     cena_abrir(_rei.x, _rei.y, "O Rei Morto", _voltou ? global.fala_rei_de_novo : global.fala_rei, make_colour_rgb(235, 60, 50), _voltou ? 110 : 210);
+    musica(snd_musica_rei, 500);
+    sfx(snd_sino, 3, false, 0.7, 0, 0.8);
     exit;
 }
 
@@ -346,7 +351,7 @@ if (dash_buffer > 0 && !is_dashing && dash_charges > 0) {
     dash_dir_x = face_h * _norm_dash;
     dash_dir_y = face_v * _norm_dash;
     dash_contador += 1;
-    audio_play_sound(snd_dash, 1, false, 1, 0, 1 + 0.05 * sin(dash_contador * 2.4));
+    sfx(snd_dash, 1, false, 1, 0, 1 + 0.05 * sin(dash_contador * 2.4));
     brilho = 1;
     fx_dash_arrancada(x, y, point_direction(0, 0, dash_dir_x, dash_dir_y));
     if (tem_tecnica("rastilho")) {
@@ -471,6 +476,9 @@ if (is_attacking) {
     if (anim_timer >= anim_speed) {
         anim_timer = 0;
         anim_frame = (anim_frame + 1) mod walk_frames;
+        if (anim_frame mod 2 == 0) {
+            passo_som();
+        }
     }
     image_index = facing_dir * walk_frames + anim_frame;
 } else {

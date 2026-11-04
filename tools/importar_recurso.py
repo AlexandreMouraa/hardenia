@@ -4,6 +4,7 @@ ela grava: os arquivos do recurso e a linha no Hardenia.yyp.
     python3 tools/importar_recurso.py sprite spr_nome folha.png --quadro 64x64
     python3 tools/importar_recurso.py sprite spr_nome imagem.png --origem 0,0
     python3 tools/importar_recurso.py som snd_nome arquivo.wav
+    python3 tools/importar_recurso.py musica snd_nome arquivo.mp3 --duracao 120.5
 
 A folha e cortada em quadros iguais, da esquerda para a direita e de cima para baixo.
 Com o recurso ja existente, ele e trocado e os ids continuam os mesmos (o id sai do
@@ -123,6 +124,21 @@ def importar_som(nome, arquivo):
     print("%s: %.2f s, %d Hz, %d canal(is)" % (nome, duracao, taxa, canais))
 
 
+def importar_musica(nome, arquivo, duracao):
+    """toca do disco, sem carregar tudo na memoria, como as musicas que ja estavam no jogo"""
+    arquivo = pathlib.Path(arquivo)
+    pasta = RAIZ / "sounds" / nome
+    pasta.mkdir(parents=True, exist_ok=True)
+    destino = pasta / (nome + arquivo.suffix.lower())
+    shutil.copyfile(arquivo, destino)
+    t = (RAIZ / "sounds/snd_game_music/snd_game_music.yy").read_text(encoding="utf-8").replace("snd_game_music", nome)
+    t = t.replace(nome + ".mp3", destino.name)
+    t = re.sub(r'("duration":)[\d.]+,', r"\g<1>%.5f," % duracao, t, count=1)
+    (pasta / (nome + ".yy")).write_text(t, encoding="utf-8", newline="\n")
+    registrar(nome, "sounds")
+    print("%s: %.1f s" % (nome, duracao))
+
+
 def par(texto, separador):
     a, b = texto.split(separador)
     return int(a), int(b)
@@ -139,9 +155,15 @@ def main():
     so = s.add_parser("som")
     so.add_argument("nome")
     so.add_argument("arquivo", help="wav")
+    sm = s.add_parser("musica")
+    sm.add_argument("nome")
+    sm.add_argument("arquivo", help="mp3 ou ogg")
+    sm.add_argument("--duracao", type=float, required=True)
     a = p.parse_args()
     if a.tipo == "sprite":
         importar_sprite(a.nome, a.arquivo, par(a.quadro, "x") if a.quadro else None, par(a.origem, ",") if a.origem else None)
+    elif a.tipo == "musica":
+        importar_musica(a.nome, a.arquivo, a.duracao)
     else:
         importar_som(a.nome, a.arquivo)
 

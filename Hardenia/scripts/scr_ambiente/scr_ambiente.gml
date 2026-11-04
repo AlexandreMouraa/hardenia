@@ -7,16 +7,17 @@
 //   clima:  "cinza", "neve", "brasa", "poeira" ou ""
 //   vinheta: quanto as bordas da tela escurecem
 //   luzes:  fogueiras da arte, [x, y] na sala. Saem de onde a arte tem chama
+//   fundo:  som de fundo; chao: som do passo (scr_som)
 global.ambiente_salas = [
-    { sala: Room1, escuro: 0.38, cor: make_colour_rgb(20, 10, 10), raio: 300, clima: "cinza", vinheta: 0.5,
+    { sala: Room1, escuro: 0.38, cor: make_colour_rgb(20, 10, 10), raio: 300, clima: "cinza", vinheta: 0.5, fundo: snd_amb_noite, chao: "pedra",
       luzes: [[500, 156], [1429, 467], [632, 925], [826, 923], [116, 348]] },
-    { sala: Room_Tunel, escuro: 0.55, cor: c_black, raio: 280, clima: "poeira", vinheta: 0.7,
+    { sala: Room_Tunel, escuro: 0.55, cor: c_black, raio: 280, clima: "poeira", vinheta: 0.7, fundo: snd_amb_gotas, chao: "pedra",
       luzes: [[1519, 146], [1819, 146], [309, 166], [629, 166], [849, 506], [1169, 506], [1449, 1006], [1829, 1006], [109, 1016], [369, 1016]] },
-    { sala: Room2, escuro: 0.42, cor: make_colour_rgb(10, 14, 30), raio: 320, clima: "poeira", vinheta: 0.5,
+    { sala: Room2, escuro: 0.42, cor: make_colour_rgb(10, 14, 30), raio: 320, clima: "poeira", vinheta: 0.5, fundo: snd_amb_noite, chao: "terra",
       luzes: [[829, 937], [678, 939], [813, 194], [662, 194], [270, 834], [240, 191], [1372, 486], [1171, 215], [267, 456], [1291, 241]] },
-    { sala: Room3, escuro: 0.35, cor: make_colour_rgb(12, 18, 38), raio: 340, clima: "neve", vinheta: 0.45,
+    { sala: Room3, escuro: 0.35, cor: make_colour_rgb(12, 18, 38), raio: 340, clima: "neve", vinheta: 0.45, fundo: snd_amb_vento, chao: "neve",
       luzes: [[841, 946], [840, 158], [694, 160], [280, 174], [224, 529], [1351, 263], [693, 947], [1249, 222]] },
-    { sala: Room_Trono, escuro: 0.5, cor: make_colour_rgb(18, 6, 6), raio: 300, clima: "brasa", vinheta: 0.65,
+    { sala: Room_Trono, escuro: 0.5, cor: make_colour_rgb(18, 6, 6), raio: 300, clima: "brasa", vinheta: 0.65, fundo: snd_amb_fogo, chao: "pedra",
       luzes: [[249, 276], [599, 276], [935, 276], [1285, 276], [249, 806], [1285, 806]] },
 ];
 // false: sem escuridao, clima e vinheta, para aparelho fraco

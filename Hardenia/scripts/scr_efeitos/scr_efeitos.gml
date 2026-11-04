@@ -26,7 +26,7 @@ function som(_som, _ganho = 1) {
     }
     variable_struct_set(global.som_ultimo, _nome, current_time);
     global.som_contador += 1;
-    audio_play_sound(_som, 1, false, _ganho, 0, 1 + 0.06 * sin(global.som_contador * 2.4));
+    sfx(_som, 1, false, _ganho, 0, 1 + 0.06 * sin(global.som_contador * 2.4));
 }
 
 function impacto(_hitstop, _tremor) {
@@ -44,7 +44,7 @@ function momento_final(_x, _y, _peso) {
     global.lento = max(global.lento, 40 * _peso);
     global.flash = max(global.flash, 0.3 * _peso);
     fx_onda(_x, _y, 150 * _peso, make_colour_rgb(255, 225, 180));
-    audio_play_sound(snd_golpe_forte, 1, false, 1, 0, 0.55);
+    sfx(snd_golpe_forte, 1, false, 1, 0, 0.55);
 }
 
 // numero do dano, subindo e sumindo. O lado alterna para dois seguidos nao ficarem um em

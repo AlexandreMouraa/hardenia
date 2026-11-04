@@ -1,0 +1,26 @@
+{
+  "$GMSound":"v2",
+  "%Name":"snd_musica_catacumbas",
+  "audioGroupId":{
+    "name":"audiogroup_default",
+    "path":"audiogroups/audiogroup_default",
+  },
+  "bitDepth":1,
+  "channelFormat":0,
+  "compression":3,
+  "compressionQuality":4,
+  "conversionMode":0,
+  "duration":126.04082,
+  "exportDir":"",
+  "name":"snd_musica_catacumbas",
+  "parent":{
+    "name":"Hardenia",
+    "path":"Hardenia.yyp",
+  },
+  "preload":false,
+  "resourceType":"GMSound",
+  "resourceVersion":"2.0",
+  "sampleRate":44100,
+  "soundFile":"snd_musica_catacumbas.mp3",
+  "volume":1.0,
+}
