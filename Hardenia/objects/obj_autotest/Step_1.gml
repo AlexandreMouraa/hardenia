@@ -33,6 +33,18 @@ if (frame > 60 * 60 * 40) {
     exit;
 }
 
+// abertura e final: passam sozinhos, com um print de cada carta na primeira run
+if (instance_exists(obj_abertura) || instance_exists(obj_final)) {
+    var _texto = instance_exists(obj_abertura) ? instance_find(obj_abertura, 0) : instance_find(obj_final, 0);
+    if (_texto.tempo == 25 && run_atual <= 1) {
+        pedir_print(instance_exists(obj_abertura) ? "abertura" : "final");
+    }
+    if (instance_exists(obj_final)) {
+        viu_final = true;
+    }
+    exit;
+}
+
 // mapa da proxima fase (obj_mapa): passa sozinho; print na primeira run
 if (instance_exists(obj_mapa)) {
     if (run_atual <= 1 && obj_mapa.tempo == 90) {
@@ -82,6 +94,12 @@ if (room == Room_Menu) {
             }
             if (!usar_horda && chefe_vencido < vitorias) {
                 log("FALHA_chefe", "vitorias=" + string(vitorias) + " chefe vencido=" + string(chefe_vencido));
+            }
+            if (!usar_horda && vitorias > 0 && !viu_final) {
+                log("FALHA_final", "venceu e o texto do final nao apareceu");
+            }
+            if (!usar_horda && !global.abertura_vista) {
+                log("FALHA_abertura", "a abertura nao apareceu");
             }
             if (!usar_horda && !chefe_metade_vista) {
                 log("FALHA_chefe", "nao viu a segunda fase");
@@ -310,6 +328,10 @@ if (_p.is_dead) {
 estava_morto = false;
 
 if (_p.venceu) {
+    // o texto do final vem antes da tela de vitoria
+    if (_p.final_espera > 0) {
+        exit;
+    }
     espera += 1;
     if (espera == 30) {
         vitorias += 1;

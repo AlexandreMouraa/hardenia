@@ -230,7 +230,7 @@ if (is_dead) {
     draw_set_color(c_ltgray);
     texto(_w / 2, _h / 2 + 46 * _esc, "A run recomeça.", _esc * 0.85, _esc * 0.85, 0);
     draw_set_color(c_white);
-} else if (venceu) {
+} else if (venceu && final_espera == 0 && !instance_exists(obj_final)) {
     draw_set_alpha(0.7);
     draw_set_color(c_black);
     draw_rectangle(0, 0, _w, _h, false);

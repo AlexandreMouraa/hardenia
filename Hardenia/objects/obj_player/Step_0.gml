@@ -115,6 +115,7 @@ if (!venceu && room == sala_final() && instance_number(obj_enemy) == 0) {
         vitoria_estado = "nome";
         keyboard_string = "";
     }
+    final_espera = 150;
 }
 
 // sala limpa: quantas tentativas cada sala custou (estatisticas do site). Nas salas de duelo,
@@ -159,6 +160,21 @@ if (global.toque_ativo) {
 }
 
 if (venceu) {
+    // o rei cai em camera lenta; o texto do final vem depois, e o ranking so depois dele
+    if (final_espera > 0) {
+        final_espera -= 1;
+        if (final_espera == 0) {
+            instance_create_depth(0, 0, -9000, obj_final);
+        }
+        exit;
+    }
+    if (instance_exists(obj_final)) {
+        exit;
+    }
+    if (final_pausa > 0) {
+        final_pausa -= 1;
+        exit;
+    }
     if (vitoria_estado == "nome") {
         vitoria_nome = nome_filtrado(keyboard_string);
         keyboard_string = vitoria_nome;
@@ -479,6 +495,7 @@ if (hp <= 0) {
     rede_evento("morte", { x: round(x), y: round(y), tentativa: global.tentativas, tempo_ms: frames_para_ms(tempo_na_sala) });
     is_dead = true;
     frase_morte = frase_de_morte(morto_por);
+    marca_guardar(x, y);
     som(snd_morte_jogador);
     cancelar_carga();
     brilho = 0;
