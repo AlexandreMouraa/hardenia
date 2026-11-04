@@ -609,6 +609,8 @@ duelo_vivo = false;
 duelos_vencidos = 0;
 viu_cena = false;
 viu_final = false;
+menu_passo = 0;
+menu_telas = ["como_jogar", "opcoes", "creditos"];
 
 // estado por sala (zerado no Room Start)
 grade = -1;

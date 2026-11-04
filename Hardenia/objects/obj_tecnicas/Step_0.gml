@@ -16,11 +16,11 @@ if (tempo < 20 || instance_exists(obj_autotest)) {
 }
 
 var _n = array_length(oferta);
-if (keyboard_check_pressed(vk_left) || keyboard_check_pressed(ord("A"))) {
+if (keyboard_check_pressed(vk_left) || keyboard_check_pressed(ord("A")) || global.pad_novo_h < 0) {
     cursor = (cursor + _n - 1) mod _n;
     sfx(snd_dash_negado, 1, false, 0.3);
 }
-if (keyboard_check_pressed(vk_right) || keyboard_check_pressed(ord("D"))) {
+if (keyboard_check_pressed(vk_right) || keyboard_check_pressed(ord("D")) || global.pad_novo_h > 0) {
     cursor = (cursor + 1) mod _n;
     sfx(snd_dash_negado, 1, false, 0.3);
 }
@@ -31,7 +31,7 @@ for (var _i = 0; _i < _n; _i++) {
         exit;
     }
 }
-if (keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space) || keyboard_check_pressed(ord("J"))) {
+if (keyboard_check_pressed(vk_enter) || keyboard_check_pressed(vk_space) || keyboard_check_pressed(ord("J")) || pad_confirma()) {
     escolher(cursor);
     exit;
 }

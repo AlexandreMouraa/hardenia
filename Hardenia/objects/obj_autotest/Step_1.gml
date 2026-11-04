@@ -76,6 +76,39 @@ if (instance_exists(obj_tecnicas)) {
 }
 
 if (room == Room_Menu) {
+    // as telas do menu, uma vez: abre, usa cada opcao, tira print e fecha
+    if (menu_passo < array_length(menu_telas) * 30) {
+        var _qual = menu_passo div 30;
+        if (menu_passo mod 30 == 1) {
+            with (obj_menu) {
+                acionar(other.menu_telas[_qual]);
+            }
+        }
+        if (menu_passo mod 30 == 10 && menu_telas[_qual] == "opcoes") {
+            with (obj_opcoes) {
+                for (var _o = 0; _o < array_length(itens); _o++) {
+                    // tela cheia fica de fora: o robo roda em janela
+                    if (itens[_o].nome != "Tela cheia") {
+                        itens[_o].mudar(-1);
+                        itens[_o].mudar(1);
+                    }
+                }
+            }
+        }
+        if (menu_passo mod 30 == 15) {
+            pedir_print("menu_" + menu_telas[_qual]);
+        }
+        if (menu_passo mod 30 == 25) {
+            if (!instance_exists(obj_opcoes)) {
+                log("FALHA_menu", "a tela nao abriu: " + menu_telas[_qual]);
+            }
+            with (obj_opcoes) {
+                fechar();
+            }
+        }
+        menu_passo += 1;
+        exit;
+    }
     espera += 1;
     if (espera == 20 && run_atual == 0) {
         pedir_print("menu");

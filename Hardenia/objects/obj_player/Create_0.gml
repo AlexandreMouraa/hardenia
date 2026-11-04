@@ -110,7 +110,7 @@ ataque_segurado = function() {
     if (instance_exists(obj_autotest)) {
         return obj_autotest.bot_segurar;
     }
-    return mouse_check_button(mb_left) || keyboard_check(ord("J"));
+    return mouse_check_button(mb_left) || keyboard_check(ord("J")) || pad_ataque_preso();
 };
 // fim da carga, sem golpe: dash, morte e vitoria
 cancelar_carga = function() {
@@ -533,14 +533,14 @@ posicionar_camera = function(_na_hora) {
         cam_x = lerp(cam_x, _ax, _cena ? 0.06 : 0.2);
         cam_y = lerp(cam_y, _ay, _cena ? 0.06 : 0.2);
     }
-    var _cx = cam_x + global.chute_x;
-    var _cy = cam_y + global.chute_y;
+    var _cx = cam_x + global.chute_x * global.op_tremor;
+    var _cy = cam_y + global.chute_y * global.op_tremor;
     global.chute_x *= 0.75;
     global.chute_y *= 0.75;
     if (global.tremor > 0) {
         tremor_fase += 1;
-        _cx += sin(tremor_fase * 1.7) * global.tremor;
-        _cy += cos(tremor_fase * 2.3) * global.tremor;
+        _cx += sin(tremor_fase * 1.7) * global.tremor * global.op_tremor;
+        _cy += cos(tremor_fase * 2.3) * global.tremor * global.op_tremor;
         global.tremor = (global.tremor < 0.5) ? 0 : global.tremor * 0.82;
     }
     camera_set_view_pos(_cam, round(clamp(_cx, 0, room_width - _cw)), round(clamp(_cy, 0, room_height - _ch)));

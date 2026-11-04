@@ -1,6 +1,7 @@
 // A historia na tela: abertura, final e as frases que mudam com as tentativas. Este e o lugar para
 // o grupo mexer no texto, sem precisar entender o resto do codigo. Fala dos Caidos e do rei: em
 // scr_tecnicas. Frases de morte por inimigo: em scr_mapa.
+// so na primeira vez que o jogo abre neste aparelho (scr_salvo)
 global.abertura_vista = false;
 global.abertura = [
     "Há anos Hardenia manda seus guerreiros ao trono.",

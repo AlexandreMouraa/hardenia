@@ -5,13 +5,24 @@ if (global.toque_ativo) {
         event_perform(ev_keypress, vk_escape);
     }
 }
+if (pad_novo(gp_start) && !is_dead && !venceu && !instance_exists(obj_opcoes)) {
+    event_perform(ev_keypress, vk_escape);
+}
 
 if (global.game_paused) {
+    // as opcoes abertas por cima da pausa cuidam da propria entrada
+    if (instance_exists(obj_opcoes)) {
+        exit;
+    }
     var _pausa_toque = toque_botoes_pausa();
-    if (keyboard_check_pressed(ord("M")) || (global.toque_ativo && toque_tap_em(_pausa_toque.menu))) {
+    if (keyboard_check_pressed(ord("M")) || pad_novo(gp_select) || (global.toque_ativo && toque_tap_em(_pausa_toque.menu))) {
         global.game_paused = false;
         room_goto(Room_Menu);
-    } else if (global.toque_ativo && toque_tap_em(_pausa_toque.continuar)) {
+    } else if (keyboard_check_pressed(ord("O")) || pad_novo(gp_face4) || (global.toque_ativo && toque_tap_em(_pausa_toque.opcoes))) {
+        with (instance_create_depth(0, 0, -9500, obj_opcoes)) {
+            modo = "opcoes";
+        }
+    } else if (pad_volta() || (global.toque_ativo && toque_tap_em(_pausa_toque.continuar))) {
         event_perform(ev_keypress, vk_escape);
     }
     exit;
@@ -29,7 +40,7 @@ if (!venceu) {
 
 // clique: o mesmo ataque do J (KeyPress_74). Lido antes da micro-pausa, como o dash:
 // clicar durante ela fica guardado
-var _clique = instance_exists(obj_autotest) ? obj_autotest.bot_clique : mouse_check_button_pressed(mb_left);
+var _clique = instance_exists(obj_autotest) ? obj_autotest.bot_clique : (mouse_check_button_pressed(mb_left) || pad_ataque_novo());
 if (global.toque_ativo) {
     // o dedo na tela nao e clique: quem ataca e o botao
     _clique = global.toque.ataque_novo;
@@ -40,7 +51,7 @@ if (_clique && !is_dead && !venceu) {
 }
 
 // golpe especial (girar, no Create). Pausa e mapa ja sairam la em cima
-var _especial = instance_exists(obj_autotest) ? obj_autotest.bot_especial : (mouse_check_button_pressed(mb_right) || keyboard_check_pressed(ord("K")));
+var _especial = instance_exists(obj_autotest) ? obj_autotest.bot_especial : (mouse_check_button_pressed(mb_right) || keyboard_check_pressed(ord("K")) || pad_novo(gp_face2));
 if (global.toque_ativo) {
     _especial = global.toque.especial_novo;
 }
@@ -57,7 +68,7 @@ if (_especial && !is_dead && !venceu) {
 
 // dash apertado fica guardado alguns frames (dash_buffer). Lido antes da
 // micro-pausa: apertar durante ela tambem vale
-var _dash_apertado = instance_exists(obj_autotest) ? obj_autotest.bot_dash : keyboard_check_pressed(vk_space);
+var _dash_apertado = instance_exists(obj_autotest) ? obj_autotest.bot_dash : (keyboard_check_pressed(vk_space) || pad_dash_novo());
 if (global.toque_ativo) {
     _dash_apertado = global.toque.dash_novo;
 }
@@ -119,6 +130,7 @@ if (!venceu && room == sala_final() && instance_number(obj_enemy) == 0) {
     }
     final_espera = 150;
     musica(snd_musica_final, 3000);
+    salvo_vitoria(global.tentativas, frames_para_ms(global.run_frames));
 }
 
 // sala limpa: quantas tentativas cada sala custou (estatisticas do site). Nas salas de duelo,
@@ -148,7 +160,11 @@ if (!sala_limpa_enviada && instance_number(obj_enemy) == 0 && !duelo_tentar()) {
 
 var _h = (keyboard_check(vk_right) || keyboard_check(ord("D"))) - (keyboard_check(vk_left) || keyboard_check(ord("A")));
 var _v = (keyboard_check(vk_down) || keyboard_check(ord("S"))) - (keyboard_check(vk_up) || keyboard_check(ord("W")));
-var _enter_apertado = keyboard_check_pressed(vk_enter);
+var _enter_apertado = keyboard_check_pressed(vk_enter) || pad_confirma();
+if (_h == 0 && _v == 0) {
+    _h = global.pad_h;
+    _v = global.pad_v;
+}
 
 // no modo -autotest quem "aperta" e o robo (obj_autotest), pelas mesmas variaveis
 if (instance_exists(obj_autotest)) {
@@ -189,6 +205,9 @@ if (venceu) {
             } else if (pedido_nome < 0 && toque_tap_em(_botoes_nome.pular)) {
                 room_goto(Room_Menu);
             }
+        } else if (pedido_nome < 0 && pad_novo(gp_face4)) {
+            // com controle: Y abre o teclado do sistema; A com o nome vazio pula o ranking
+            pedido_nome = get_string_async("Seu nome para o ranking", vitoria_nome);
         } else if (_enter_apertado) {
             enviar_nome();
         }
@@ -293,7 +312,7 @@ if (especial_buffer > 0 && !is_dashing) {
     girar();
 }
 especial_buffer = max(0, especial_buffer - 1);
-var _especial_preso = instance_exists(obj_autotest) ? obj_autotest.bot_especial_preso : (mouse_check_button(mb_right) || keyboard_check(ord("K")));
+var _especial_preso = instance_exists(obj_autotest) ? obj_autotest.bot_especial_preso : (mouse_check_button(mb_right) || keyboard_check(ord("K")) || pad_preso(gp_face2));
 if (global.toque_ativo) {
     _especial_preso = global.toque.especial_preso;
 }
@@ -504,6 +523,8 @@ if (hp <= 0) {
     is_dead = true;
     frase_morte = frase_de_morte(morto_por);
     marca_guardar(x, y);
+    global.salvo.mortes_total += 1;
+    salvo_gravar();
     som(snd_morte_jogador);
     cancelar_carga();
     brilho = 0;

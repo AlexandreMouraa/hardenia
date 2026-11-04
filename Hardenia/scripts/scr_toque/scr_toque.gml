@@ -86,6 +86,7 @@ function toque_detectar() {
         global.toque_ativo = obj_autotest.usar_toque;
         return;
     }
+    pad_ler();
     var _x = ponteiro_gui_x(0);
     var _y = ponteiro_gui_y(0);
     // janela mudou (girou o aparelho, a barra do navegador sumiu): o ponteiro "andou" sem
@@ -142,8 +143,9 @@ function toque_botoes_pausa() {
     var _cy = display_get_gui_height() / 2;
     var _e = toque_escala();
     return {
-        continuar: [_cx - 190 * _e, _cy - 130 * _e, _cx - 10 * _e, _cy - 84 * _e, "CONTINUAR"],
-        menu: [_cx + 10 * _e, _cy - 130 * _e, _cx + 190 * _e, _cy - 84 * _e, "VOLTAR AO MENU"],
+        continuar: [_cx - 290 * _e, _cy - 130 * _e, _cx - 100 * _e, _cy - 84 * _e, "CONTINUAR"],
+        opcoes: [_cx - 90 * _e, _cy - 130 * _e, _cx + 90 * _e, _cy - 84 * _e, "OPÇÕES"],
+        menu: [_cx + 100 * _e, _cy - 130 * _e, _cx + 290 * _e, _cy - 84 * _e, "VOLTAR AO MENU"],
     };
 }
 

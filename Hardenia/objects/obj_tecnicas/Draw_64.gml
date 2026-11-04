@@ -56,7 +56,7 @@ for (var _i = 0; _i < array_length(oferta); _i++) {
 }
 draw_set_alpha(_surgir);
 draw_set_color(c_ltgray);
-texto(_w / 2, _h / 2 + 122 * _esc, global.toque_ativo ? "Toque na técnica" : "A / D ou 1 2 3 para escolher    ENTER confirma    Também dá para clicar", _esc * 0.75, _esc * 0.75, 0);
+texto(_w / 2, _h / 2 + 122 * _esc, global.toque_ativo ? "Toque na técnica" : ((global.ultimo_aparelho == "controle") ? "ALAVANCA para escolher    A confirma" : "A / D ou 1 2 3 para escolher    ENTER confirma    Também dá para clicar"), _esc * 0.75, _esc * 0.75, 0);
 draw_set_alpha(1);
 draw_set_color(c_white);
 draw_set_halign(fa_left);
