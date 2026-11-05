@@ -98,7 +98,9 @@ function frase_de_morte(_causa) {
 // parede), em vez de obj_wall posicionados a mao. passo: de quantos em quantos pixels da
 // imagem ela e lida; contorno mais detalhado que isso vira degrau. Veja ESPECIFICACAO_ARTE
 global.mascaras_sala = [
-    { sala: Room1, sprite: spr_mascara_fase01, passo: 4 },
+    { sala: Room1, sprite: spr_mascara_ruinas, passo: 8 },
+    { sala: Room2, sprite: spr_mascara_patio, passo: 8 },
+    { sala: Room3, sprite: spr_mascara_cemiterio, passo: 8 },
     { sala: Room_Tunel, sprite: spr_mascara_tunel, passo: 8 },
     { sala: Room_Trono, sprite: spr_mascara_trono, passo: 8 },
 ];

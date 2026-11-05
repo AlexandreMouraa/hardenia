@@ -40,6 +40,9 @@ PLATAFORMAS = {"web", "windows"}
 TIPOS_EVENTO = {"inicio", "morte", "sala"}
 TIPOS_OPINIAO = {"opiniao", "bug"}
 VERSAO_OK = re.compile(r"^[0-9][0-9.]{0,15}$")
+# salas refeitas: o mapa de mortes so mostra o tracado atual. Versao do jogo em que cada
+# tracado entrou; morte sem versao (o jogo so manda desde a 0.10) ou mais antiga fica de fora
+TRACADO_DESDE = {"Room1": (0, 10), "Room2": (0, 10), "Room3": (0, 10)}
 # no maximo isto de mensagens por hora no Discord, para spam nao inundar o canal
 DISCORD_POR_HORA = 30
 
@@ -118,6 +121,7 @@ MIGRACOES = [
     ("opinioes", "tipo", "ALTER TABLE opinioes ADD COLUMN tipo TEXT NOT NULL DEFAULT 'opiniao'"),
     ("opinioes", "versao", "ALTER TABLE opinioes ADD COLUMN versao TEXT"),
     ("vitorias", "desafio", "ALTER TABLE vitorias ADD COLUMN desafio TEXT NOT NULL DEFAULT ''"),
+    ("eventos", "versao", "ALTER TABLE eventos ADD COLUMN versao TEXT"),
 ]
 
 # melhor resultado de cada nome (sem diferenciar maiusculas); empate de
@@ -301,11 +305,14 @@ def registrar_evento(con, dados):
         y = inteiro(dados, "y", 0, 10000)
     tentativa = inteiro(dados, "tentativa", 1, 100000) if "tentativa" in dados else None
     tempo = inteiro(dados, "tempo_ms", 0, 86_400_000) if "tempo_ms" in dados else None
+    versao = dados.get("versao")
+    if versao is not None and (not isinstance(versao, str) or not VERSAO_OK.match(versao)):
+        raise Invalido("versao")
     con.execute(
-        "INSERT INTO eventos (tipo, sala, x, y, tentativa, tempo_ms, plataforma, sessao, criado)"
-        " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        "INSERT INTO eventos (tipo, sala, x, y, tentativa, tempo_ms, plataforma, sessao, criado, versao)"
+        " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         (tipo, sala, x, y, tentativa, tempo, texto_opcao(dados, "plataforma", PLATAFORMAS),
-         sessao(dados), int(time.time())))
+         sessao(dados), int(time.time()), versao))
     return {"ok": True}
 
 
@@ -387,13 +394,22 @@ def estatisticas(con):
     }
 
 
+def versao_tupla(texto):
+    """"0.10" vira (0, 10), que vem depois de (0, 9); sem versao vira (), antes de tudo"""
+    try:
+        return tuple(int(p) for p in texto.split("."))
+    except (AttributeError, ValueError):
+        return ()
+
+
 def mortes(con, sala):
     if sala not in SALAS:
         raise Invalido("sala")
     linhas = con.execute(
-        "SELECT x, y FROM eventos WHERE tipo='morte' AND sala=? ORDER BY id DESC LIMIT 5000",
+        "SELECT x, y, versao FROM eventos WHERE tipo='morte' AND sala=? ORDER BY id DESC LIMIT 5000",
         (sala,)).fetchall()
-    return {"sala": sala, "pontos": [[l["x"], l["y"]] for l in linhas]}
+    desde = TRACADO_DESDE.get(sala, ())
+    return {"sala": sala, "pontos": [[l["x"], l["y"]] for l in linhas if versao_tupla(l["versao"]) >= desde]}
 
 
 class Api(BaseHTTPRequestHandler):
