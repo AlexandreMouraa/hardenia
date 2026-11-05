@@ -56,6 +56,17 @@ def validar():
     for i in instancias:
         if i["objectId"]["name"] == "obj_wall":
             paredes.append((i["x"], i["y"], i["x"] + 64 * i["scaleX"], i["y"] + 64 * i["scaleY"]))
+    # Contrato da restauracao: preservar a geometria original da terceira fase.
+    assert paredes == [
+        (0, 0, 1536, 32), (0, 992, 1536, 1024),
+        (0, 0, 32, 1024), (1504, 0, 1536, 1024),
+        (0, 0, 704, 248), (800, 0, 1536, 248),
+        (0, 832, 704, 1024), (800, 832, 1536, 1024),
+        (0, 248, 264, 832), (1280, 248, 1536, 832),
+    ], "As paredes do Patio devem continuar iguais as originais"
+    fundo = next(layer for layer in sala["layers"] if layer["name"] == "Background")
+    assert fundo["spriteId"]["name"] == "spr_bg_fase02"
+    assert not (JOGO / "objects/obj_patio/Draw_0.gml").exists(), "Nao sobrepor o fundo original"
     # Grade conservadora, inflada como a do robo: 8 px laterais e 14 px verticais.
     passo = 8
     w, h = 1536 // passo, 1024 // passo

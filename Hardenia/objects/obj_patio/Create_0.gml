@@ -1,5 +1,5 @@
-depth = 90; // acima do fundo antigo e abaixo da luz, dos avisos e dos personagens
-chao = -1;
+// So controla os perigos e as dicas; o cenario e a colisao continuam os originais.
+depth = 90;
 // Primeiro barril perto da entrada, longe do primeiro grupo: experimentar sem ser cercado.
 var _barris = [[840, 500], [380, 280], [1140, 750], [760, 690]];
 for (var _i = 0; _i < array_length(_barris); _i++) {

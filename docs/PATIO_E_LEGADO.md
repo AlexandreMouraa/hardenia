@@ -7,49 +7,46 @@ Não foi publicada nem teve a versão de distribuição alterada.
 
 | Antes | Agora | Objetivo de design |
 |---|---|---|
-| Pátio com paredes periféricas e grupos de inimigos | Quatro colunas, duas muretas, rotas laterais e centro exposto | Escolher aproximação e usar cobertura contra flechas |
-| Cenário sem ferramentas de combate | Quatro barris e duas armadilhas | Atrair inimigos e criar oportunidades de dano ambiental |
-| Arranjos centrados em ghouls | Arqueiros, ghouls e defensor nos três arranjos | Combinar pressão de aproximação com posições defensivas |
+| Cenário sem ferramentas de combate | Quatro barris e duas armadilhas no mapa original | Atrair inimigos e criar oportunidades de dano ambiental |
+| Arranjos centrados em ghouls | Arqueiros, ghouls, defensor e curandeiro | Criar prioridades de combate e suporte entre inimigos |
 | Cartas com descrição curta | Ícone, efeito detalhado, ativação e caminhos de combinação | Entender a consequência de cada escolha |
 | Técnicas representadas por quadrados no HUD | Ícones compartilhados e nome da última técnica ativada | Reconhecer a construção e perceber seus efeitos |
 | Lista de nomes na pausa | Árvore consultável na pausa e na escolha | Planejar combinações e identificar pré-requisitos |
 
-## Pátio: regras e balanceamento inicial
+## Mapa original preservado
 
-A terceira fase da run é `Room2`, depois de Ruínas e Catacumbas.
-A geometria fica na própria sala. O controlador `obj_patio` desenha as coberturas
-a partir dos retângulos reais de `obj_wall`, sem uma segunda máscara divergente.
-O fundo tem lajes de baixo contraste, emblema militar e estandartes. A iluminação
-foi ajustada para o novo cenário. O desenho estático fica em uma surface,
-recriada se o dispositivo perder o contexto e liberada ao sair da sala.
+Por solicitação do Rodrigo, o redesenho do mapa foi retirado. A terceira fase
+continua sendo o Pátio (`Room2`), com **fundo, paredes, iluminação, entradas,
+dimensões e configurações originais**. O cenário procedural e seu cache de surface
+foram removidos. A restauração foi comparada com a base original do trabalho;
+as diferenças da sala ficam nos novos inimigos.
 
-- **Barril:** um golpe, flecha ou explosão acende a mecha. Aviso de 60 frames,
-  raio de 112 px, 4 de dano em inimigos e 1 na vida do jogador. Explode uma vez
-  e deixa restos. A primeira unidade fica perto do nascimento, para experimentar.
-- **Armadilha:** aproximação de jogador ou inimigo inicia um aviso de 60 frames.
-  Raio de 38 px, 2 de dano em inimigos e 1 no jogador. Um disparo por ciclo,
-  seguido de animação de 18 frames e recarga de 180 frames. Barris são atravessáveis;
-  a única geometria sólida nova são as coberturas.
-- **Cobertura:** bloqueia visão, flechas e dano ambiental. O dash mantém sua
-  invulnerabilidade e a proteção contra dano repetido é a mesma do combate atual.
-- **Defensor:** 5 de vida antes do ajuste de dificuldade da fase, movimento de
-  1,05 px/frame e guarda frontal com meia abertura de 65 graus. Gira no máximo
-  2 graus/frame ao acompanhar o jogador. Seu aviso dura 72 frames e sua recuperação
-  90, antes dos multiplicadores existentes da fase.
-- **Contra o defensor:** flanco e costas aceitam golpes comuns. Durante a
-  recuperação a guarda fica aberta, sinalizada por um losango. Carregado,
-  estocada, giro e dano ambiental abrem a guarda por 60 frames. O bloqueio tem
-  som metálico, faíscas e reação do escudo.
+`obj_patio` agora cria somente os perigos interativos e mostra as dicas.
+Os barris e armadilhas permanecem em posições acessíveis dentro da geometria original.
+Os ícones, cartas, árvore, defensor, curandeiro e créditos de Rodrigo Geraldino
+continuam presentes.
 
-Os valores são uma primeira proposta para playtest, não um balanceamento já
-aprovado por jogadores. A dificuldade existente ainda acrescenta vida e reduz
-aviso/recarga na terceira fase.
+## Regras de combate no Pátio
 
-Dano ambiental não aplica Sangria ou outros modificadores do golpe do jogador.
-Matar um inimigo que já sangrava continua podendo disparar sua combinação de morte.
-Reações em cadeia acendem outra mecha, sem explodir recursivamente no mesmo frame.
-Pausa, cartas, árvore, transição de mapa, cenas, morte e vitória interrompem os perigos.
-O robô percebe os novos avisos e usa giro ou carregado contra a guarda do defensor.
+- **Barril:** golpe, flecha ou explosão acende a mecha. Aviso de 60 frames,
+  raio de 112 px, 4 de dano em inimigos e 1 no jogador. Explode uma vez e deixa restos.
+- **Armadilha:** aproximação de jogador ou inimigo inicia aviso de 60 frames.
+  Raio de 38 px, 2 de dano em inimigos e 1 no jogador; animação de 18 frames
+  e recarga de 180 frames. Perigos não adicionam obstáculos sólidos ao mapa.
+- **Paredes:** bloqueiam visão, flechas e dano ambiental. O dash mantém a
+  invulnerabilidade e a proteção contra dano repetido segue o combate existente.
+- **Defensor:** 5 de vida base, movimento de 1,05 px/frame, guarda frontal de
+  65 graus para cada lado e giro limitado a 2 graus/frame. Aviso de 72 frames e
+  recuperação de 90, antes dos multiplicadores de dificuldade da fase.
+- **Contra o defensor:** flanco, costas e recuperação permitem golpes comuns.
+  Carregado, estocada, giro e cenário abrem a guarda por 60 frames. Bloqueio
+  tem som metálico, faíscas e reação do escudo; recuperação ganha um losango.
+- **Curandeiro:** regras e validação em [CURANDEIRO.md](CURANDEIRO.md).
+
+Dano ambiental não aplica técnicas do jogador ao golpe. Um inimigo já sangrando
+continua podendo disparar sua combinação de morte. Reações em cadeia acendem
+outra mecha, sem explosão recursiva no mesmo frame. Pausa, cartas, árvore,
+transição, cenas, morte e vitória interrompem os perigos.
 
 ## Técnicas e árvore
 
@@ -103,7 +100,7 @@ git diff --check
   teclado aos 13 nós verificados.
 - Guarda frontal, flanco, recuperação, quebra, dano neutro, cobertura,
   invulnerabilidade, pausa, aviso, disparo único e rearmamento verificados.
-- Prévia de cartas, árvore e cenário desenhada em Canvas a partir dos eventos GML
+- Prévia das cartas e da árvore desenhada em Canvas a partir dos eventos GML
   adaptados e das fontes do projeto; inspeção visual sem cortes nos exemplos conferidos.
 
 Os testes Node executam um subconjunto das funções reais com adaptação restrita
@@ -166,7 +163,7 @@ Playtest manual:
    a indicação de requisitos cumpridos e a aquisição posterior por uma oferta.
 3. Abrir árvore pela pausa; fechar com teclado, controle e toque. Confirmar que
    o mundo permanece pausado e o próximo comando não vira ataque acidental.
-4. No Pátio, provocar disparo de arqueiro contra uma coluna e contra um barril.
+4. No Pátio, provocar disparo de arqueiro contra uma parede e contra um barril.
    Ativar um barril perto de um inimigo, sair do raio e testar proteção da cobertura.
 5. Atrair inimigo para uma armadilha. Pausar durante o aviso e confirmar que
    o temporizador não avança; testar o rearmamento e o dash sobre o disparo.
@@ -176,5 +173,5 @@ Playtest manual:
    o Cemitério; morrer e confirmar o reinício sem técnicas ou perigos antigos.
 8. Repetir cartas, árvore e interações em HTML5, incluindo toque e redimensionamento.
 
-Para apresentar o trabalho, comparar o Pátio original com o novo layout e observar
-se colegas usam a cobertura, provocam dano ambiental e explicam um caminho de combinação.
+Para apresentar o trabalho, comparar os encontros no mesmo mapa e observar
+se colegas usam as paredes, provocam dano ambiental e explicam um caminho de combinação.

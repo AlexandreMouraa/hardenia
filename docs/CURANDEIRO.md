@@ -56,4 +56,4 @@ de gameplay desta alteração. Os resultados do robô registrados em
 
 Para experimentar: entrar na terceira fase, ferir um aliado próximo do curandeiro,
 observar a ligação verde e comparar deixar a conjuração terminar com interrompê-la.
-Conferir também que a cura não atravessa uma cobertura.
+Conferir também que a cura não atravessa uma parede do mapa original.

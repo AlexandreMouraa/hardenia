@@ -15,7 +15,7 @@ não é o personagem que fica mais forte, é o jogador.
 
 Mais detalhes em [docs/GDD.md](docs/GDD.md).
 
-O desenvolvimento local do Pátio tático, cartas detalhadas e árvore de técnicas
+O desenvolvimento de combate no Pátio, cartas detalhadas e árvore de técnicas
 está descrito em [docs/PATIO_E_LEGADO.md](docs/PATIO_E_LEGADO.md), com regras,
 verificações realizadas e testes de engine ainda pendentes.
 O [curandeiro do Pátio](docs/CURANDEIRO.md) acrescenta suporte inimigo com cura
