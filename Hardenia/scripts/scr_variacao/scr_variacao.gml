@@ -18,8 +18,8 @@ global.arranjos = [
     ] },
     { sala: Room2, lista: [
         [],
-        [[obj_enemy_arqueiro, 400, 350], [obj_enemy_arqueiro, 1136, 350], [obj_enemy_ghoul, 400, 674], [obj_enemy_ghoul, 1136, 674]],
-        [[obj_enemy_ghoul, 400, 350], [obj_enemy_ghoul, 1136, 350], [obj_enemy_ghoul, 400, 674], [obj_enemy_ghoul, 1136, 674], [obj_enemy, 768, 250], [obj_enemy, 768, 800]],
+        [[obj_enemy_defensor, 400, 350], [obj_enemy_curandeiro, 400, 510], [obj_enemy_ghoul, 400, 674], [obj_enemy_arqueiro, 1136, 674]],
+        [[obj_enemy_arqueiro, 400, 350], [obj_enemy_ghoul, 1136, 350], [obj_enemy_defensor, 400, 674], [obj_enemy_ghoul, 1136, 674], [obj_enemy_curandeiro, 1136, 480], [obj_enemy, 768, 880]],
     ] },
     { sala: Room3, lista: [
         [],

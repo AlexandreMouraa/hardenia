@@ -27,6 +27,8 @@ function run_zerar() {
     global.fase_curada = -1;
     global.furia = 0;
     global.tecnicas = [];
+    global.tecnica_ultimo = "";
+    global.tecnica_ultimo_ms = -2000;
     global.tecnica_inicio = true;
     duelos_zerar();
     global.runs_zeradas += 1;
@@ -46,6 +48,8 @@ run_zerar();
 // Frase da tela de morte: o guerreiro mais fraco aprendendo, sem cutscene. Por inimigo:
 // [primeira vez, voltou a morrer ali]. Inimigo novo: acrescentar aqui, com o nome do objeto
 global.frases_inimigo = {
+    obj_enemy_defensor: ["O escudo cobria a frente. As costas estavam livres.", "De novo o defensor. Depois do golpe ele abre a guarda."],
+    obj_perigo_patio: ["O chão avisou. A pólvora não escolhe lado.", "Posso usar as armadilhas. Só não posso ficar nelas."],
     obj_enemy: ["O esqueleto avisou. Eu é que não saí da frente.", "Esse esqueleto de novo... dessa vez eu desvio."],
     obj_enemy_ghoul: ["O ghoul só corre em linha reta. Era só sair do caminho.", "Esse ghoul de novo. Agora eu sei onde ele para."],
     obj_enemy_wight: ["O wight demora, mas quando varre, varre tudo.", "De novo esse wight. Depois da varredura ele fica exposto."],

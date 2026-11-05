@@ -1,4 +1,4 @@
-if (global.game_paused || is_dead || venceu || instance_exists(obj_mapa) || instance_exists(obj_tecnicas) || instance_exists(obj_cena)) {
+if (global.consulta_bloqueio > 0 || instance_exists(obj_arvore) || global.game_paused || is_dead || venceu || instance_exists(obj_mapa) || instance_exists(obj_tecnicas) || instance_exists(obj_cena)) {
     exit;
 }
 
