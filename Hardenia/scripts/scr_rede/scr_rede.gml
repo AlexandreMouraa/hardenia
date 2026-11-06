@@ -50,6 +50,8 @@ function rede_evento(_tipo, _dados = undefined) {
     }
     _dados.tipo = _tipo;
     _dados.sala = room_get_name(room);
+    // o mapa de mortes do site separa as salas refeitas: morte do tracado antigo nao aparece no novo
+    _dados.versao = VERSAO_JOGO;
     return rede_post("/api/evento", _dados);
 }
 
