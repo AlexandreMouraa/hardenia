@@ -61,6 +61,25 @@ if (instance_exists(obj_cena)) {
     exit;
 }
 
+// arma no chao (obj_arma_escolha, filha do obj_tecnicas): troca, a nao ser com -semarmas
+if (instance_exists(obj_arma_escolha)) {
+    var _escolha = instance_find(obj_arma_escolha, 0);
+    if (_escolha.tempo == 24 && !viu_arma) {
+        viu_arma = true;
+        pedir_print("arma");
+    }
+    if (_escolha.tempo == 30 && _escolha.escolhido < 0) {
+        var _chao = _escolha.chao;
+        var _troca = (pegar_armas && !variable_instance_exists(_chao, "robo_largou")) ? 1 : 0;
+        log("arma", (_troca == 1) ? "troca " + global.arma + " por " + _escolha.oferta[1].chave : "fica com " + global.arma);
+        _escolha.escolher(_troca);
+        if (_troca == 1) {
+            _chao.robo_largou = true;
+        }
+    }
+    exit;
+}
+
 // escolha de tecnica: fica com a primeira carta; print na primeira vez
 if (instance_exists(obj_tecnicas)) {
     var _carta = instance_find(obj_tecnicas, 0);
@@ -151,7 +170,7 @@ if (room == Room_Menu) {
             if (!usar_horda && !todas_tecnicas && variable_struct_names_count(elites_vistas) < 3) {
                 log("FALHA_elite", "so " + string(variable_struct_names_count(elites_vistas)) + " habilidades apareceram");
             }
-            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes) + " danos=" + string(danos) + " avisos_max=" + string(avisos_max) + " combos=" + string(combos) + " elites=" + string(variable_struct_names_count(elites_vistas)) + (carregar ? " carregados=" + string(carregados) : "") + (usar_especial ? " especiais=" + string(especiais) : "") + (usar_estocada ? " estocadas=" + string(estocadas) : "") + (testar_formas ? " formas=" + string(variable_struct_names_count(formas_vistas)) : "") + (testar_grupo ? " grupo=" + string(grupo_ok) : "") + (usar_toque ? " toque=1" : "") + " tecnicas=" + string(variable_struct_names_count(global.tecnica_usos)) + " furia=" + string(global.giros_furiosos) + " duelos=" + string(duelos_vencidos));
+            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes) + " danos=" + string(danos) + " avisos_max=" + string(avisos_max) + " combos=" + string(combos) + " elites=" + string(variable_struct_names_count(elites_vistas)) + (carregar ? " carregados=" + string(carregados) : "") + (usar_especial ? " especiais=" + string(especiais) : "") + (usar_estocada ? " estocadas=" + string(estocadas) : "") + (testar_formas ? " formas=" + string(variable_struct_names_count(formas_vistas)) : "") + (testar_grupo ? " grupo=" + string(grupo_ok) : "") + (usar_toque ? " toque=1" : "") + " tecnicas=" + string(variable_struct_names_count(global.tecnica_usos)) + " furia=" + string(global.giros_furiosos) + " duelos=" + string(duelos_vencidos) + " armas=" + string(variable_struct_names_count(armas_usadas)));
             encerrar(0);
             exit;
         }
@@ -292,6 +311,10 @@ if (run_atual == 1 && dash_prints == 0 && _p.is_dashing && _p.dash_timer == 5) {
 }
 // combos completos: conta quando o terceiro golpe comeca
 var _forte_agora = _p.is_attacking && _p.golpe_atual == 3;
+// quais armas golpearam nesta bateria ("armas=N" no resumo)
+if (_p.is_attacking) {
+    variable_struct_set(armas_usadas, global.arma, true);
+}
 if (_forte_agora && !forte_antes) {
     if (_p.golpe_carregado) {
         carregados += 1;
@@ -626,6 +649,12 @@ for (var _i = 0; _i < array_length(_zonas); _i++) {
     }
 }
 
+// print do HUD com a arma de Caido na mao, na primeira luta depois de trocar
+if (!viu_arma_hud && global.arma != "espada" && instance_number(obj_enemy) > 0) {
+    viu_arma_hud = true;
+    pedir_print("arma_hud");
+}
+
 // ---------- objetivo: inimigo mais perto, ou o portao adiante ----------
 var _alvo = instance_nearest(_p.x, _p.y, obj_enemy);
 var _gx = _p.x;
@@ -633,6 +662,15 @@ var _gy = _p.y;
 if (_alvo != noone) {
     _gx = _alvo.x;
     _gy = _alvo.y;
+} else if (pegar_armas && arma_no_chao() != noone) {
+    // a arma do Caido antes do bau: fica no lugar onde ele caiu, perto de onde a luta acabou
+    var _arma_chao = arma_no_chao();
+    _gx = _arma_chao.x;
+    _gy = _arma_chao.y;
+    if (!viu_arma_chao && _arma_chao.pousar == 0) {
+        viu_arma_chao = true;
+        pedir_print("arma_chao");
+    }
 } else if (instance_exists(obj_bau) && !instance_find(obj_bau, 0).aberto) {
     _gx = instance_find(obj_bau, 0).x;
     _gy = instance_find(obj_bau, 0).y;

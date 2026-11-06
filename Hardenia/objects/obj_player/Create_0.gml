@@ -164,13 +164,16 @@ enviar_nome = function() {
 };
 
 golpear = function(_carregado = false) {
+    // os numeros vem da arma na mao (scr_armas); a espada tem os de sempre
+    var _arma = arma_def();
     combo_passo += 1;
-    // o golpe carregado usa os mesmos valores do terceiro golpe do combo
-    golpe_atual = _carregado ? 3 : combo_passo;
+    // o forte e o ultimo golpe do combo da arma (3 na espada, 4 nas adagas) e o carregado. Para a
+    // animacao, as dicas e o robo ele e sempre o golpe 3; os comuns alternam entre 1 e 2
+    var _forte = _carregado || combo_passo >= _arma.combo;
+    golpe_atual = _forte ? 3 : ((combo_passo - 1) mod 2) + 1;
     golpe_carregado = _carregado;
     golpe_estocada = false;
-    var _forte = (golpe_atual == 3);
-    var _alcance = _forte ? 36 : 32;
+    var _alcance = _forte ? _arma.alcance_forte : _arma.alcance;
     var _dir = point_direction(0, 0, face_h, face_v);
     var _alvo = mira_alvo();
     golpe_mirado = (_alvo != noone);
@@ -204,13 +207,19 @@ golpear = function(_carregado = false) {
         _gy = y + _cy * _k;
     }
     var _golpe = instance_create_layer(_gx, _gy, "Instances", obj_attack);
-    _golpe.quebra_escudo = _carregado;
+    _golpe.quebra_escudo = _carregado || _arma.quebra;
+    if (!_forte) {
+        _golpe.damage = _arma.dano;
+        _golpe.knockback = _arma.empurra;
+        _golpe.image_xscale = _arma.escala;
+        _golpe.image_yscale = _arma.escala;
+    }
     if (_forte) {
         _golpe.forte = true;
-        _golpe.damage = 2;
-        _golpe.knockback = 28;
-        _golpe.image_xscale = 1.25;
-        _golpe.image_yscale = 1.25;
+        _golpe.damage = _arma.dano_forte;
+        _golpe.knockback = _arma.empurra_forte;
+        _golpe.image_xscale = _arma.escala_forte;
+        _golpe.image_yscale = _arma.escala_forte;
         if (tem_tecnica("bomba_combo")) {
             // no alvo; sem alvo, a frente, sem cair dentro da parede
             var _ate = golpe_mirado ? point_distance(x, y, _alvo.x, _alvo.y) : 150;
@@ -225,25 +234,31 @@ golpear = function(_carregado = false) {
     }
     // arco de corte desenhado (o golpe em si, obj_attack, e invisivel). O
     // segundo varre ao contrario; o terceiro e mais largo e mais claro
-    // Do tamanho do alcance do golpe (64 e 76 px), e claro, para nao confundir com o vermelho
-    // dos ataques dos inimigos
+    // Do tamanho do alcance do golpe (64 e 76 px na espada), e claro, para nao confundir com o vermelho
+    // dos ataques dos inimigos. Arma de Caido: abertura, raio e cor dela (a cor do Caido)
+    var _espada = (_arma.caido == "");
+    var _cor_arma = arma_cor();
     with (instance_create_depth(x, y, depth - 1, obj_fx)) {
         tipo = "arco";
         dir = _dir;
         dono = other.id;
         if (_forte) {
-            abertura = 230;
-            raio = 74;
+            abertura = _arma.arco_forte;
+            raio = _arma.raio_forte;
             espessura = 24;
-            cor = make_colour_rgb(255, 160, 60);
+            cor = _espada ? make_colour_rgb(255, 160, 60) : merge_colour(_cor_arma, c_white, 0.25);
             intensidade = 1.6;
             vida_max = 13;
         } else {
-            abertura = 150;
-            raio = 62;
+            abertura = _arma.arco;
+            raio = _arma.raio;
             espessura = 18;
-            sentido = (other.combo_passo == 2) ? -1 : 1;
-            cor = (other.combo_passo == 2) ? make_colour_rgb(255, 215, 180) : make_colour_rgb(190, 210, 240);
+            sentido = (other.golpe_atual == 2) ? -1 : 1;
+            if (_espada) {
+                cor = (other.golpe_atual == 2) ? make_colour_rgb(255, 215, 180) : make_colour_rgb(190, 210, 240);
+            } else {
+                cor = (other.golpe_atual == 2) ? merge_colour(_cor_arma, c_white, 0.45) : _cor_arma;
+            }
             vida_max = 10;
         }
         vida = vida_max;
@@ -251,24 +266,25 @@ golpear = function(_carregado = false) {
     if (_forte) {
         combo_passo = 0;
         combo_janela = 0;
-        attack_cooldown = 36;
+        attack_cooldown = _arma.recarga_forte;
         attack_anim_duration = 14;
         ataque_impulso = 4;
     } else {
-        // mesma recarga do ataque antigo (20 frames): um inimigo comum morre
+        // espada: mesma recarga do ataque antigo (20 frames), um inimigo comum morre
         // no mesmo tempo de antes; mais 14 frames para emendar o proximo
-        combo_janela = 34;
-        attack_cooldown = 20;
+        combo_janela = _arma.janela;
+        attack_cooldown = _arma.recarga;
         attack_anim_duration = 12;
         // alvo na beira do alcance: passo curto ate ele, para o golpe nao passar raspando
-        if (golpe_mirado && point_distance(x, y, _alvo.x, _alvo.y) > 48) {
+        // (48 px na espada: alcance mais 16)
+        if (golpe_mirado && point_distance(x, y, _alvo.x, _alvo.y) > _alcance + 16) {
             ataque_impulso = 3;
         }
     }
     is_attacking = true;
     attack_anim_timer = attack_anim_duration;
-    // segundo golpe mais agudo, para o combo ter um ritmo de ouvido
-    sfx(_forte ? snd_golpe_forte : snd_attack, 1, false, 1, 0, golpe_atual == 2 ? 1.12 : 1);
+    // segundo golpe mais agudo, para o combo ter um ritmo de ouvido. Cada arma tem o seu tom
+    sfx(_forte ? snd_golpe_forte : snd_attack, 1, false, 1, 0, (golpe_atual == 2 ? 1.12 : 1) * _arma.tom);
 };
 
 // estocada: atacar no dash ou logo no fim dele (dash_freio) sai para o lado do

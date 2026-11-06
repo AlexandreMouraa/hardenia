@@ -153,6 +153,16 @@ if (_inimigos > 0) {
     draw_set_alpha(1);
 }
 
+// arma de Caido na mao, embaixo, com o icone (scr_armas). A espada nao aparece: e a de sempre.
+// Acima do botao de pausa do toque, que comeca em 40
+if (global.arma != "espada") {
+    draw_set_halign(fa_right);
+    draw_set_color(arma_cor());
+    texto(_w - 34 * _esc, 28 * _esc, arma_def().nome, _esc * 0.7, _esc * 0.7, 0);
+    arma_icone(global.arma, _w - 23 * _esc, 32 * _esc, 6 * _esc, arma_cor());
+    draw_set_halign(fa_right);
+}
+
 // seta na borda da tela apontando para o portao aberto quando ele esta fora
 // da camera
 if (portao_aberto() && _fase > 0 && room != sala_final() && !is_dead && !venceu) {

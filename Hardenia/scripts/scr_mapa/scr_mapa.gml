@@ -27,6 +27,8 @@ function run_zerar() {
     global.fase_curada = -1;
     global.furia = 0;
     global.tecnicas = [];
+    // a arma do Caido tambem se perde na morte (scr_armas)
+    global.arma = "espada";
     global.tecnica_inicio = true;
     duelos_zerar();
     global.runs_zeradas += 1;
