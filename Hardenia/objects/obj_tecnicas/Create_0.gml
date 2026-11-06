@@ -29,14 +29,8 @@ escolher = function(_i) {
 
 // [esquerda, cima, direita, baixo], na tela
 carta = function(_i) {
-    var _w = display_get_gui_width();
-    var _h = display_get_gui_height();
-    var _esc = max(1, _h / 540);
-    var _cw = 180 * _esc;
-    var _ch = 190 * _esc;
-    var _vao = 16 * _esc;
+    var _u = tecnicas_ui();
     var _n = array_length(oferta);
-    var _x0 = _w / 2 - (_n * _cw + (_n - 1) * _vao) / 2;
-    var _y0 = _h / 2 - _ch / 2 + 10 * _esc;
-    return [_x0 + _i * (_cw + _vao), _y0, _x0 + _i * (_cw + _vao) + _cw, _y0 + _ch];
+    var _x = (960 - (_n * 272 + (_n - 1) * 20)) / 2 + _i * 292;
+    return tecnica_ret(_u, _x, 117, 272, 336);
 };

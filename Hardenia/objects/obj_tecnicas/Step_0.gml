@@ -1,5 +1,6 @@
 global.hitstop = 1;
 tempo += 1;
+if (instance_exists(obj_arvore)) exit;
 
 if (escolhido >= 0) {
     saindo -= 1;
@@ -15,6 +16,12 @@ if (tempo < 20 || instance_exists(obj_autotest)) {
     exit;
 }
 
+var _u = tecnicas_ui();
+if (keyboard_check_pressed(vk_tab) || pad_novo(gp_face4)
+    || tecnica_clicou(tecnica_ret(_u, 720, 64, 188, 32))) {
+    arvore_abrir();
+    exit;
+}
 var _n = array_length(oferta);
 if (keyboard_check_pressed(vk_left) || keyboard_check_pressed(ord("A")) || global.pad_novo_h < 0) {
     cursor = (cursor + _n - 1) mod _n;

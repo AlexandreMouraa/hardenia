@@ -44,6 +44,12 @@ if (state == 1 && !zona_fixa) {
     zona_posicionar(zona, x, y);
 }
 
+// Suporte compartilha sangria, empurrao e pausa, mas nao disputa vagas de ataque.
+if (suporte_passo != undefined) {
+    suporte_passo();
+    exit;
+}
+
 var _is_moving = false;
 
 switch (state) {

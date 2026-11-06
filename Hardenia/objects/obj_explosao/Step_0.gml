@@ -6,6 +6,7 @@ tempo -= 1;
 if (estado == 1) {
     if (tempo <= 0) {
         estado = 2;
+        patio_zona(zona);
         tempo = duracao;
         if (explode) {
             som(snd_explosao);
