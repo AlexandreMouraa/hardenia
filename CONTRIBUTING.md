@@ -1,7 +1,13 @@
 # Como trabalhar no Hardenia em equipe
 
-A `main` é sempre jogável: tudo o que entra nela passou pelo robô. Ninguém sobe
-direto na `main`; toda mudança entra por pull request (PR).
+**Todo trabalho vai para o branch `homologacao`.** Cada tarefa sai dele, num
+branch seu, e volta para ele por pull request (PR). A `main` é a versão que está
+no site: só o Alexandre leva a `homologacao` para a `main`, quando publica.
+Ninguém sobe direto na `main` nem na `homologacao`.
+
+**Usa IA (Claude, Codex, Cursor, Copilot...)?** Peça para ela ler o
+[AGENTS.md](AGENTS.md) antes de qualquer mudança. Ele tem estas mesmas regras,
+escritas para a IA.
 
 Como abrir o projeto e rodar o robô está no [README](README.md).
 
@@ -9,12 +15,13 @@ Como abrir o projeto e rodar o robô está no [README](README.md).
 
 1. **Pegue uma tarefa** nas issues do GitHub e avise no grupo que ela é sua.
    Uma tarefa, um branch, um PR.
-2. **Atualize** com o projeto fechado na IDE:
+2. **Atualize a `homologacao`** com o projeto fechado na IDE:
    ```
-   git checkout main
-   git pull
+   git fetch origin
+   git checkout homologacao
+   git pull origin homologacao
    ```
-3. **Crie um branch** com seu nome e a tarefa:
+3. **Crie um branch** a partir dela, com seu nome e a tarefa:
    ```
    git checkout -b cris/golpe-carregado
    ```
@@ -29,9 +36,12 @@ Como abrir o projeto e rodar o robô está no [README](README.md).
    ```
    git push -u origin cris/golpe-carregado
    ```
-   No GitHub aparece o botão para abrir o PR. Preencha o modelo: o que muda,
+   No GitHub aparece o botão para abrir o PR. **Em "base", escolha
+   `homologacao`**, não `main`. Pelo terminal:
+   `gh pr create --base homologacao`. Preencha o modelo: o que muda, a issue,
    a linha `resumo` do robô e um print.
-7. **Revisão:** outra pessoa da equipe olha, o Alexandre aprova e faz o merge.
+7. **Revisão:** outra pessoa da equipe olha, o Alexandre aprova e faz o merge
+   na `homologacao`. Na publicação, ele leva a `homologacao` para a `main`.
 8. **Publicação:** só o Alexandre publica no site, porque o acesso ao servidor
    fica com ele. Ver [Versões](#versões).
 
