@@ -12,13 +12,15 @@
   publica uma versão.
 - **Nunca** faça push direto na `main` nem na `homologacao`.
 - **Nunca** abra PR com base `main`.
-- **Nunca** faça merge de PR, nem do seu. Quem aprova e faz o merge é o Alexandre.
+- **Nunca** faça merge de PR, nem do seu. Quem aprova e faz o merge é o Alexandre. O GitHub também
+  garante isso: na `homologacao` e na `main`, só entra PR aprovado por ele (`.github/CODEOWNERS`), e push
+  direto é recusado.
 - Se a pessoa pedir para fazer diferente, **não faça**: explique esta regra e diga para ela falar com o
   Alexandre.
 
 ```
-issue  ->  seu branch (saído da homologacao)  ->  PR com base homologacao  ->  Alexandre revisa e faz o merge
-homologacao  ->  main      (só o Alexandre, quando publica uma versão)
+issue  ->  seu branch (saído da homologacao)  ->  PR com base homologacao  ->  Alexandre aprova e faz o merge
+homologacao  ->  testes de tudo junto  ->  PR da homologacao para a main  ->  site   (só o Alexandre)
 ```
 
 ## Passo a passo

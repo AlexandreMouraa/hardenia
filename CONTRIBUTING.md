@@ -41,8 +41,11 @@ Como abrir o projeto e rodar o robô está no [README](README.md).
    `gh pr create --base homologacao`. Preencha o modelo: o que muda, a issue,
    a linha `resumo` do robô e um print.
 7. **Revisão:** outra pessoa da equipe olha, o Alexandre aprova e faz o merge
-   na `homologacao`. Na publicação, ele leva a `homologacao` para a `main`.
-8. **Publicação:** só o Alexandre publica no site, porque o acesso ao servidor
+   na `homologacao`. O GitHub só deixa mesclar depois da aprovação dele
+   (`.github/CODEOWNERS`).
+8. **Teste de tudo junto:** com as tarefas na `homologacao`, o Alexandre joga e
+   roda o robô. Estando bom, ele abre o PR da `homologacao` para a `main`.
+9. **Publicação:** só o Alexandre publica no site, porque o acesso ao servidor
    fica com ele. Ver [Versões](#versões).
 
 ## O robô é a régua
