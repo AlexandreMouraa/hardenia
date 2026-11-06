@@ -3,6 +3,11 @@
 Implementação local na branch `rodrigo/implementacao`, baseada na versão 0.9.
 Não foi publicada nem teve a versão de distribuição alterada.
 
+> **Barris e armadilhas desligados por enquanto (06/11/2026).** O Pátio vai ser refeito com caminhos na
+> 0.10 (issue #91), e as posições abaixo só servem no Pátio antigo. O código continua no projeto
+> (`obj_perigo_patio`, `scr_patio`); para religar, `perigos_ligados = true` em `obj_patio`, com posições
+> novas. O defensor, o curandeiro, as cartas e a árvore seguem valendo.
+
 ## O que muda
 
 | Antes | Agora | Objetivo de design |

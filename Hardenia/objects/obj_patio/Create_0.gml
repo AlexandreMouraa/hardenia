@@ -1,5 +1,10 @@
 // So controla os perigos e as dicas; o cenario e a colisao continuam os originais.
 depth = 90;
+// Barris e armadilhas desligados por enquanto (decisao do Alexandre, 06/11): o Patio vai ser refeito
+// com caminhos na 0.10 (issue #91), e estas posicoes so servem no Patio antigo. Para religar, volte
+// com perigos_ligados = true e reposicione no mapa novo.
+var perigos_ligados = false;
+if (!perigos_ligados) exit;
 // Primeiro barril perto da entrada, longe do primeiro grupo: experimentar sem ser cercado.
 var _barris = [[840, 500], [380, 280], [1140, 750], [760, 690]];
 for (var _i = 0; _i < array_length(_barris); _i++) {
