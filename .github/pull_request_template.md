@@ -1,3 +1,7 @@
+<!-- A BASE DESTE PR TEM DE SER homologacao, NAO main. Confira no topo da pagina antes de criar. -->
+
+Issue: #
+
 ## O que muda
 
 <!-- Em uma ou duas frases, para quem joga. Ex.: "segurar o clique carrega um golpe mais forte" -->
@@ -11,6 +15,7 @@ antes:
 depois:
 ```
 
+- [ ] A base do PR é `homologacao` (não `main`)
 - [ ] Robô no teclado deu `OK`
 - [ ] Mexeu em combate ou mira: robô com `-Extra "-mouse"` deu `OK`
 - [ ] Mexeu em morte ou reinício de sala: robô com `-Extra "-morrer"` deu `OK`

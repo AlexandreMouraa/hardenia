@@ -38,12 +38,15 @@ LTS 2026 pode não conseguir mais abrir nem compilar.
 
 O GitHub é a cópia oficial do projeto. O passo a passo de uma tarefa (branch,
 robô, pull request), o que dá conflito no GameMaker e as regras do código
-estão no [CONTRIBUTING.md](CONTRIBUTING.md).
+estão no [CONTRIBUTING.md](CONTRIBUTING.md). **Todo trabalho sai do branch
+`homologacao` e volta para ele por PR**; a `main` é a versão do site. Quem usa
+IA: peça para ela ler o [AGENTS.md](AGENTS.md) antes de mexer.
 
 - **Antes de mexer:** feche o projeto na IDE e só então faça `git pull`. Com o
   projeto aberto, a IDE pode salvar por cima do que chegou.
-- **Ao terminar:** rode o robô (seção abaixo) e, se der `OK`, faça commit e
-  `git push`. Não troque de computador deixando mudança sem subir.
+- **Ao terminar:** rode o robô (seção abaixo) e, se der `OK`, faça commit,
+  `git push` do seu branch e abra o PR para a `homologacao`. Não troque de
+  computador deixando mudança sem subir.
 - **Duas pessoas ao mesmo tempo:** combinem quem mexe em qual sala ou objeto.
   Criar ou apagar um recurso altera o `Hardenia.yyp`, e esse arquivo entra em
   conflito fácil.
