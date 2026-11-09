@@ -7,13 +7,5 @@ draw_set_color(_cor);
 draw_ellipse(x - 16, y - 5, x + 16, y + 7, false);
 draw_set_alpha(1);
 arma_icone(arma, x, y - 10 - _alto, 12, _cor);
-// o nome, so quando da para pegar
-if (pousar <= 0 && !espera) {
-    draw_set_halign(fa_center);
-    draw_set_valign(fa_bottom);
-    draw_set_color(_cor);
-    texto(x, y - 30 - _alto, arma_def(arma).nome, 0.45, 0.45, 0);
-    draw_set_halign(fa_left);
-    draw_set_valign(fa_top);
-}
+// o nome fica no Draw End (Draw_73), por cima do bau e do heroi
 draw_set_color(c_white);
