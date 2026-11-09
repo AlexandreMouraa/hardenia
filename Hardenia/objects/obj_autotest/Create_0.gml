@@ -72,6 +72,9 @@ viu_tecnicas = false;
 // jogar. "armas=N" no resumo: quantas armas diferentes golpearam (a espada conta). Com -semarmas
 // ele fica so com a espada: o resumo tem de ser o mesmo de antes das armas
 pegar_armas = true;
+// -arma X: a run inteira com a arma X na mao (espada, machado, adagas, alabarda), sem trocar. Serve
+// para comparar as armas: o resumo ganha "arma=X", e o tempo de cada sala sai no log (sala_limpa)
+arma_forcada = "";
 viu_arma = false;
 viu_arma_chao = false;
 viu_arma_hud = false;
@@ -168,6 +171,10 @@ for (var _i = 1; _i < parameter_count(); _i++) {
     }
     if (parameter_string(_i) == "-nome") {
         nome_robo = parameter_string(_i + 1);
+    }
+    if (parameter_string(_i) == "-arma") {
+        arma_forcada = parameter_string(_i + 1);
+        pegar_armas = false;
     }
 }
 

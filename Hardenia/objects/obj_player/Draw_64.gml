@@ -153,13 +153,16 @@ if (_inimigos > 0) {
     draw_set_alpha(1);
 }
 
-// arma de Caido na mao, embaixo, com o icone (scr_armas). A espada nao aparece: e a de sempre.
-// Acima do botao de pausa do toque, que comeca em 40
+// arma de Caido na mao, com o icone (scr_armas). A espada nao aparece: e a de sempre. Fica a
+// esquerda, na coluna do dash, do especial e da Furia. No canto direito ela encostava no contador
+// de inimigos, e no toque no botao de pausa. Uma linha de folga embaixo das tecnicas (ate 104): o
+// PR #90 escreve ali, em 116, o nome da tecnica que acabou de agir. A letra de 0,7 ocupa de 6 a 15
+// abaixo do y do texto, e o icone fica no meio dela
 if (global.arma != "espada") {
-    draw_set_halign(fa_right);
+    draw_set_halign(fa_left);
+    arma_icone(global.arma, 22 * _esc, 138 * _esc, 6 * _esc, arma_cor());
     draw_set_color(arma_cor());
-    texto(_w - 34 * _esc, 28 * _esc, arma_def().nome, _esc * 0.7, _esc * 0.7, 0);
-    arma_icone(global.arma, _w - 23 * _esc, 32 * _esc, 6 * _esc, arma_cor());
+    texto(32 * _esc, 128 * _esc, arma_def().nome, _esc * 0.7, _esc * 0.7, 0);
     draw_set_halign(fa_right);
 }
 

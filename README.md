@@ -202,6 +202,7 @@ roda 3 runs em velocidade acelerada, sem som e em janela, e termina com `OK` ou
 | `-mouse` | ataca com o clique em vez do `J` (testa o caminho do clique; o golpe é o mesmo) |
 | `-tecnicas` | começa a run com todas as técnicas e reprova se alguma não fizer efeito (soma `tecnicas=N` no resumo) |
 | `-semarmas` | não pega as armas dos Caídos e fica só com a espada: o resumo tem de ser igual ao de antes das armas (sem a opção, o robô troca de arma e soma `armas=N`, quantas golpearam) |
+| `-arma X` | joga a run inteira com a arma `X` na mão (`espada`, `machado`, `adagas` ou `alabarda`), sem trocar: serve para comparar as armas (soma `arma=X` no resumo; o tempo de cada sala sai no log, em `sala_limpa`) |
 | `-carregar` | segura o ataque depois de cada golpe e solta com a carga cheia (testa o golpe carregado; soma `carregados=N` no resumo) |
 | `-especial` | usa o golpe especial sempre que tem alvo perto e recarga pronta (soma `especiais=N` no resumo e registra os acertos de cada giro) |
 | `-estocar` | com alvo perto e carga de dash, dá o dash e ataca logo depois (soma `estocadas=N` no resumo). Vida sempre cheia: testa o fluxo, não o balanceamento |
