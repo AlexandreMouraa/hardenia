@@ -15,6 +15,8 @@ if (lifetime <= 0) {
     exit;
 }
 
+patio_zona(zona);
+
 if (instance_exists(obj_player) && obj_player.invuln_timer <= 0 && !obj_player.is_dashing) {
     if (zona_acerta_jogador(zona)) {
         obj_player.morto_por = object_get_name(dono.object_index);

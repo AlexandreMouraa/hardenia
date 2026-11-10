@@ -15,6 +15,12 @@ não é o personagem que fica mais forte, é o jogador.
 
 Mais detalhes em [docs/GDD.md](docs/GDD.md).
 
+O desenvolvimento de combate no Pátio, cartas detalhadas e árvore de técnicas
+está descrito em [docs/PATIO_E_LEGADO.md](docs/PATIO_E_LEGADO.md), com regras,
+verificações realizadas e testes de engine ainda pendentes.
+O [curandeiro do Pátio](docs/CURANDEIRO.md) acrescenta suporte inimigo com cura
+interrompível, sem ultrapassar a vida máxima dos aliados.
+
 ## Engine
 
 GameMaker **LTS 2026** (versão gratuita, uso não-comercial, export Windows). O
@@ -62,6 +68,7 @@ estão no [CONTRIBUTING.md](CONTRIBUTING.md).
 | Pausar / continuar | `Esc` |
 | Voltar ao menu (na pausa) | `M` |
 | Opções (na pausa) | `O` |
+| Árvore de técnicas (na pausa ou escolha) | `Tab` ou botão na tela; `Esc` volta |
 | Menu | `W` `S` ou mouse, `Enter` ou clique |
 | Voltar ao menu (na vitória) | `Enter` |
 | Sair do jogo (no menu) | `Esc` |

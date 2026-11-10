@@ -18,12 +18,13 @@ global.arranjos = [
         [[obj_enemy, 400, 300], [obj_enemy_conjurador, 540, 260], [obj_enemy_arqueiro, 500, 420], [obj_enemy_arqueiro, 900, 640], [obj_enemy_wight, 1120, 640], [obj_enemy, 1010, 800], [obj_enemy_ghoul, 1600, 300], [obj_enemy_wight, 1760, 340], [obj_enemy, 1680, 220], [obj_enemy, 700, 1170], [obj_enemy_conjurador, 1540, 1120], [obj_enemy_arqueiro, 1740, 1120]],
         [[obj_enemy_wight, 400, 300], [obj_enemy, 540, 260], [obj_enemy, 500, 420], [obj_enemy, 900, 640], [obj_enemy_arqueiro, 1120, 640], [obj_enemy_conjurador, 1010, 800], [obj_enemy_arqueiro, 1600, 300], [obj_enemy, 1760, 340], [obj_enemy_conjurador, 1680, 220], [obj_enemy_ghoul, 700, 1170], [obj_enemy_arqueiro, 1540, 1120], [obj_enemy_wight, 1740, 1120]],
     ] },
-    // Patio: dois no patio central e um em cada ala, do outro lado das pontes. Com arqueiros
-    // nas alas, atravessar a ponte custa; o ultimo guarda o patio da saida
+    // Patio: dois no patio central e um em cada ala, do outro lado das pontes. Com arqueiro
+    // na ala, atravessar a ponte custa; o ultimo guarda o patio da saida. O defensor e o curandeiro
+    // (PR #90) ficam sempre perto de um aliado: o curandeiro sozinho numa ala nao teria quem curar
     { sala: Room2, lista: [
         [],
-        [[obj_enemy_ghoul, 870, 780], [obj_enemy_ghoul, 1130, 820], [obj_enemy_arqueiro, 360, 1000], [obj_enemy_arqueiro, 1640, 1000]],
-        [[obj_enemy_ghoul, 870, 780], [obj_enemy_ghoul, 1130, 820], [obj_enemy_ghoul, 360, 980], [obj_enemy_ghoul, 1640, 980], [obj_enemy, 820, 1240], [obj_enemy, 1180, 1240]],
+        [[obj_enemy_defensor, 870, 780], [obj_enemy_curandeiro, 1130, 820], [obj_enemy_ghoul, 360, 1000], [obj_enemy_arqueiro, 1640, 1000]],
+        [[obj_enemy_defensor, 870, 780], [obj_enemy_ghoul, 1130, 820], [obj_enemy_arqueiro, 360, 980], [obj_enemy_ghoul, 1640, 980], [obj_enemy_curandeiro, 820, 1240], [obj_enemy, 1180, 1240]],
     ] },
     // Cemiterio: um wight em cada campo de lapides e dois na praca da estatua. O primeiro e o
     // terceiro wight sao as elites (escudo e invocacao). Com o arqueiro no patio da saida, o
