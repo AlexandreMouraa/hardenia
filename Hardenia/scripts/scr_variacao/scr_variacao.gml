@@ -6,25 +6,33 @@
 // (elites_sala, em scr_inimigos) tem de manter os tipos que ela usa. O robo passa por todos e
 // reprova inimigo em parede ou sem caminho
 global.arranjos = [
+    // Ruinas: o original e 1, 2 e 2 (primeira camara, segunda, praca). Os outros mudam quem
+    // espera na primeira camara, onde se aprende
     { sala: Room1, lista: [
         [],
-        [[obj_enemy, 240, 240], [obj_enemy, 330, 370], [obj_enemy, 1248, 288], [obj_enemy, 1160, 340]],
-        [[obj_enemy, 560, 360], [obj_enemy, 930, 330], [obj_enemy, 750, 240], [obj_enemy, 240, 768]],
+        [[obj_enemy, 560, 740], [obj_enemy, 760, 880], [obj_enemy, 1250, 470], [obj_enemy, 1580, 1090], [obj_enemy, 1700, 1040]],
+        [[obj_enemy, 680, 760], [obj_enemy, 1180, 540], [obj_enemy, 1330, 380], [obj_enemy, 1560, 1060], [obj_enemy, 1640, 960], [obj_enemy, 1760, 1130]],
     ] },
     { sala: Room_Tunel, lista: [
         [],
         [[obj_enemy, 400, 300], [obj_enemy_conjurador, 540, 260], [obj_enemy_arqueiro, 500, 420], [obj_enemy_arqueiro, 900, 640], [obj_enemy_wight, 1120, 640], [obj_enemy, 1010, 800], [obj_enemy_ghoul, 1600, 300], [obj_enemy_wight, 1760, 340], [obj_enemy, 1680, 220], [obj_enemy, 700, 1170], [obj_enemy_conjurador, 1540, 1120], [obj_enemy_arqueiro, 1740, 1120]],
         [[obj_enemy_wight, 400, 300], [obj_enemy, 540, 260], [obj_enemy, 500, 420], [obj_enemy, 900, 640], [obj_enemy_arqueiro, 1120, 640], [obj_enemy_conjurador, 1010, 800], [obj_enemy_arqueiro, 1600, 300], [obj_enemy, 1760, 340], [obj_enemy_conjurador, 1680, 220], [obj_enemy_ghoul, 700, 1170], [obj_enemy_arqueiro, 1540, 1120], [obj_enemy_wight, 1740, 1120]],
     ] },
+    // Patio: dois no patio central e um em cada ala, do outro lado das pontes. Com arqueiro
+    // na ala, atravessar a ponte custa; o ultimo guarda o patio da saida. O defensor e o curandeiro
+    // (PR #90) ficam sempre perto de um aliado: o curandeiro sozinho numa ala nao teria quem curar
     { sala: Room2, lista: [
         [],
-        [[obj_enemy_arqueiro, 400, 350], [obj_enemy_arqueiro, 1136, 350], [obj_enemy_ghoul, 400, 674], [obj_enemy_ghoul, 1136, 674]],
-        [[obj_enemy_ghoul, 400, 350], [obj_enemy_ghoul, 1136, 350], [obj_enemy_ghoul, 400, 674], [obj_enemy_ghoul, 1136, 674], [obj_enemy, 768, 250], [obj_enemy, 768, 800]],
+        [[obj_enemy_defensor, 870, 780], [obj_enemy_curandeiro, 1130, 820], [obj_enemy_ghoul, 360, 1000], [obj_enemy_arqueiro, 1640, 1000]],
+        [[obj_enemy_defensor, 870, 780], [obj_enemy_ghoul, 1130, 820], [obj_enemy_arqueiro, 360, 980], [obj_enemy_ghoul, 1640, 980], [obj_enemy_curandeiro, 820, 1240], [obj_enemy, 1180, 1240]],
     ] },
+    // Cemiterio: um wight em cada campo de lapides e dois na praca da estatua. O primeiro e o
+    // terceiro wight sao as elites (escudo e invocacao). Com o arqueiro no patio da saida, o
+    // atalho apertado fica na mira dele
     { sala: Room3, lista: [
         [],
-        [[obj_enemy_wight, 400, 350], [obj_enemy_wight, 1136, 350], [obj_enemy_wight, 400, 674], [obj_enemy_conjurador, 768, 760], [obj_enemy_arqueiro, 1136, 674]],
-        [[obj_enemy_wight, 400, 674], [obj_enemy_wight, 1136, 674], [obj_enemy_wight, 768, 700], [obj_enemy_ghoul, 400, 350], [obj_enemy_ghoul, 1136, 350]],
+        [[obj_enemy_wight, 400, 500], [obj_enemy_wight, 860, 800], [obj_enemy_wight, 1610, 815], [obj_enemy_conjurador, 1140, 760], [obj_enemy_arqueiro, 1000, 1330]],
+        [[obj_enemy_wight, 400, 500], [obj_enemy_wight, 860, 800], [obj_enemy_wight, 1610, 815], [obj_enemy_ghoul, 1140, 800], [obj_enemy_ghoul, 1600, 950]],
     ] },
 ];
 

@@ -3,7 +3,7 @@
 
 // versao mostrada no menu (bug reportado diz em qual versao foi). Ao lancar
 // uma nova, trocar aqui e em deploy/VERSAO, e registrar no site (novidades)
-#macro VERSAO_JOGO "0.9"
+#macro VERSAO_JOGO "0.10"
 
 // no navegador a API fica no mesmo site; o build de Windows usa o endereco
 // publico. -api <url> troca o endereco (teste local) e liga a rede no robo
@@ -50,6 +50,8 @@ function rede_evento(_tipo, _dados = undefined) {
     }
     _dados.tipo = _tipo;
     _dados.sala = room_get_name(room);
+    // o mapa de mortes do site separa as salas refeitas: morte do tracado antigo nao aparece no novo
+    _dados.versao = VERSAO_JOGO;
     return rede_post("/api/evento", _dados);
 }
 

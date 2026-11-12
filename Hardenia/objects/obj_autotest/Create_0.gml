@@ -68,11 +68,34 @@ testar_grupo = false;
 // ("tecnicas=N", quantas fizeram efeito). Sem ela, fica com a primeira carta de cada oferta
 todas_tecnicas = false;
 viu_tecnicas = false;
+// armas dos Caidos (scr_armas): o robo vai ate a arma que o Caido largou e troca, para cada arma
+// jogar. "armas=N" no resumo: quantas armas diferentes golpearam (a espada conta). Com -semarmas
+// ele fica so com a espada: o resumo tem de ser o mesmo de antes das armas
+pegar_armas = true;
+// -arma X: a run inteira com a arma X na mao (espada, machado, adagas, alabarda), sem trocar. Serve
+// para comparar as armas: o resumo ganha "arma=X", e o tempo de cada sala sai no log (sala_limpa)
+arma_forcada = "";
+viu_arma = false;
+viu_arma_chao = false;
+viu_arma_hud = false;
+armas_usadas = {};
+// a arma no chao que o robo quer: nao a que ele mesmo largou ao trocar (robo_largou), senao ficaria
+// trocando para sempre entre as duas
+arma_no_chao = function() {
+    var _achou = noone;
+    with (obj_arma_chao) {
+        if (!espera && !variable_instance_exists(id, "robo_largou")) {
+            _achou = id;
+        }
+    }
+    return _achou;
+};
 grupo_passo = 0;
 grupo_tempo = 0;
 grupo_parede = noone;
 grupo_a = noone;
 grupo_dir = 0;
+grupo_paredes = []; // paredes tiradas para abrir a clareira do teste: [x, y, escala x, escala y]
 grupo_ok = 0;
 grupo_chegou = false;
 // -horda: joga as 3 ondas da sala de teste, com a vida sempre cheia (aqui a pergunta
@@ -121,6 +144,9 @@ for (var _i = 1; _i <= parameter_count(); _i++) {
     if (parameter_string(_i) == "-tecnicas") {
         todas_tecnicas = true;
     }
+    if (parameter_string(_i) == "-semarmas") {
+        pegar_armas = false;
+    }
     if (parameter_string(_i) == "-grupo") {
         testar_grupo = true;
     }
@@ -146,6 +172,10 @@ for (var _i = 1; _i < parameter_count(); _i++) {
     }
     if (parameter_string(_i) == "-nome") {
         nome_robo = parameter_string(_i + 1);
+    }
+    if (parameter_string(_i) == "-arma") {
+        arma_forcada = parameter_string(_i + 1);
+        pegar_armas = false;
     }
 }
 
@@ -351,10 +381,47 @@ testar_zonas = function() {
 // Passo 1: quem perdeu o jogador foi ate a memoria e desistiu; todos acordam longe.
 // Passo 2: com uma parede grande no meio, ele da a volta e chega a ver o jogador.
 // Passo 3: os 4 chegam, cada um de um lado. Erro vira FALHA no log
+// O teste precisa de campo aberto em volta do jogador, e as salas agora sao caminhos: ele abre
+// uma clareira no meio da sala (tira as paredes que encostam nela) e poe o jogador no meio. No
+// fim, as paredes voltam e cada um volta para onde nasceu; a run segue normal
+grupo_abrir = function(_p) {
+    var _cx = room_width / 2;
+    var _cy = room_height / 2;
+    with (obj_wall) {
+        if (rectangle_in_circle(bbox_left, bbox_top, bbox_right, bbox_bottom, _cx, _cy, 420) > 0) {
+            array_push(other.grupo_paredes, [x, y, image_xscale, image_yscale]);
+            instance_destroy();
+        }
+    }
+    _p.x = _cx;
+    _p.y = _cy;
+    global.campo.sala = -1;
+};
+grupo_fechar = function(_p) {
+    for (var _i = 0; _i < array_length(grupo_paredes); _i++) {
+        var _w = grupo_paredes[_i];
+        with (instance_create_layer(_w[0], _w[1], "Instances", obj_wall)) {
+            image_xscale = _w[2];
+            image_yscale = _w[3];
+        }
+    }
+    grupo_paredes = [];
+    _p.x = _p.xstart;
+    _p.y = _p.ystart;
+    with (obj_enemy) {
+        x = xstart;
+        y = ystart;
+        home_x = x;
+        home_y = y;
+        acordado = false;
+    }
+    global.campo.sala = -1;
+};
 grupo_conferir = function(_p) {
     grupo_tempo -= 1;
     switch (grupo_passo) {
         case 0:
+            grupo_abrir(_p);
             grupo_a = instance_find(obj_enemy, 0);
             var _b = instance_find(obj_enemy, 1);
             var _c = instance_find(obj_enemy, 2);
@@ -366,6 +433,7 @@ grupo_conferir = function(_p) {
             }
             if (_dir < 0) {
                 log("FALHA_grupo", "sem lado livre em volta do jogador");
+                grupo_fechar(_p);
                 grupo_passo = 4;
                 return;
             }
@@ -522,6 +590,7 @@ grupo_conferir = function(_p) {
                 }
                 pedir_print("cerco");
                 grupo_ok = 1;
+                grupo_fechar(_p);
                 grupo_passo = 4;
             }
             break;

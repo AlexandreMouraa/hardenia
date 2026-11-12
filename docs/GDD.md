@@ -29,6 +29,10 @@ leitura de padrão), Hollow Knight (precisão de movimento 2D), Hades
 - Técnicas dos Caídos: dentro de uma run ele aprende técnicas com os guerreiros que
   morreram antes. Valem até a próxima morte, sem nenhuma progressão permanente. O que
   fica de uma run para a outra continua sendo só o que o jogador aprendeu.
+- Armas dos Caídos: o Caído vencido larga a arma que usava (o machado do Carrasco, as
+  adagas do Batedor, a alabarda da Sentinela), e o guerreiro escolhe se troca a espada
+  por ela. Não é arma mágica: é a arma de quem morreu antes, e se perde na morte, como
+  as técnicas.
 - Kit de combate enxuto (ex: ataque básico, dash/esquiva, talvez um
   bloqueio/parry) — a limitação de ferramentas é proposital.
 
@@ -48,7 +52,8 @@ O texto na tela fica em `scripts/scr_historia` e em `scripts/scr_tecnicas`.
   guerra, e foi o último da sua vez. Era forte, mas não soube voltar.
 - **Os Caídos** são os guerreiros mandados antes: o Carrasco, o Batedor, o Sapador e a
   Sentinela. O rei levanta cada um contra quem vem depois. Vencer um deles liberta o
-  guerreiro, e ele deixa a técnica que sabia.
+  guerreiro, e ele deixa a técnica que sabia e a arma que usava. O Sapador não deixa
+  arma: ele ensina as bombas.
 - **O guerreiro** é o mais fraco de todos, e o único que não para de voltar. O final
   muda com o número de tentativas e fecha nessa ideia.
 

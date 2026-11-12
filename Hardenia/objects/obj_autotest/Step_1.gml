@@ -5,6 +5,16 @@ if (encerrando) {
 }
 
 frame += 1;
+// -arma: a arma pedida na mao a run inteira. Todo frame, porque a morte e o menu devolvem a espada
+// (run_zerar)
+if (arma_forcada != "") {
+    if (!variable_struct_exists(global.armas, arma_forcada)) {
+        log("FALHA_arma", "arma desconhecida: " + arma_forcada);
+        encerrar(1);
+        exit;
+    }
+    global.arma = arma_forcada;
+}
 // -toque: o que o direcional leu no frame passado e o que o robo mandou?
 if (usar_toque && toque_conferido) {
     if (global.toque.h != toque_esperado_h || global.toque.v != toque_esperado_v) {
@@ -57,6 +67,25 @@ if (instance_exists(obj_mapa)) {
 if (instance_exists(obj_cena)) {
     if (run_atual == 1 && obj_cena.tempo == 60) {
         pedir_print("cena");
+    }
+    exit;
+}
+
+// arma no chao (obj_arma_escolha, filha do obj_tecnicas): troca, a nao ser com -semarmas
+if (instance_exists(obj_arma_escolha)) {
+    var _escolha = instance_find(obj_arma_escolha, 0);
+    if (_escolha.tempo == 24 && !viu_arma) {
+        viu_arma = true;
+        pedir_print("arma");
+    }
+    if (_escolha.tempo == 30 && _escolha.escolhido < 0) {
+        var _chao = _escolha.chao;
+        var _troca = (pegar_armas && !variable_instance_exists(_chao, "robo_largou")) ? 1 : 0;
+        log("arma", (_troca == 1) ? "troca " + global.arma + " por " + _escolha.oferta[1].chave : "fica com " + global.arma);
+        _escolha.escolher(_troca);
+        if (_troca == 1) {
+            _chao.robo_largou = true;
+        }
     }
     exit;
 }
@@ -151,7 +180,7 @@ if (room == Room_Menu) {
             if (!usar_horda && !todas_tecnicas && variable_struct_names_count(elites_vistas) < 3) {
                 log("FALHA_elite", "so " + string(variable_struct_names_count(elites_vistas)) + " habilidades apareceram");
             }
-            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes) + " danos=" + string(danos) + " avisos_max=" + string(avisos_max) + " combos=" + string(combos) + " elites=" + string(variable_struct_names_count(elites_vistas)) + (carregar ? " carregados=" + string(carregados) : "") + (usar_especial ? " especiais=" + string(especiais) : "") + (usar_estocada ? " estocadas=" + string(estocadas) : "") + (testar_formas ? " formas=" + string(variable_struct_names_count(formas_vistas)) : "") + (testar_grupo ? " grupo=" + string(grupo_ok) : "") + (usar_toque ? " toque=1" : "") + " tecnicas=" + string(variable_struct_names_count(global.tecnica_usos)) + " furia=" + string(global.giros_furiosos) + " duelos=" + string(duelos_vencidos));
+            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes) + " danos=" + string(danos) + " avisos_max=" + string(avisos_max) + " combos=" + string(combos) + " elites=" + string(variable_struct_names_count(elites_vistas)) + (carregar ? " carregados=" + string(carregados) : "") + (usar_especial ? " especiais=" + string(especiais) : "") + (usar_estocada ? " estocadas=" + string(estocadas) : "") + (testar_formas ? " formas=" + string(variable_struct_names_count(formas_vistas)) : "") + (testar_grupo ? " grupo=" + string(grupo_ok) : "") + (usar_toque ? " toque=1" : "") + " tecnicas=" + string(variable_struct_names_count(global.tecnica_usos)) + " furia=" + string(global.giros_furiosos) + " duelos=" + string(duelos_vencidos) + " armas=" + string(variable_struct_names_count(armas_usadas)) + ((arma_forcada != "") ? " arma=" + arma_forcada : ""));
             encerrar(0);
             exit;
         }
@@ -292,6 +321,10 @@ if (run_atual == 1 && dash_prints == 0 && _p.is_dashing && _p.dash_timer == 5) {
 }
 // combos completos: conta quando o terceiro golpe comeca
 var _forte_agora = _p.is_attacking && _p.golpe_atual == 3;
+// quais armas golpearam nesta bateria ("armas=N" no resumo)
+if (_p.is_attacking) {
+    variable_struct_set(armas_usadas, global.arma, true);
+}
 if (_forte_agora && !forte_antes) {
     if (_p.golpe_carregado) {
         carregados += 1;
@@ -578,6 +611,11 @@ if (!_quer_morrer) {
         array_push(_zonas, [zona, estado, tempo]);
     }
 }
+if (!_quer_morrer) {
+    with (obj_perigo_patio) {
+        if (estado == 1) array_push(_zonas, [zona, 1, tempo]);
+    }
+}
 // as 3 habilidades de elite: print da primeira vez, e o limite de invocados
 with (obj_explosao) {
     other.ver_elite("explosao");
@@ -626,6 +664,13 @@ for (var _i = 0; _i < array_length(_zonas); _i++) {
     }
 }
 
+// print do HUD com a arma de Caido na mao, na primeira luta depois de trocar. Depois de 2 s de
+// sala: no primeiro frame a tela ainda esta escura, e com -arma o print saia preto
+if (!viu_arma_hud && global.arma != "espada" && instance_number(obj_enemy) > 0 && tempo_sala > 120) {
+    viu_arma_hud = true;
+    pedir_print("arma_hud");
+}
+
 // ---------- objetivo: inimigo mais perto, ou o portao adiante ----------
 var _alvo = instance_nearest(_p.x, _p.y, obj_enemy);
 var _gx = _p.x;
@@ -633,6 +678,15 @@ var _gy = _p.y;
 if (_alvo != noone) {
     _gx = _alvo.x;
     _gy = _alvo.y;
+} else if (pegar_armas && arma_no_chao() != noone) {
+    // a arma do Caido antes do bau: fica ao lado de onde ele caiu, perto de onde a luta acabou
+    var _arma_chao = arma_no_chao();
+    _gx = _arma_chao.x;
+    _gy = _arma_chao.y;
+    if (!viu_arma_chao && _arma_chao.pousar == 0) {
+        viu_arma_chao = true;
+        pedir_print("arma_chao");
+    }
 } else if (instance_exists(obj_bau) && !instance_find(obj_bau, 0).aberto) {
     _gx = instance_find(obj_bau, 0).x;
     _gy = instance_find(obj_bau, 0).y;
@@ -744,16 +798,20 @@ if (global.furia >= FURIA_MAX && furia_frames <= 0 && _alvo != noone && !_ameaca
 
 // ---------- ataque: vira para o alvo e bate quando ele esta no alcance ----------
 if (_alvo != noone && !_ameacado && !_quer_morrer) {
-    // mesma conta do golpe (obj_player, golpear): vira sozinho para o inimigo, com
-    // alcance de 32 nas retas e ate 45 nas diagonais
+    // mesma conta do golpe (obj_player, golpear): vira sozinho para o inimigo, com o alcance e o
+    // tamanho do golpe comum da arma na mao (scr_armas). Na espada, 32 nas retas e ate 45 nas
+    // diagonais, com 32 de meia area: os numeros de antes das armas. Sem isso o robo batia com a
+    // alabarda de perto, como se fosse espada, e com as adagas de longe demais, no vazio
+    var _arma_bot = arma_def();
+    var _meia = 32 * _arma_bot.escala;
     var _mira = _p.mira_alvo();
     var _ang = (_mira != noone) ? point_direction(_p.x, _p.y, _mira.x, _mira.y) : point_direction(0, 0, _p.face_h, _p.face_v);
     var _cx = lengthdir_x(1, _ang);
     var _cy = lengthdir_y(1, _ang);
-    var _k = 32 / max(abs(_cx), abs(_cy));
+    var _k = _arma_bot.alcance / max(abs(_cx), abs(_cy));
     var _ax = _p.x + _cx * _k;
     var _ay = _p.y + _cy * _k;
-    if (rectangle_in_rectangle(_alvo.bbox_left, _alvo.bbox_top, _alvo.bbox_right, _alvo.bbox_bottom, _ax - 32, _ay - 32, _ax + 32, _ay + 32) > 0) {
+    if (rectangle_in_rectangle(_alvo.bbox_left, _alvo.bbox_top, _alvo.bbox_right, _alvo.bbox_bottom, _ax - _meia, _ay - _meia, _ax + _meia, _ay + _meia) > 0) {
         _mh = 0;
         _mv = 0;
         if (_p.attack_cooldown <= 0 && segurar_frames <= 0) {
@@ -767,7 +825,7 @@ if (_alvo != noone && !_ameacado && !_quer_morrer) {
             }
             alvo_golpeado = _alvo.id;
             hp_golpeado = _alvo.hp;
-            if (_alvo.escudo) {
+            if (_alvo.escudo || (_alvo.defensor && _alvo.state != 3 && _alvo.guarda_quebrada <= 0)) {
                 // o golpe comum nao tira vida do escudo: gira, ou segura ate a carga encher
                 golpes_vazios = 0;
                 if (_p.especial_recarga <= 0) {
@@ -805,6 +863,19 @@ if (_alvo != noone && !_ameacado && !_quer_morrer) {
             }
         }
     }
+}
+
+// ---------- -tecnicas: Passo Cortante ----------
+// So conta quando o dash atravessa um inimigo, e o robo so fazia isso por acaso, colado no alvo.
+// Com o alcance de cada arma ele luta de mais longe (a alabarda, contra o rei) e a tecnica ficava
+// sem contar. Enquanto ela nao contou, da um dash atraves do alvo que esta perto
+if (todas_tecnicas && _alvo != noone && !_ameacado && !_quer_morrer && _p.dash_charges > 0 && !_p.is_dashing
+    && !variable_struct_exists(global.tecnica_usos, "passo_cortante")
+    && point_distance(_p.x, _p.y, _alvo.x, _alvo.y) < 48) {
+    var _rumo_corte = point_direction(_p.x, _p.y, _alvo.x, _alvo.y);
+    _mh = round(lengthdir_x(1, _rumo_corte));
+    _mv = round(lengthdir_y(1, _rumo_corte));
+    bot_dash = true;
 }
 
 // ---------- dash: o golpe vai cair agora e ainda estou dentro ----------

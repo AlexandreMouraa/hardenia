@@ -127,11 +127,17 @@ draw_set_alpha(1);
 draw_set_color(_fcheia ? make_colour_rgb(255, 170, 90) : c_ltgray);
 texto(16 * _esc + dash_charges_max * 16 * _esc + 4 * _esc, 79 * _esc, _fcheia ? "FÚRIA: SEGURE O GIRO" : "FÚRIA", _esc * 0.7, _esc * 0.7, 0);
 
-// as tecnicas da run: um quadradinho para cada uma, na cor de quem ensinou (nomes na pausa)
+// Icones identicos aos das cartas e da arvore; o ultimo efeito aparece por pouco tempo.
 for (var _i = 0; _i < array_length(global.tecnicas); _i++) {
     var _def = tecnica_def(global.tecnicas[_i]);
+    tecnica_icone(_def.chave, (22 + _i * 17) * _esc, 103 * _esc, 6 * _esc,
+        variable_struct_get(global.caidos, _def.caido).cor);
+}
+if (global.tecnica_ultimo != "" && current_time - global.tecnica_ultimo_ms < 1300
+    && !global.game_paused && !instance_exists(obj_tecnicas) && !instance_exists(obj_arvore)) {
+    var _def = tecnica_def(global.tecnica_ultimo);
     draw_set_color(variable_struct_get(global.caidos, _def.caido).cor);
-    draw_rectangle(16 * _esc + _i * 12 * _esc, 96 * _esc, 16 * _esc + _i * 12 * _esc + 8 * _esc, 104 * _esc, false);
+    texto(16 * _esc, 116 * _esc, _def.nome, _esc * 0.7, _esc * 0.7, 0);
 }
 
 // HUD: fase atual; fora do caminho da run, sala de teste
@@ -151,6 +157,19 @@ if (_inimigos > 0) {
     draw_set_alpha(_piscar);
     texto(_w - 16 * _esc, 12 * _esc, portao_aberto() ? "PORTÃO ABERTO" : "ABRA O BAÚ", _esc, _esc, 0);
     draw_set_alpha(1);
+}
+
+// arma de Caido na mao, com o icone (scr_armas). A espada nao aparece: e a de sempre. Fica a
+// esquerda, na coluna do dash, do especial e da Furia. No canto direito ela encostava no contador
+// de inimigos, e no toque no botao de pausa. Uma linha de folga embaixo das tecnicas (ate 104): o
+// PR #90 escreve ali, em 116, o nome da tecnica que acabou de agir. A letra de 0,7 ocupa de 6 a 15
+// abaixo do y do texto, e o icone fica no meio dela
+if (global.arma != "espada") {
+    draw_set_halign(fa_left);
+    arma_icone(global.arma, 22 * _esc, 138 * _esc, 6 * _esc, arma_cor());
+    draw_set_color(arma_cor());
+    texto(32 * _esc, 128 * _esc, arma_def().nome, _esc * 0.7, _esc * 0.7, 0);
+    draw_set_halign(fa_right);
 }
 
 // seta na borda da tela apontando para o portao aberto quando ele esta fora
@@ -349,6 +368,8 @@ if (global.game_paused) {
     draw_set_color(c_white);
     texto(_w / 2, _h / 2 + 62 * _esc, "ESC: CONTINUAR    O: OPÇÕES    M: VOLTAR AO MENU", _esc, _esc, 0);
     }
+    var _ui = tecnicas_ui();
+    tecnica_botao(_ui, 384, 354, 192, global.toque_ativo ? "ÁRVORE DE TÉCNICAS" : (global.ultimo_aparelho == "controle" ? "X: ÁRVORE DE TÉCNICAS" : "TAB: ÁRVORE DE TÉCNICAS"));
     // onde voce esta no caminho ate o fim
     var _fase_mapa = mapa_indice(room);
     if (_fase_mapa >= 0) {

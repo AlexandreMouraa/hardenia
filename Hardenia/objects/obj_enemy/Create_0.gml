@@ -1,4 +1,7 @@
 hp = 3;
+vida_maxima_cura = hp;
+suporte_passo = undefined;
+ao_sofrer_golpe = undefined;
 move_speed = 1.5;
 
 state = 0;
@@ -19,6 +22,11 @@ ataque = {
 // elite: "escudo", "explosao" ou "invocacao" (elites_aplicar, em scr_inimigos)
 elite = "";
 escudo = false;
+// O defensor usa guarda direcional; a elite continua com escudo integral.
+defensor = false;
+guarda_dir = 0;
+guarda_quebrada = 0;
+guarda_flash = 0;
 invocados = [];
 invocar_timer = 120;
 invocar_total = 0;

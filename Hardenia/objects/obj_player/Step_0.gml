@@ -1,4 +1,9 @@
 toque_detectar();
+if (instance_exists(obj_arvore)) exit;
+if (global.consulta_bloqueio > 0) {
+    global.consulta_bloqueio -= 1;
+    exit;
+}
 if (global.toque_ativo) {
     toque_ler();
     if (global.toque.pausa_novo && !is_dead && !venceu) {
@@ -15,6 +20,12 @@ if (global.game_paused) {
         exit;
     }
     var _pausa_toque = toque_botoes_pausa();
+    var _ui = tecnicas_ui();
+    if (keyboard_check_pressed(vk_tab) || pad_novo(gp_face3)
+        || tecnica_clicou(tecnica_ret(_ui, 384, 354, 192, 32))) {
+        arvore_abrir();
+        exit;
+    }
     if (keyboard_check_pressed(ord("M")) || pad_novo(gp_select) || (global.toque_ativo && toque_tap_em(_pausa_toque.menu))) {
         global.game_paused = false;
         room_goto(Room_Menu);
