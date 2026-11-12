@@ -99,8 +99,9 @@ Ali, `L` ou um toque no botão de baixo mede quantos inimigos o aparelho aguenta
   outra, e limpar uma fase pela primeira vez na run devolve 1.
 - Ao morrer, a run recomeça na primeira fase, com a vida cheia, e o contador de
   **tentativas** sobe. Uma caveira fica no chão onde o guerreiro caiu.
-- **Duelos** (`scripts/scr_duelos`, `obj_enemy_caido`): nas Catacumbas e no
-  Cemitério, quando a sala fica limpa, um dos 4 Caídos aparece, sorteado por run.
+- **Duelos** (`scripts/scr_duelos`, `obj_enemy_caido`): em cada mapa antes do Trono
+  (Ruínas, Catacumbas, Pátio e Cemitério), quando a sala fica limpa, um dos 4 Caídos
+  aparece, em ordem sorteada por run, sem repetir. O das Ruínas é o mais fácil.
   Cada um tem arte, rodízio de ataques e falas próprios, e o baú que vem depois
   oferece primeiro as técnicas dele.
 - **Armas dos Caídos** (`scripts/scr_armas`, `obj_arma_chao`, `obj_arma_escolha`): o
