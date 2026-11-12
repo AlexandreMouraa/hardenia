@@ -127,11 +127,17 @@ draw_set_alpha(1);
 draw_set_color(_fcheia ? make_colour_rgb(255, 170, 90) : c_ltgray);
 texto(16 * _esc + dash_charges_max * 16 * _esc + 4 * _esc, 79 * _esc, _fcheia ? "FÚRIA: SEGURE O GIRO" : "FÚRIA", _esc * 0.7, _esc * 0.7, 0);
 
-// as tecnicas da run: um quadradinho para cada uma, na cor de quem ensinou (nomes na pausa)
+// Icones identicos aos das cartas e da arvore; o ultimo efeito aparece por pouco tempo.
 for (var _i = 0; _i < array_length(global.tecnicas); _i++) {
     var _def = tecnica_def(global.tecnicas[_i]);
+    tecnica_icone(_def.chave, (22 + _i * 17) * _esc, 103 * _esc, 6 * _esc,
+        variable_struct_get(global.caidos, _def.caido).cor);
+}
+if (global.tecnica_ultimo != "" && current_time - global.tecnica_ultimo_ms < 1300
+    && !global.game_paused && !instance_exists(obj_tecnicas) && !instance_exists(obj_arvore)) {
+    var _def = tecnica_def(global.tecnica_ultimo);
     draw_set_color(variable_struct_get(global.caidos, _def.caido).cor);
-    draw_rectangle(16 * _esc + _i * 12 * _esc, 96 * _esc, 16 * _esc + _i * 12 * _esc + 8 * _esc, 104 * _esc, false);
+    texto(16 * _esc, 116 * _esc, _def.nome, _esc * 0.7, _esc * 0.7, 0);
 }
 
 // HUD: fase atual; fora do caminho da run, sala de teste
@@ -362,6 +368,8 @@ if (global.game_paused) {
     draw_set_color(c_white);
     texto(_w / 2, _h / 2 + 62 * _esc, "ESC: CONTINUAR    O: OPÇÕES    M: VOLTAR AO MENU", _esc, _esc, 0);
     }
+    var _ui = tecnicas_ui();
+    tecnica_botao(_ui, 384, 354, 192, global.toque_ativo ? "ÁRVORE DE TÉCNICAS" : (global.ultimo_aparelho == "controle" ? "X: ÁRVORE DE TÉCNICAS" : "TAB: ÁRVORE DE TÉCNICAS"));
     // onde voce esta no caminho ate o fim
     var _fase_mapa = mapa_indice(room);
     if (_fase_mapa >= 0) {

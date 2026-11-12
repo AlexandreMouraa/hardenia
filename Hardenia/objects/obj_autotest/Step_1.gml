@@ -611,6 +611,11 @@ if (!_quer_morrer) {
         array_push(_zonas, [zona, estado, tempo]);
     }
 }
+if (!_quer_morrer) {
+    with (obj_perigo_patio) {
+        if (estado == 1) array_push(_zonas, [zona, 1, tempo]);
+    }
+}
 // as 3 habilidades de elite: print da primeira vez, e o limite de invocados
 with (obj_explosao) {
     other.ver_elite("explosao");
@@ -820,7 +825,7 @@ if (_alvo != noone && !_ameacado && !_quer_morrer) {
             }
             alvo_golpeado = _alvo.id;
             hp_golpeado = _alvo.hp;
-            if (_alvo.escudo) {
+            if (_alvo.escudo || (_alvo.defensor && _alvo.state != 3 && _alvo.guarda_quebrada <= 0)) {
                 // o golpe comum nao tira vida do escudo: gira, ou segura ate a carga encher
                 golpes_vazios = 0;
                 if (_p.especial_recarga <= 0) {

@@ -1,5 +1,6 @@
 // a sala com mascara de colisao cria as paredes aqui (scr_mapa)
 paredes_da_mascara();
+if (room == Room2) instance_create_depth(0, 0, 90, obj_patio);
 // profundidade entre o chao (100) e os personagens (0), como a poeira do dash
 instance_create_depth(0, 0, 60, obj_marcas);
 instance_create_depth(0, 0, 75, obj_ambiente);

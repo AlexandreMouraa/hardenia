@@ -10,7 +10,7 @@ global.abertura = [
     "Sem poderes. Sem armadura. Sem arma mágica.\nSó uma coisa que os outros não tinham: você não para de voltar.",
 ];
 // equipe: mesma lista do site
-global.creditos_equipe = "Alexandre Moura, Gabriel (Woooly), William e Cristielly";
+global.creditos_equipe = "Alexandre Moura, Gabriel (Woooly), William, Cristielly e Rodrigo Geraldino";
 
 // o final muda com o tanto que custou chegar la
 function final_cartas() {

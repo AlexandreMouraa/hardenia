@@ -238,11 +238,17 @@ function zona_acerta_jogador(_z) {
 // ---------- golpe do jogador acertando um inimigo ----------
 // vale para o golpe (obj_attack) e para o que as tecnicas causam. _forte: pausa, tremor e
 // empurrao do golpe forte. _quebra: quebra o escudo da elite
-function golpe_acertar(_enemy, _dano, _knockback, _forte, _quebra) {
+function golpe_acertar(_enemy, _dano, _knockback, _forte, _quebra, _origem_x = undefined, _origem_y = undefined, _ambiente = false) {
+    if (!instance_exists(_enemy)) return;
+    if (_origem_x == undefined) {
+        _origem_x = instance_exists(obj_player) ? obj_player.x : _enemy.x;
+        _origem_y = instance_exists(obj_player) ? obj_player.y : _enemy.y;
+    }
     // apanhar acorda ele e os vizinhos, mesmo sem ter visto o jogador
     with (_enemy) {
         acordar();
     }
+    if (defensor_interceptar(_enemy, _origem_x, _origem_y, _quebra)) return;
     // escudo da elite: o golpe comum so faz barulho. Quem tem o golpe certo quebra e ja tira vida
     if (_enemy.escudo) {
         var _dir_escudo = instance_exists(obj_player) ? point_direction(obj_player.x, obj_player.y, _enemy.x, _enemy.y) : 0;
@@ -256,10 +262,15 @@ function golpe_acertar(_enemy, _dano, _knockback, _forte, _quebra) {
         impacto(4, 4);
         fx_faiscas(_enemy.x, _enemy.y, _dir_escudo, make_colour_rgb(120, 220, 255), 12);
     }
-    _dano = tecnicas_no_golpe(_enemy, _dano, _forte);
-    furia_ganhar(_forte ? 6 : 3);
+    if (!_ambiente) {
+        _dano = tecnicas_no_golpe(_enemy, _dano, _forte);
+        furia_ganhar(_forte ? 6 : 3);
+    }
     _enemy.hp -= _dano;
     _enemy.hit_flash = 8;
+    if (_enemy.hp > 0 && _enemy.ao_sofrer_golpe != undefined) {
+        with (_enemy) ao_sofrer_golpe();
+    }
     var _dir_golpe = instance_exists(obj_player) ? point_direction(obj_player.x, obj_player.y, _enemy.x, _enemy.y) : 0;
     som(_enemy.hp <= 0 ? snd_morte_inimigo : snd_acerto);
     // dez vezes o dano: 1 e 2 nao dizem muito na tela. Na horda seria uma chuva de numeros
@@ -576,6 +587,7 @@ function dificuldade_aplicar() {
         with (obj_enemy) {
             if (!leve && !imovel) {
                 hp += _d.vida;
+                vida_maxima_cura = hp;
                 ataque.aviso = round(ataque.aviso * _d.aviso);
                 ataque.recarga = round(ataque.recarga * _d.recarga);
             }

@@ -1,63 +1,55 @@
-var _w = display_get_gui_width();
-var _h = display_get_gui_height();
-var _esc = max(1, _h / 540);
-var _surgir = min(1, tempo / 10);
-
-draw_set_alpha(0.72 * _surgir);
-draw_set_color(c_black);
-draw_rectangle(0, 0, _w, _h, false);
-draw_set_alpha(_surgir);
-draw_set_halign(fa_center);
-draw_set_valign(fa_top);
-draw_set_color(c_white);
-titulo(_w / 2, _h / 2 - 158 * _esc, (caido_def != undefined) ? "O que " + string_lower(string_char_at(caido_def.titulo, 1)) + string_delete(caido_def.titulo, 1, 1) + " deixou" : "O que os Caídos deixaram", _esc * 1.7);
-draw_set_color(c_ltgray);
-texto(_w / 2, _h / 2 - 122 * _esc, (caido_def != undefined) ? "\"" + caido_def.adeus + "\"   Vale até a próxima morte." : "Vale até a próxima morte. Fique com uma.", _esc * 0.85, _esc * 0.85, 0);
-
-for (var _i = 0; _i < array_length(oferta); _i++) {
-    var _r = carta(_i);
-    var _def = oferta[_i];
-    var _cor = variable_struct_get(global.caidos, _def.caido).cor;
-    var _caido = variable_struct_get(global.caidos, _def.caido).nome;
-    var _dupla = variable_struct_exists(_def, "caido2");
-    var _cor2 = _dupla ? variable_struct_get(global.caidos, _def.caido2).cor : _cor;
-    var _foco = (escolhido >= 0) ? (_i == escolhido) : (_i == cursor);
-    var _sobe = _foco ? 6 * _esc : 0;
-    var _cx = (_r[0] + _r[2]) / 2;
-    var _top = _r[1] - _sobe;
-    var _fim = _r[3] - _sobe;
-    var _alfa = _surgir * ((escolhido >= 0 && _i != escolhido) ? 0.25 : 1);
-    draw_set_alpha(_alfa);
-    draw_set_color(make_colour_rgb(24, 18, 20));
-    draw_rectangle(_r[0], _top, _r[2], _fim, false);
-    draw_set_color(_cor);
-    draw_rectangle(_r[0], _top, _r[2], _top + 6 * _esc, false);
-    draw_rectangle(_r[0], _top, _r[2], _fim, true);
-    if (_dupla) {
-        // combinacao: as duas cores, e os dois nomes
-        draw_set_color(_cor2);
-        draw_rectangle(_cx, _top, _r[2], _top + 6 * _esc, false);
-        _caido = "COMBINAÇÃO";
-        draw_set_color(c_white);
-    }
-    if (_foco) {
-        draw_rectangle(_r[0] - 1, _top - 1, _r[2] + 1, _fim + 1, true);
-        draw_rectangle(_r[0] - 2, _top - 2, _r[2] + 2, _fim + 2, true);
-    }
-    texto(_cx, _top + 16 * _esc, _caido, _esc * 0.75, _esc * 0.75, 0);
-    draw_set_color(c_white);
-    texto_ext(_cx, _top + 40 * _esc, _def.nome, 18, (_r[2] - _r[0] - 16 * _esc) / (_esc * 1.05), _esc * 1.05, _esc * 1.05, 0);
-    draw_set_color(c_ltgray);
-    texto_ext(_cx, _top + 84 * _esc, _def.texto, 19, (_r[2] - _r[0] - 20 * _esc) / (_esc * 0.75), _esc * 0.75, _esc * 0.75, 0);
-    if (!global.toque_ativo) {
-        draw_set_color(c_gray);
-        texto(_cx, _fim - 18 * _esc, string(_i + 1), _esc * 0.8, _esc * 0.8, 0);
-    }
-}
-draw_set_alpha(_surgir);
-draw_set_color(c_ltgray);
-texto(_w / 2, _h / 2 + 122 * _esc, global.toque_ativo ? "Toque na técnica" : ((global.ultimo_aparelho == "controle") ? "ALAVANCA para escolher    A confirma" : "A / D ou 1 2 3 para escolher    ENTER confirma    Também dá para clicar"), _esc * 0.75, _esc * 0.75, 0);
+if (instance_exists(obj_arvore)) exit;
+var _u = tecnicas_ui();
+var _n = array_length(oferta);
+draw_set_alpha(0.96);
+draw_set_color(make_colour_rgb(11, 15, 21));
+draw_rectangle(0, 0, display_get_gui_width(), display_get_gui_height(), false);
 draw_set_alpha(1);
+draw_set_halign(fa_left);
+draw_set_valign(fa_top);
+draw_set_color(make_colour_rgb(236, 218, 176));
+titulo(_u.x + 52 * _u.e, _u.y + 24 * _u.e, "Escolha seu legado", 2 * _u.e);
+draw_set_color(c_ltgray);
+tecnica_texto(_u, 52, 64, caido_def != undefined ? caido_def.adeus : "Aprenda uma técnica. Ela vale até a próxima morte.", 0.85);
+tecnica_texto(_u, 52, 86, string(array_length(global.tecnicas)) + " técnicas adquiridas nesta tentativa", 0.72);
+tecnica_botao(_u, 720, 64, 188, "ÁRVORE DE TÉCNICAS");
+for (var _i = 0; _i < _n; _i++) {
+    var _def = oferta[_i];
+    var _caido = variable_struct_get(global.caidos, _def.caido);
+    var _x = (960 - (_n * 272 + (_n - 1) * 20)) / 2 + _i * 292;
+    var _foco = _i == cursor;
+    var _y = _foco ? 117 : 123;
+    var _ativa = escolhido < 0 || escolhido == _i;
+    draw_set_alpha(_ativa ? 1 : 0.35);
+    tecnica_painel(_u, _x, _y, 272, 330, make_colour_rgb(27, 33, 42));
+    tecnica_painel(_u, _x, _y, 272, 4, _caido.cor);
+    if (variable_struct_exists(_def, "caido2")) {
+        tecnica_painel(_u, _x + 136, _y, 136, 4, variable_struct_get(global.caidos, _def.caido2).cor);
+    }
+    tecnica_painel(_u, _x, _y, 272, 330, _foco ? c_white : make_colour_rgb(76, 88, 99), true);
+    tecnica_icone(_def.chave, _u.x + (_x + 35) * _u.e, _u.y + (_y + 35) * _u.e, 17 * _u.e, _caido.cor);
+    draw_set_color(_caido.cor);
+    tecnica_texto(_u, _x + 65, _y + 17, variable_struct_exists(_def, "requer") ? "COMBINAÇÃO" : _caido.nome, 0.65);
+    draw_set_color(c_white);
+    tecnica_texto(_u, _x + 65, _y + 35, _def.nome, 0.95, 192);
+    draw_set_color(c_ltgray);
+    tecnica_texto(_u, _x + 18, _y + 88, _def.detalhe, 0.83, 236);
+    draw_set_color(_caido.cor);
+    tecnica_texto(_u, _x + 18, _y + 166, "ATIVAÇÃO", 0.7);
+    draw_set_color(c_white);
+    tecnica_texto(_u, _x + 18, _y + 185, _def.ativacao, 0.78, 236);
+    draw_set_color(_caido.cor);
+    tecnica_texto(_u, _x + 18, _y + 237, variable_struct_exists(_def, "requer") ? "REQUISITOS CUMPRIDOS" : "CAMINHOS DE COMBINAÇÃO", 0.65);
+    draw_set_color(c_ltgray);
+    tecnica_texto(_u, _x + 18, _y + 257, variable_struct_exists(_def, "requer") ? "Consulte as ligações na árvore." : tecnica_caminhos(_def.chave), 0.68, 236);
+    draw_set_color(_foco ? c_white : c_gray);
+    tecnica_texto(_u, _x + 18, _y + 308, escolhido == _i ? "[OK] ADQUIRIDA" : string(_i + 1) + "   " + (_foco ? "CONFIRMAR ESCOLHA" : "SELECIONAR"), 0.68);
+}
+draw_set_alpha(1);
+draw_set_color(c_ltgray);
+tecnica_texto(_u, 52, 474, global.toque_ativo ? "Toque em uma carta para escolher. Consulte sua construção na árvore." : (global.ultimo_aparelho == "controle" ? "ALAVANCA: selecionar    A: confirmar    Y: árvore" : "A / D ou SETAS: selecionar    ENTER: confirmar    1 2 3: escolher    TAB: árvore"), 0.77);
+draw_set_color(make_colour_rgb(169, 182, 190));
+tecnica_texto(_u, 52, 500, "A árvore mostra possibilidades. Técnicas só são adquiridas ao confirmar uma das ofertas.", 0.72);
 draw_set_color(c_white);
 draw_set_halign(fa_left);
 draw_set_valign(fa_top);
