@@ -49,7 +49,7 @@ if (modo == "opcoes") {
     titulo(_w / 2, _h * 0.13, "Como jogar", _esc * 2);
     var _linhas = [
         ["Andar", "WASD ou setas", "alavanca", "polegar à esquerda da tela"],
-        ["Golpe (3 seguidos: combo)", "clique ou J", "RB ou X", "ATACAR"],
+        ["Golpe (seguidos: combo)", "clique ou J", "RB ou X", "ATACAR"],
         ["Golpe carregado (quebra escudo)", "segurar o ataque", "segurar o ataque", "segurar ATACAR"],
         ["Dash (atravessa o golpe)", "espaço", "A ou LB", "DASH"],
         ["Estocada (quebra escudo)", "atacar no dash", "atacar no dash", "ATACAR no dash"],

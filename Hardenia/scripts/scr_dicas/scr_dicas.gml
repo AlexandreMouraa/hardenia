@@ -24,10 +24,11 @@ function dica_texto(_k) {
         case "mover": return dica_botao("mover") + " move o guerreiro.";
         case "golpe": return dica_botao("golpe") + ": golpe. Ele vira sozinho para o inimigo mais perto.";
         case "zona": return "Saia da zona vermelha antes do golpe. " + dica_botao("dash") + ": o dash atravessa.";
-        case "combo": return "Três golpes seguidos fazem um combo. O último vale o dobro e empurra.";
+        // sem numeros: o combo e o golpe forte mudam com a arma (scr_armas)
+        case "combo": return "Golpes seguidos fazem um combo. O último é mais forte e empurra.";
         case "apagado": return "Inimigo apagado acabou de atacar: é a hora de bater.";
         case "giro": return "Cercado? " + dica_botao("giro") + ": o giro acerta todos em volta.";
-        case "escudo": return "Escudo: só quebra com golpe carregado, estocada ou giro.";
+        case "escudo": return arma_def().quebra ? "Escudo: com esta arma, qualquer golpe quebra." : "Escudo: só quebra com golpe carregado, estocada ou giro.";
         case "estocada": return "Atacar logo depois do dash solta a estocada, um golpe mais longo.";
         case "carga": return "Segure " + dica_botao("golpe") + " até o guerreiro piscar e solte: golpe carregado.";
         case "furia": return "Fúria cheia: segure " + dica_botao("giro") + " para soltar o Giro Furioso.";

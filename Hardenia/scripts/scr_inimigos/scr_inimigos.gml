@@ -317,6 +317,8 @@ function inimigo_morrer(_enemy, _dir, _forte) {
     // o Caido que cai deixa a tecnica no bau da sala (obj_tecnicas)
     if (_enemy.object_index == obj_enemy_caido) {
         global.caido_vencido = _enemy.caido;
+        // e a arma dele fica no chao, onde ele caiu (scr_armas)
+        arma_largar(_enemy.caido, _enemy.x, _enemy.y);
         musica(musica_da_sala(), 2000);
         salvo_caido_livre(_enemy.caido);
     }

@@ -68,6 +68,28 @@ testar_grupo = false;
 // ("tecnicas=N", quantas fizeram efeito). Sem ela, fica com a primeira carta de cada oferta
 todas_tecnicas = false;
 viu_tecnicas = false;
+// armas dos Caidos (scr_armas): o robo vai ate a arma que o Caido largou e troca, para cada arma
+// jogar. "armas=N" no resumo: quantas armas diferentes golpearam (a espada conta). Com -semarmas
+// ele fica so com a espada: o resumo tem de ser o mesmo de antes das armas
+pegar_armas = true;
+// -arma X: a run inteira com a arma X na mao (espada, machado, adagas, alabarda), sem trocar. Serve
+// para comparar as armas: o resumo ganha "arma=X", e o tempo de cada sala sai no log (sala_limpa)
+arma_forcada = "";
+viu_arma = false;
+viu_arma_chao = false;
+viu_arma_hud = false;
+armas_usadas = {};
+// a arma no chao que o robo quer: nao a que ele mesmo largou ao trocar (robo_largou), senao ficaria
+// trocando para sempre entre as duas
+arma_no_chao = function() {
+    var _achou = noone;
+    with (obj_arma_chao) {
+        if (!espera && !variable_instance_exists(id, "robo_largou")) {
+            _achou = id;
+        }
+    }
+    return _achou;
+};
 grupo_passo = 0;
 grupo_tempo = 0;
 grupo_parede = noone;
@@ -121,6 +143,9 @@ for (var _i = 1; _i <= parameter_count(); _i++) {
     if (parameter_string(_i) == "-tecnicas") {
         todas_tecnicas = true;
     }
+    if (parameter_string(_i) == "-semarmas") {
+        pegar_armas = false;
+    }
     if (parameter_string(_i) == "-grupo") {
         testar_grupo = true;
     }
@@ -146,6 +171,10 @@ for (var _i = 1; _i < parameter_count(); _i++) {
     }
     if (parameter_string(_i) == "-nome") {
         nome_robo = parameter_string(_i + 1);
+    }
+    if (parameter_string(_i) == "-arma") {
+        arma_forcada = parameter_string(_i + 1);
+        pegar_armas = false;
     }
 }
 

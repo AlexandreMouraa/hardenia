@@ -23,6 +23,8 @@ global.runs_zeradas = 0;
 global.desafio = false;
 global.desafio_dia = "";
 function run_zerar() {
+    // a arma do Caido se perde na morte, como as tecnicas (scr_armas)
+    global.arma = "espada";
     global.vida = VIDA_MAX;
     global.fase_curada = -1;
     global.furia = 0;

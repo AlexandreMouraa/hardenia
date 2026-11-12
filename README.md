@@ -96,6 +96,12 @@ Ali, `L` ou um toque no botão de baixo mede quantos inimigos o aparelho aguenta
   Cemitério, quando a sala fica limpa, um dos 4 Caídos aparece, sorteado por run.
   Cada um tem arte, rodízio de ataques e falas próprios, e o baú que vem depois
   oferece primeiro as técnicas dele.
+- **Armas dos Caídos** (`scripts/scr_armas`, `obj_arma_chao`, `obj_arma_escolha`): o
+  Caído vencido larga a arma ao lado de onde caiu. Chegando perto, o jogador escolhe
+  ficar com a da mão ou trocar; a que sai fica no chão. **Machado do Carrasco:** lento,
+  largo, todo golpe quebra escudo. **Adagas do Batedor:** rápidas e curtas, combo de 4.
+  **Alabarda da Sentinela:** alcance longo, golpe estreito. A arma se perde na morte. O
+  Sapador não deixa arma.
 - **O Rei Morto** (`obj_enemy_chefe`): 3 fases, uma a cada terço da vida, com
   rodízio próprio.
 - **Variação** (`scripts/scr_variacao`): cada sala tem 3 arranjos de inimigos,
@@ -195,6 +201,8 @@ roda 3 runs em velocidade acelerada, sem som e em janela, e termina com `OK` ou
 | `-morrer` | morre uma vez em cada sala na 1ª run (testa morte, volta ao começo da run e a vida) |
 | `-mouse` | ataca com o clique em vez do `J` (testa o caminho do clique; o golpe é o mesmo) |
 | `-tecnicas` | começa a run com todas as técnicas e reprova se alguma não fizer efeito (soma `tecnicas=N` no resumo) |
+| `-semarmas` | não pega as armas dos Caídos e fica só com a espada: o resumo tem de ser igual ao de antes das armas (sem a opção, o robô troca de arma e soma `armas=N`, quantas golpearam) |
+| `-arma X` | joga a run inteira com a arma `X` na mão (`espada`, `machado`, `adagas` ou `alabarda`), sem trocar: serve para comparar as armas (soma `arma=X` no resumo; o tempo de cada sala sai no log, em `sala_limpa`) |
 | `-carregar` | segura o ataque depois de cada golpe e solta com a carga cheia (testa o golpe carregado; soma `carregados=N` no resumo) |
 | `-especial` | usa o golpe especial sempre que tem alvo perto e recarga pronta (soma `especiais=N` no resumo e registra os acertos de cada giro) |
 | `-estocar` | com alvo perto e carga de dash, dá o dash e ataca logo depois (soma `estocadas=N` no resumo). Vida sempre cheia: testa o fluxo, não o balanceamento |
