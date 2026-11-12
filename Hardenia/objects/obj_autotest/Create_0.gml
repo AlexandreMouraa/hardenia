@@ -95,6 +95,7 @@ grupo_tempo = 0;
 grupo_parede = noone;
 grupo_a = noone;
 grupo_dir = 0;
+grupo_paredes = []; // paredes tiradas para abrir a clareira do teste: [x, y, escala x, escala y]
 grupo_ok = 0;
 grupo_chegou = false;
 // -horda: joga as 3 ondas da sala de teste, com a vida sempre cheia (aqui a pergunta
@@ -380,10 +381,47 @@ testar_zonas = function() {
 // Passo 1: quem perdeu o jogador foi ate a memoria e desistiu; todos acordam longe.
 // Passo 2: com uma parede grande no meio, ele da a volta e chega a ver o jogador.
 // Passo 3: os 4 chegam, cada um de um lado. Erro vira FALHA no log
+// O teste precisa de campo aberto em volta do jogador, e as salas agora sao caminhos: ele abre
+// uma clareira no meio da sala (tira as paredes que encostam nela) e poe o jogador no meio. No
+// fim, as paredes voltam e cada um volta para onde nasceu; a run segue normal
+grupo_abrir = function(_p) {
+    var _cx = room_width / 2;
+    var _cy = room_height / 2;
+    with (obj_wall) {
+        if (rectangle_in_circle(bbox_left, bbox_top, bbox_right, bbox_bottom, _cx, _cy, 420) > 0) {
+            array_push(other.grupo_paredes, [x, y, image_xscale, image_yscale]);
+            instance_destroy();
+        }
+    }
+    _p.x = _cx;
+    _p.y = _cy;
+    global.campo.sala = -1;
+};
+grupo_fechar = function(_p) {
+    for (var _i = 0; _i < array_length(grupo_paredes); _i++) {
+        var _w = grupo_paredes[_i];
+        with (instance_create_layer(_w[0], _w[1], "Instances", obj_wall)) {
+            image_xscale = _w[2];
+            image_yscale = _w[3];
+        }
+    }
+    grupo_paredes = [];
+    _p.x = _p.xstart;
+    _p.y = _p.ystart;
+    with (obj_enemy) {
+        x = xstart;
+        y = ystart;
+        home_x = x;
+        home_y = y;
+        acordado = false;
+    }
+    global.campo.sala = -1;
+};
 grupo_conferir = function(_p) {
     grupo_tempo -= 1;
     switch (grupo_passo) {
         case 0:
+            grupo_abrir(_p);
             grupo_a = instance_find(obj_enemy, 0);
             var _b = instance_find(obj_enemy, 1);
             var _c = instance_find(obj_enemy, 2);
@@ -395,6 +433,7 @@ grupo_conferir = function(_p) {
             }
             if (_dir < 0) {
                 log("FALHA_grupo", "sem lado livre em volta do jogador");
+                grupo_fechar(_p);
                 grupo_passo = 4;
                 return;
             }
@@ -551,6 +590,7 @@ grupo_conferir = function(_p) {
                 }
                 pedir_print("cerco");
                 grupo_ok = 1;
+                grupo_fechar(_p);
                 grupo_passo = 4;
             }
             break;

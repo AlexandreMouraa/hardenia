@@ -81,9 +81,9 @@ Hoje o efeito do jogador é invisível (a animação de ataque do próprio perso
 
 ## Mapas / Cenários
 
-- **Resolução por fase**: sem tamanho fixo obrigatório. As 3 fases atuais são salas de **1536 x 1024 px** e a câmera mostra **1152 x 648** em volta do jogador. Fases futuras podem ter outro tamanho (maiores também: a câmera segue o jogador), só me avisar as dimensões exatas de cada uma antes de configurar a sala no jogo.
+- **Resolução por fase**: sem tamanho fixo obrigatório. Ruínas e Catacumbas têm **2000 x 1400 px**, Pátio e Cemitério **2000 x 1600 px**, o Trono **1536 x 1024 px**, e a câmera mostra **1152 x 648** em volta do jogador. Fases futuras podem ter outro tamanho (maiores também: a câmera segue o jogador), só me avisar as dimensões exatas de cada uma antes de configurar a sala no jogo.
 - Pode ser entregue como **uma imagem única pré-renderizada** (como foi a Fase 1) — não precisa ser feito em tileset/grade de tiles, o jogo não depende disso.
-- Colisão (paredes, pilares, obstáculos): hoje é montada à mão com blocos invisíveis (a Fase 1 tem 294). Para os mapas novos, mandar junto uma **máscara de colisão** (ver abaixo) deixa isso rápido e exato.
+- Colisão (paredes, pilares, obstáculos): sai de uma **máscara de colisão** (ver abaixo), sem bloco posto à mão. As cinco salas são geradas por script, arte e máscara do mesmo traçado: `tools/gerar_tunel.py` (Catacumbas e Trono) e `tools/gerar_mapas.py` (Ruínas, Pátio e Cemitério). As pinturas antigas do Pátio e do Cemitério ficam em `tools/pinturas`, de onde saem cores e peças.
 - Portões/entradas de fase (como o portão de cima e de baixo da Fase 1) devem ficar visualmente claros na arte, já que vão virar pontos de transição entre fases.
 
 ### Próximos mapas: túneis e caminhos
