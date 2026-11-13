@@ -125,7 +125,8 @@ draw_set_alpha(_fcheia ? _piscar : 1);
 draw_rectangle(16 * _esc, _fy, 16 * _esc + _ew * global.furia / FURIA_MAX, _fy + 6 * _esc, false);
 draw_set_alpha(1);
 draw_set_color(_fcheia ? make_colour_rgb(255, 170, 90) : c_ltgray);
-texto(16 * _esc + dash_charges_max * 16 * _esc + 4 * _esc, 79 * _esc, _fcheia ? "FÚRIA: SEGURE O GIRO" : "FÚRIA", _esc * 0.7, _esc * 0.7, 0);
+// cheia, o nome do golpe da arma na mao (scr_armas): cada arma tem o seu
+texto(16 * _esc + dash_charges_max * 16 * _esc + 4 * _esc, 79 * _esc, _fcheia ? "SEGURE O GIRO: " + arma_def().furia : "FÚRIA", _esc * 0.7, _esc * 0.7, 0);
 
 // Icones identicos aos das cartas e da arvore; o ultimo efeito aparece por pouco tempo.
 for (var _i = 0; _i < array_length(global.tecnicas); _i++) {

@@ -42,6 +42,9 @@ for (var _i = 0; _i < 2; _i++) {
     texto_ext(_cx, _top + 96 * _esc, _def.nome, 18, (_r[2] - _r[0] - 16 * _esc) / (_esc * 1.05), _esc * 1.05, _esc * 1.05, 0);
     draw_set_color(c_ltgray);
     texto_ext(_cx, _top + 136 * _esc, _def.texto, 19, (_r[2] - _r[0] - 20 * _esc) / (_esc * 0.75), _esc * 0.75, _esc * 0.75, 0);
+    // a Furia da arma, na cor dela: cada uma tem a sua (scr_armas)
+    draw_set_color(_cor);
+    texto_ext(_cx, _top + 182 * _esc, "FÚRIA, " + _def.furia + ": " + _def.furia_texto, 17, (_r[2] - _r[0] - 20 * _esc) / (_esc * 0.65), _esc * 0.65, _esc * 0.65, 0);
     if (!global.toque_ativo) {
         draw_set_color(c_gray);
         texto(_cx, _fim - 18 * _esc, string(_i + 1), _esc * 0.8, _esc * 0.8, 0);

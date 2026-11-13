@@ -270,6 +270,31 @@ function golpe_em_volta(_x, _y, _raio, _dano, _knockback, _forte, _quebra) {
     return _n;
 }
 
+// golpe em linha: de (_x, _y) na direcao _dir por _comp px, com _meia px para cada lado. Acerta
+// cada inimigo que a linha cruza uma vez so: a estocada longa da alabarda e a Investida (scr_armas).
+// Tres linhas paralelas, porque collision_line nao tem largura. Quem chama corta _comp na parede
+// (linha_ate_parede), senao o golpe atravessaria ela
+function golpe_em_linha(_x, _y, _dir, _comp, _meia, _dano, _knockback, _forte, _quebra) {
+    var _fx = _x + lengthdir_x(_comp, _dir);
+    var _fy = _y + lengthdir_y(_comp, _dir);
+    var _lx = lengthdir_x(_meia, _dir + 90);
+    var _ly = lengthdir_y(_meia, _dir + 90);
+    var _acertados = [];
+    for (var _k = -1; _k <= 1; _k++) {
+        var _lista = ds_list_create();
+        var _n = collision_line_list(_x + _lx * _k, _y + _ly * _k, _fx + _lx * _k, _fy + _ly * _k, obj_enemy, false, true, _lista, false);
+        for (var _i = 0; _i < _n; _i++) {
+            var _e = _lista[| _i];
+            if (!array_contains(_acertados, _e)) {
+                array_push(_acertados, _e);
+                golpe_acertar(_e, _dano, _knockback, _forte, _quebra, _x, _y);
+            }
+        }
+        ds_list_destroy(_lista);
+    }
+    return array_length(_acertados);
+}
+
 // bomba do Sapador: _voo frames no ar ate (_px, _py); depois espera _espera frames no chao
 function bomba_jogador(_x, _y, _px, _py, _voo, _espera, _dano) {
     with (instance_create_layer(_x, _y, "Instances", obj_bomba_jogador)) {
