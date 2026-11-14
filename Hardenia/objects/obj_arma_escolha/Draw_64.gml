@@ -25,17 +25,20 @@ for (var _i = 0; _i < 2; _i++) {
     var _top = _r[1] - _sobe;
     var _fim = _r[3] - _sobe;
     var _alfa = _surgir * ((escolhido >= 0 && _i != escolhido) ? 0.25 : 1);
+    // entrada: a carta sobe e aparece (scr_interface_tecnicas, painel premium)
+    var _vida = premium_entrada(tempo, _i);
+    _top += 30 * (1 - _vida) * (1 - _vida);
+    _fim += 30 * (1 - _vida) * (1 - _vida);
     draw_set_alpha(_alfa);
-    draw_set_color(make_colour_rgb(24, 18, 20));
-    draw_rectangle(_r[0], _top, _r[2], _fim, false);
+    painel_premium(_r[0], _top, _r[2], _fim, _cor, _foco, _vida, _esc);
+    draw_set_alpha(_alfa * _vida);
     draw_set_color(_cor);
-    draw_rectangle(_r[0], _top, _r[2], _top + 6 * _esc, false);
-    draw_rectangle(_r[0], _top, _r[2], _fim, true);
-    if (_foco) {
-        draw_rectangle(_r[0] - 1, _top - 1, _r[2] + 1, _fim + 1, true);
-        draw_rectangle(_r[0] - 2, _top - 2, _r[2] + 2, _fim + 2, true);
-    }
     texto(_cx, _top + 16 * _esc, (_i == 0) ? "FICAR COM" : "TROCAR POR", _esc * 0.75, _esc * 0.75, 0);
+    gpu_set_blendmode(bm_add);
+    draw_set_alpha(_alfa * _vida * 0.3);
+    draw_circle(_cx, _top + 62 * _esc, 26 * _esc, false);
+    gpu_set_blendmode(bm_normal);
+    draw_set_alpha(_alfa * _vida);
     arma_icone(_chave, _cx, _top + 62 * _esc, 18 * _esc, _cor);
     draw_set_alpha(_alfa);
     draw_set_color(c_white);

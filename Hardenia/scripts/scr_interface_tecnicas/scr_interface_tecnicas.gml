@@ -144,6 +144,99 @@ function tecnica_icone(_chave, _x, _y, _r, _cor) {
     draw_set_color(c_white);
 }
 
+// ---------- painel premium: cartas, carta da arma e nos da arvore (pedido dos lideres, 13/11) ----------
+// Tudo so desenho, sem random: o brilho anda com o relogio (current_time), como o pisca do HUD.
+// _cor: cor do Caido ou da arma; _foco: pulsa um halo; _vida: 0 a 1, entrada (sobe e aparece)
+#macro PREMIUM_OURO make_colour_rgb(214, 178, 96)
+#macro PREMIUM_OURO_ESCURO make_colour_rgb(120, 92, 44)
+function painel_premium(_x1, _y1, _x2, _y2, _cor, _foco, _vida = 1, _esc = 1) {
+    var _a_antes = draw_get_alpha();
+    var _a = _a_antes * _vida;
+    var _w = _x2 - _x1;
+    var _h = _y2 - _y1;
+    var _rel = current_time / 1000;
+    // halo em volta, pulsando devagar quando em foco
+    if (_foco) {
+        var _p = 0.5 + 0.5 * sin(_rel * 4);
+        gpu_set_blendmode(bm_add);
+        for (var _k = 1; _k <= 4; _k++) {
+            draw_set_alpha(_a * (0.10 + 0.08 * _p) * (1 - _k / 5));
+            draw_set_color(merge_colour(_cor, c_white, 0.3));
+            draw_rectangle(_x1 - _k * 3 * _esc, _y1 - _k * 3 * _esc, _x2 + _k * 3 * _esc, _y2 + _k * 3 * _esc, false);
+        }
+        gpu_set_blendmode(bm_normal);
+    }
+    // fundo: degrade de cima (mais claro, com um pouco da cor) para baixo (quase preto)
+    draw_set_alpha(_a);
+    var _topo = merge_colour(make_colour_rgb(30, 26, 36), _cor, 0.18);
+    var _base = make_colour_rgb(12, 9, 14);
+    draw_rectangle_colour(_x1, _y1, _x2, _y2, _topo, _topo, _base, _base, false);
+    // faixa da cor em cima, com brilho
+    draw_set_color(_cor);
+    draw_rectangle(_x1, _y1, _x2, _y1 + 4 * _esc, false);
+    gpu_set_blendmode(bm_add);
+    draw_set_alpha(_a * 0.35);
+    draw_rectangle_colour(_x1, _y1 + 4 * _esc, _x2, _y1 + 28 * _esc, _cor, _cor, c_black, c_black, false);
+    // brilho varrendo: uma faixa vertical clara que atravessa o painel a cada 3 s, mais forte no foco
+    var _fase = ((_rel * 0.33 + _x1 * 0.0007) mod 1);
+    var _bx = _x1 - _w * 0.25 + _fase * _w * 1.5;
+    var _bw = _w * 0.18;
+    var _bint = (_foco ? 0.22 : 0.10) * _a;
+    var _l = clamp(_bx - _bw, _x1, _x2);
+    var _m = clamp(_bx, _x1, _x2);
+    var _r = clamp(_bx + _bw, _x1, _x2);
+    if (_m > _l) draw_rectangle_colour(_l, _y1, _m, _y2, c_black, c_white, c_white, c_black, false);
+    draw_set_alpha(_bint);
+    if (_m > _l) draw_rectangle_colour(_l, _y1, _m, _y2, c_black, c_white, c_white, c_black, false);
+    if (_r > _m) draw_rectangle_colour(_m, _y1, _r, _y2, c_white, c_black, c_black, c_white, false);
+    gpu_set_blendmode(bm_normal);
+    // borda dupla: ouro escuro fora, ouro claro dentro (branco no foco)
+    draw_set_alpha(_a);
+    draw_set_color(PREMIUM_OURO_ESCURO);
+    draw_rectangle(_x1, _y1, _x2, _y2, true);
+    draw_set_color(_foco ? c_white : PREMIUM_OURO);
+    draw_rectangle(_x1 + 3 * _esc, _y1 + 3 * _esc, _x2 - 3 * _esc, _y2 - 3 * _esc, true);
+    // ornamento: um losango em cada canto
+    var _d = 5 * _esc;
+    var _cantos = [[_x1, _y1], [_x2, _y1], [_x1, _y2], [_x2, _y2]];
+    for (var _c = 0; _c < 4; _c++) {
+        var _cx = _cantos[_c][0];
+        var _cy = _cantos[_c][1];
+        draw_set_color(make_colour_rgb(12, 9, 14));
+        draw_triangle(_cx - _d - 1, _cy, _cx, _cy - _d - 1, _cx + _d + 1, _cy, false);
+        draw_triangle(_cx - _d - 1, _cy, _cx, _cy + _d + 1, _cx + _d + 1, _cy, false);
+        draw_set_color(_foco ? c_white : PREMIUM_OURO);
+        draw_triangle(_cx - _d, _cy, _cx, _cy - _d, _cx + _d, _cy, false);
+        draw_triangle(_cx - _d, _cy, _cx, _cy + _d, _cx + _d, _cy, false);
+    }
+    draw_set_alpha(_a_antes);
+    draw_set_color(c_white);
+}
+
+// entrada de uma carta: 0 no primeiro quadro, 1 depois de 14 quadros, com atraso por carta
+function premium_entrada(_tempo, _i) {
+    return clamp((_tempo - 4 * _i) / 14, 0, 1);
+}
+
+// ligacao da arvore: linha e um ponto de luz que corre por ela (mais forte em foco)
+function ligacao_viva(_x1, _y1, _x2, _y2, _cor, _foco, _esc) {
+    draw_set_color(_foco ? PREMIUM_OURO : make_colour_rgb(53, 66, 76));
+    draw_set_alpha(_foco ? 0.85 : 0.35);
+    draw_line_width(_x1, _y1, _x2, _y2, _foco ? 2 * _esc : _esc);
+    var _f = (current_time / 1400 + (_x1 + _y2) * 0.001) mod 1;
+    var _px = lerp(_x1, _x2, _f);
+    var _py = lerp(_y1, _y2, _f);
+    gpu_set_blendmode(bm_add);
+    draw_set_alpha(_foco ? 0.9 : 0.35);
+    draw_set_color(_foco ? c_white : _cor);
+    draw_circle(_px, _py, (_foco ? 3 : 2) * _esc, false);
+    draw_set_alpha((_foco ? 0.35 : 0.12));
+    draw_circle(_px, _py, (_foco ? 7 : 4) * _esc, false);
+    gpu_set_blendmode(bm_normal);
+    draw_set_alpha(1);
+    draw_set_color(c_white);
+}
+
 function arvore_abrir() {
     if (!instance_exists(obj_arvore)) instance_create_depth(0, 0, -11000, obj_arvore);
 }

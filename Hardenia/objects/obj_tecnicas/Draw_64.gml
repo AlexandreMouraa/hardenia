@@ -18,15 +18,25 @@ for (var _i = 0; _i < _n; _i++) {
     var _caido = variable_struct_get(global.caidos, _def.caido);
     var _x = (960 - (_n * 272 + (_n - 1) * 20)) / 2 + _i * 292;
     var _foco = _i == cursor;
-    var _y = _foco ? 117 : 123;
+    // entrada: cada carta sobe e aparece, uma atras da outra; a em foco fica um pouco mais alta
+    var _vida = premium_entrada(tempo, _i);
+    var _y = (_foco ? 117 : 123) + 40 * (1 - _vida) * (1 - _vida);
     var _ativa = escolhido < 0 || escolhido == _i;
     draw_set_alpha(_ativa ? 1 : 0.35);
-    tecnica_painel(_u, _x, _y, 272, 330, make_colour_rgb(27, 33, 42));
-    tecnica_painel(_u, _x, _y, 272, 4, _caido.cor);
+    var _r = tecnica_ret(_u, _x, _y, 272, 330);
+    painel_premium(_r[0], _r[1], _r[2], _r[3], _caido.cor, _foco, _vida, _u.e);
     if (variable_struct_exists(_def, "caido2")) {
+        draw_set_alpha((_ativa ? 1 : 0.35) * _vida);
         tecnica_painel(_u, _x + 136, _y, 136, 4, variable_struct_get(global.caidos, _def.caido2).cor);
     }
-    tecnica_painel(_u, _x, _y, 272, 330, _foco ? c_white : make_colour_rgb(76, 88, 99), true);
+    draw_set_alpha((_ativa ? 1 : 0.35) * _vida);
+    // icone com um halo da cor do Caido atras
+    gpu_set_blendmode(bm_add);
+    draw_set_alpha((_ativa ? 0.35 : 0.1) * _vida);
+    draw_set_color(_caido.cor);
+    draw_circle(_u.x + (_x + 35) * _u.e, _u.y + (_y + 35) * _u.e, 24 * _u.e, false);
+    gpu_set_blendmode(bm_normal);
+    draw_set_alpha((_ativa ? 1 : 0.35) * _vida);
     tecnica_icone(_def.chave, _u.x + (_x + 35) * _u.e, _u.y + (_y + 35) * _u.e, 17 * _u.e, _caido.cor);
     draw_set_color(_caido.cor);
     tecnica_texto(_u, _x + 65, _y + 17, variable_struct_exists(_def, "requer") ? "COMBINAÇÃO" : _caido.nome, 0.65);

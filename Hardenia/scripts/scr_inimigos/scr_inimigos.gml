@@ -287,6 +287,8 @@ function golpe_acertar(_enemy, _dano, _knockback, _forte, _quebra, _origem_x = u
             impacto(6, 6);
             chute_camera(_dir_golpe, 9);
             fx_onda(_enemy.x, _enemy.y, 58, make_colour_rgb(255, 180, 90));
+            // clarao branco curto no ponto do acerto, por cima da onda (so desenho)
+            fx_onda(_enemy.x, _enemy.y, 26, c_white);
             fx_faiscas(_enemy.x, _enemy.y, _dir_golpe, make_colour_rgb(255, 200, 120), 8);
             fx_corte(_enemy.x, _enemy.y, _dir_golpe, make_colour_rgb(255, 170, 80), 50);
         } else {
