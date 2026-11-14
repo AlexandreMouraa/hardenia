@@ -28,8 +28,10 @@ function tecnica_texto(_u, _x, _y, _s, _esc = 1, _largura = 0) {
 }
 
 function tecnica_botao(_u, _x, _y, _w, _rotulo) {
-    tecnica_painel(_u, _x, _y, _w, 32, make_colour_rgb(29, 37, 45));
-    tecnica_painel(_u, _x, _y, _w, 32, make_colour_rgb(137, 154, 164), true);
+    var _b = tecnica_ret(_u, _x, _y, _w, 32);
+    ret_redondo(_b[0], _b[1], _b[2], _b[3], 10 * _u.e, make_colour_rgb(36, 44, 54), make_colour_rgb(22, 28, 36));
+    draw_set_color(make_colour_rgb(137, 154, 164));
+    borda_redonda(_b[0], _b[1], _b[2], _b[3], 10 * _u.e, max(1, _u.e));
     draw_set_halign(fa_center);
     draw_set_valign(fa_middle);
     draw_set_color(c_white);
@@ -149,66 +151,106 @@ function tecnica_icone(_chave, _x, _y, _r, _cor) {
 // _cor: cor do Caido ou da arma; _foco: pulsa um halo; _vida: 0 a 1, entrada (sobe e aparece)
 #macro PREMIUM_OURO make_colour_rgb(214, 178, 96)
 #macro PREMIUM_OURO_ESCURO make_colour_rgb(120, 92, 44)
+// ---------- cantos arredondados (pedido do Alexandre, 14/11) ----------
+// contorno de um retangulo de cantos redondos, no sentido do relogio, fechado: [x, y, x, y...]
+#macro REDONDO_PASSOS 6
+function redondo_pontos(_x1, _y1, _x2, _y2, _r) {
+    _r = max(0, min(_r, (_x2 - _x1) / 2, (_y2 - _y1) / 2));
+    var _cx = [_x2 - _r, _x2 - _r, _x1 + _r, _x1 + _r];
+    var _cy = [_y1 + _r, _y2 - _r, _y2 - _r, _y1 + _r];
+    var _p = [];
+    for (var _c = 0; _c < 4; _c++) {
+        for (var _k = 0; _k <= REDONDO_PASSOS; _k++) {
+            var _ang = -90 + _c * 90 + 90 * _k / REDONDO_PASSOS;
+            array_push(_p, _cx[_c] + _r * dcos(_ang), _cy[_c] + _r * dsin(_ang));
+        }
+    }
+    array_push(_p, _p[0], _p[1]);
+    return _p;
+}
+
+// retangulo cheio de cantos redondos, em degrade de cima para baixo. Usa o alpha corrente
+function ret_redondo(_x1, _y1, _x2, _y2, _r, _topo, _base = -1) {
+    if (_x2 <= _x1 || _y2 <= _y1) return;
+    if (_base == -1) _base = _topo;
+    var _a = draw_get_alpha();
+    var _p = redondo_pontos(_x1, _y1, _x2, _y2, _r);
+    var _alt = _y2 - _y1;
+    draw_primitive_begin(pr_trianglefan);
+    draw_vertex_colour((_x1 + _x2) / 2, (_y1 + _y2) / 2, merge_colour(_topo, _base, 0.5), _a);
+    for (var _i = 0; _i < array_length(_p); _i += 2) {
+        draw_vertex_colour(_p[_i], _p[_i + 1], merge_colour(_topo, _base, (_p[_i + 1] - _y1) / _alt), _a);
+    }
+    draw_primitive_end();
+}
+
+// so a borda, com espessura (para dentro). Usa a cor e o alpha correntes
+function borda_redonda(_x1, _y1, _x2, _y2, _r, _esp) {
+    var _a = draw_get_alpha();
+    var _cor = draw_get_colour();
+    var _f = redondo_pontos(_x1, _y1, _x2, _y2, _r);
+    var _d = redondo_pontos(_x1 + _esp, _y1 + _esp, _x2 - _esp, _y2 - _esp, max(0, _r - _esp));
+    draw_primitive_begin(pr_trianglestrip);
+    for (var _i = 0; _i < array_length(_f); _i += 2) {
+        draw_vertex_colour(_f[_i], _f[_i + 1], _cor, _a);
+        draw_vertex_colour(_d[_i], _d[_i + 1], _cor, _a);
+    }
+    draw_primitive_end();
+}
+
+#macro PREMIUM_RAIO 14
 function painel_premium(_x1, _y1, _x2, _y2, _cor, _foco, _vida = 1, _esc = 1) {
     var _a_antes = draw_get_alpha();
     var _a = _a_antes * _vida;
     var _w = _x2 - _x1;
     var _h = _y2 - _y1;
     var _rel = current_time / 1000;
+    // painel pequeno (no da arvore) tem raio menor, para nao virar pilula
+    var _raio = min(PREMIUM_RAIO * _esc, _w * 0.22, _h * 0.22);
     // halo em volta, pulsando devagar quando em foco
     if (_foco) {
         var _p = 0.5 + 0.5 * sin(_rel * 4);
         gpu_set_blendmode(bm_add);
         for (var _k = 1; _k <= 4; _k++) {
             draw_set_alpha(_a * (0.10 + 0.08 * _p) * (1 - _k / 5));
-            draw_set_color(merge_colour(_cor, c_white, 0.3));
-            draw_rectangle(_x1 - _k * 3 * _esc, _y1 - _k * 3 * _esc, _x2 + _k * 3 * _esc, _y2 + _k * 3 * _esc, false);
+            var _m = _k * 3 * _esc;
+            ret_redondo(_x1 - _m, _y1 - _m, _x2 + _m, _y2 + _m, _raio + _m, merge_colour(_cor, c_white, 0.3));
         }
         gpu_set_blendmode(bm_normal);
     }
-    // fundo: degrade de cima (mais claro, com um pouco da cor) para baixo (quase preto)
+    // a cor por baixo e o fundo 4 px mais abaixo: sobra em cima uma faixa da cor que acompanha a curva
     draw_set_alpha(_a);
+    var _faixa = min(4 * _esc, _h * 0.12);
+    ret_redondo(_x1, _y1, _x2, _y1 + max(_raio * 2, _faixa * 2), _raio, _cor);
+    // fundo: degrade de cima (mais claro, com um pouco da cor) para baixo (quase preto)
     var _topo = merge_colour(make_colour_rgb(30, 26, 36), _cor, 0.18);
     var _base = make_colour_rgb(12, 9, 14);
-    draw_rectangle_colour(_x1, _y1, _x2, _y2, _topo, _topo, _base, _base, false);
-    // faixa da cor em cima, com brilho
-    draw_set_color(_cor);
-    draw_rectangle(_x1, _y1, _x2, _y1 + 4 * _esc, false);
+    ret_redondo(_x1, _y1 + _faixa, _x2, _y2, _raio, _topo, _base);
+    // brilho da faixa descendo pelo painel
     gpu_set_blendmode(bm_add);
     draw_set_alpha(_a * 0.35);
-    draw_rectangle_colour(_x1, _y1 + 4 * _esc, _x2, _y1 + 28 * _esc, _cor, _cor, c_black, c_black, false);
-    // brilho varrendo: uma faixa vertical clara que atravessa o painel a cada 3 s, mais forte no foco
+    ret_redondo(_x1, _y1 + _faixa, _x2, min(_y2, _y1 + _faixa + max(24 * _esc, _raio * 2)), _raio, _cor, c_black);
+    // brilho varrendo: uma faixa vertical clara que atravessa o painel a cada 3 s, mais forte no foco.
+    // Fica entre os cantos, para nao sair da curva
     var _fase = ((_rel * 0.33 + _x1 * 0.0007) mod 1);
     var _bx = _x1 - _w * 0.25 + _fase * _w * 1.5;
     var _bw = _w * 0.18;
     // fraca de proposito: o texto branco fica por cima dela e tem de continuar legivel
     var _bint = (_foco ? 0.11 : 0.06) * _a;
-    var _l = clamp(_bx - _bw, _x1, _x2);
-    var _m = clamp(_bx, _x1, _x2);
-    var _r = clamp(_bx + _bw, _x1, _x2);
+    var _l = clamp(_bx - _bw, _x1 + _raio, _x2 - _raio);
+    var _mm = clamp(_bx, _x1 + _raio, _x2 - _raio);
+    var _r = clamp(_bx + _bw, _x1 + _raio, _x2 - _raio);
     draw_set_alpha(_bint);
-    if (_m > _l) draw_rectangle_colour(_l, _y1, _m, _y2, c_black, c_white, c_white, c_black, false);
-    if (_r > _m) draw_rectangle_colour(_m, _y1, _r, _y2, c_white, c_black, c_black, c_white, false);
+    if (_mm > _l) draw_rectangle_colour(_l, _y1 + _faixa, _mm, _y2 - 1, c_black, c_white, c_white, c_black, false);
+    if (_r > _mm) draw_rectangle_colour(_mm, _y1 + _faixa, _r, _y2 - 1, c_white, c_black, c_black, c_white, false);
     gpu_set_blendmode(bm_normal);
     // borda dupla: ouro escuro fora, ouro claro dentro (branco no foco)
     draw_set_alpha(_a);
     draw_set_color(PREMIUM_OURO_ESCURO);
-    draw_rectangle(_x1, _y1, _x2, _y2, true);
+    borda_redonda(_x1, _y1, _x2, _y2, _raio, max(1, 1.5 * _esc));
     draw_set_color(_foco ? c_white : PREMIUM_OURO);
-    draw_rectangle(_x1 + 3 * _esc, _y1 + 3 * _esc, _x2 - 3 * _esc, _y2 - 3 * _esc, true);
-    // ornamento: um losango em cada canto
-    var _d = 5 * _esc;
-    var _cantos = [[_x1, _y1], [_x2, _y1], [_x1, _y2], [_x2, _y2]];
-    for (var _c = 0; _c < 4; _c++) {
-        var _cx = _cantos[_c][0];
-        var _cy = _cantos[_c][1];
-        draw_set_color(make_colour_rgb(12, 9, 14));
-        draw_triangle(_cx - _d - 1, _cy, _cx, _cy - _d - 1, _cx + _d + 1, _cy, false);
-        draw_triangle(_cx - _d - 1, _cy, _cx, _cy + _d + 1, _cx + _d + 1, _cy, false);
-        draw_set_color(_foco ? c_white : PREMIUM_OURO);
-        draw_triangle(_cx - _d, _cy, _cx, _cy - _d, _cx + _d, _cy, false);
-        draw_triangle(_cx - _d, _cy, _cx, _cy + _d, _cx + _d, _cy, false);
-    }
+    var _in = min(3.5 * _esc, _raio * 0.4);
+    borda_redonda(_x1 + _in, _y1 + _in, _x2 - _in, _y2 - _in, _raio - _in, max(1, _esc));
     draw_set_alpha(_a_antes);
     draw_set_color(c_white);
 }

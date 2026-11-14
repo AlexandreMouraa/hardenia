@@ -27,7 +27,7 @@ for (var _i = 0; _i < _n; _i++) {
     painel_premium(_r[0], _r[1], _r[2], _r[3], _caido.cor, _foco, _vida, _u.e);
     if (variable_struct_exists(_def, "caido2")) {
         draw_set_alpha((_ativa ? 1 : 0.35) * _vida);
-        tecnica_painel(_u, _x + 136, _y, 136, 4, variable_struct_get(global.caidos, _def.caido2).cor);
+        tecnica_painel(_u, _x + 136, _y, 136 - PREMIUM_RAIO, 4, variable_struct_get(global.caidos, _def.caido2).cor);
     }
     draw_set_alpha((_ativa ? 1 : 0.35) * _vida);
     // icone com um halo da cor do Caido atras
