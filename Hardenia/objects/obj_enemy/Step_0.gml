@@ -205,6 +205,11 @@ switch (state) {
         state_timer -= 1;
         if (state_timer <= 0) {
             state = 0;
+            // proximo ataque do rodizio, para quem tem (issue #109)
+            if (array_length(rodizio) > 0) {
+                rodizio_vez = (rodizio_vez + 1) mod array_length(rodizio);
+                ataque = rodizio[rodizio_vez];
+            }
             if (ao_voltar != undefined) {
                 ao_voltar();
             }

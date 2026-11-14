@@ -19,3 +19,9 @@ ataque = {
     recarga: 90,
     avanco: 13,
 };
+// depois do bote, uma mordida de perto, curta e rapida (aviso 22): quem fica colado nele depois
+// de desviar do bote leva a mordida. Recarga curta, e o bote vem de novo (issue #109)
+rodizio = [
+    ataque,
+    { forma: "arco", gatilho: 64, alcance: 58, tamanho: 60, aviso: 22, duracao: 14, acerto: 8, recarga: 45, avanco: 0 },
+];

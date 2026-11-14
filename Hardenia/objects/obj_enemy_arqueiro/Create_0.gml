@@ -35,8 +35,22 @@ ao_mirar = function() {
     ataque.alcance = linha_ate_parede(x, y, attack_dir, 480);
     som(snd_arco_tensao, 0.5);
 };
-// brilho na ponta da flecha, logo antes do tiro: mostra para onde e quando
+// a mira: uma linha pontilhada do arco ate onde a flecha vai, que acende durante o aviso. A turma
+// achou o arqueiro "estranho": sem zona no chao, ninguem via de onde o tiro vinha (issue #109)
 ao_desenhar = function() {
+    if (state == 1) {
+        var _t = 1 - state_timer / ataque.aviso;
+        gpu_set_blendmode(bm_add);
+        draw_set_alpha(0.15 + 0.55 * _t);
+        for (var _d = 24; _d < ataque.alcance; _d += 16) {
+            var _qx = x + lengthdir_x(_d, attack_dir);
+            var _qy = y + lengthdir_y(_d, attack_dir);
+            draw_line_width_colour(_qx, _qy, _qx + lengthdir_x(6, attack_dir), _qy + lengthdir_y(6, attack_dir), 2, make_colour_rgb(255, 200, 140), make_colour_rgb(255, 200, 140));
+        }
+        draw_set_alpha(1);
+        gpu_set_blendmode(bm_normal);
+    }
+    // brilho na ponta da flecha, logo antes do tiro: mostra para onde e quando
     if (state == 1 && state_timer <= 16) {
         var _b = 1 - state_timer / 16;
         var _px = x + lengthdir_x(30, attack_dir);
