@@ -394,8 +394,8 @@ function mapa_desenhar(_cy, _esc, _pos, _alpha, _amp = 30, _chegada = 1) {
     // o guerreiro andando pela estrada, de frente para a direita, com uma luz no chao
     var _pm = mapa_ponto(_x0, _passo, _cy, _a, _pos);
     var _andando = (abs(_pos - round(_pos)) > 0.001);
-    var _quadro = _andando ? (current_time div 120) mod 4 : 0;
-    var _spr = _andando ? spr_player_walk : spr_player_idle;
+    var _quadro = _andando ? (current_time div 70) mod 8 : 0;
+    var _spr = _andando ? spr_heroi_andar : spr_heroi_parado;
     var _chao = _pm[1] - (_andando ? 4 : 18) * _esc;
     gpu_set_blendmode(bm_add);
     draw_set_alpha(_alpha * 0.25);
@@ -403,7 +403,7 @@ function mapa_desenhar(_cy, _esc, _pos, _alpha, _amp = 30, _chegada = 1) {
     draw_ellipse(_pm[0] - 18 * _esc, _chao - 6 * _esc, _pm[0] + 18 * _esc, _chao + 5 * _esc, false);
     gpu_set_blendmode(bm_normal);
     draw_set_alpha(_alpha);
-    draw_sprite_ext(_spr, 1 * 4 + _quadro, _pm[0], _chao - 36 * _esc, 1.6 * _esc, 1.6 * _esc, 0, c_white, _alpha);
+    draw_sprite_ext(_spr, (_andando ? 8 : 4) + _quadro, _pm[0], _chao - 30 * _esc, 1.25 * _esc, 1.25 * _esc, 0, c_white, _alpha);
 
     draw_set_alpha(1);
     draw_set_colour(c_white);

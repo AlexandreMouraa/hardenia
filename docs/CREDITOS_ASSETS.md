@@ -67,6 +67,15 @@ Os quatro Caídos (`spr_caido_*`) saem da mesma ferramenta, tingidos:
 | Machado e alabarda | Carrasco, Sentinela | Benjamin K. Smith (BenCreating), bluecarrot16, Sander Frenken (castelonia) | CC-BY-SA 3.0, GPL 3.0 | [armas](https://opengameart.org/content/lpc-medieval-weapons) |
 | Adaga | Batedor | bluecarrot16, Johannes Sjölund (wulax), Matthew Krohn (makrohn) | OGA-BY 3.0, CC-BY-SA 3.0, GPL 3.0 | [fantasia medieval](https://opengameart.org/content/lpc-medieval-fantasy-character-sprites) |
 
+O herói (`spr_heroi_parado`, `spr_heroi_andar`, `spr_heroi_golpe`) sai da mesma ferramenta: o corpo e a cabeça de homem da tabela acima, sem tingir, e mais estas peças. O cabelo e a espada não têm CC-BY-SA entre as licenças de origem; entram pelas licenças de atribuição (CC-BY 3.0 e OGA-BY 3.0), que permitem o uso com o crédito, e a folha montada segue sob CC-BY-SA 3.0 como as outras.
+
+| Peça | Autores | Licenças | Origem |
+|---|---|---|---|
+| Armadura de placas (peito, braços, pernas e pés), escurecida | Napsio (Vitruvian Studio), JaidynReiman, bluecarrot16, Michael Whitlock (bigbeargames), Matthew Krohn (makrohn), Johannes Sjölund (wulax) | OGA-BY 3.0, CC-BY-SA 3.0, GPL 3.0 | [fantasia medieval](https://opengameart.org/content/lpc-medieval-fantasy-character-sprites), [armadura de combate](https://opengameart.org/content/lpc-combat-armor-for-women), [roupas](http://opengameart.org/content/lpc-clothing-updates) |
+| Capa rasgada, tingida de vermelho | Nila122, JaidynReiman | OGA-BY 3.0, CC-BY-SA 3.0, GPL 3.0 | [capa](https://opengameart.org/content/lpc-curly-hair-elven-ears-white-cape-with-blue-trim-and-more), [armadura romana](https://opengameart.org/content/lpc-roman-armor) |
+| Cabelo longo, escurecido | Mandi Paugh, bluecarrot16 | CC-BY 3.0, GPL 2.0, GPL 3.0 | [puck](https://opengameart.org/content/puck-overland), [cabelos](https://opengameart.org/content/lpc-hair) |
+| Espada longa | Pierre Vigier (pvigier) e os artistas do DCSS ([lista](https://github.com/crawl/tiles/blob/master/ARTISTS.md)) | OGA-BY 3.0 | [espadas](https://opengameart.org/content/lpc-dcss-swords) |
+
 A flecha que voa (`spr_flecha`) foi desenhada em `tools/gerar_sprites_lpc.py`, e a bomba (`spr_bomba`), em `tools/gerar_bomba.py`.
 
 Crédito obrigatório: quem publicar o jogo precisa manter esta lista acessível. Ela também aparece no site.

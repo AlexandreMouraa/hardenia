@@ -23,7 +23,7 @@ gpu_set_blendmode(bm_normal);
 // o guerreiro aparece quando a frase fala dele
 if (carta >= 2) {
     var _quadro = (current_time div 200) mod 4;
-    draw_sprite_ext(spr_player_idle, 3 * 4 + _quadro, _w / 2, _h * 0.76, 3 * _esc, 3 * _esc, 0, c_white, min(1, tempo / 30));
+    draw_sprite_ext(spr_heroi_parado, 3 * 4 + _quadro, _w / 2, _h * 0.76, 2.4 * _esc, 2.4 * _esc, 0, c_white, min(1, tempo / 30));
 }
 
 var _duracao = instance_exists(obj_autotest) ? 40 : por_carta;

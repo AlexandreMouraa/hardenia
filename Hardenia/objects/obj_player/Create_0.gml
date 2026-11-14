@@ -590,19 +590,22 @@ if (!variable_global_exists("tentativas")) {
 facing_dir = 3; // 0 = esquerda, 1 = direita, 2 = cima, 3 = baixo
 
 idle_frames = 4;
-walk_frames = 4;
+walk_frames = 8;
 slash_frames = 6;
 
 anim_timer = 0;
 anim_speed = 6;
+anim_speed_andar = 3;
+anim_speed_parado = 16;
 anim_frame = 0;
 
 is_attacking = false;
 attack_anim_timer = 0;
 attack_anim_duration = 12;
 
-sprite_index = spr_player_idle;
-// mascara fixa: sem ela a colisao muda de tamanho a cada animacao e prende na parede
+sprite_index = spr_heroi_parado;
+// mascara fixa: sem ela a colisao muda de tamanho a cada animacao e prende na parede. Continua
+// a do heroi antigo (spr_player_idle, 19 x 34 no meio do corpo): trocar o desenho nao muda o jogo
 mask_index = spr_player_idle;
 image_speed = 0;
 image_index = facing_dir * idle_frames;
