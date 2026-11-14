@@ -332,6 +332,11 @@ function inimigo_morrer(_enemy, _dir, _forte) {
         arma_largar(_enemy.caido, _enemy.x, _enemy.y);
         musica(musica_da_sala(), 2000);
         salvo_caido_livre(_enemy.caido);
+        // vencer o duelo devolve 1 de vida (a cura de limpar a sala veio antes dele): com um Caido
+        // em cada mapa, a run ficou mais longa e a turma pediu mais vida (issue #111)
+        if (instance_exists(obj_player)) {
+            obj_player.curar(1);
+        }
     }
     // a bomba espera um instante: pode pegar outro que sangra, e a corrente cresce sem recursao
     if (_enemy.sangra > 0 && tem_tecnica("sangue_polvora")) {
