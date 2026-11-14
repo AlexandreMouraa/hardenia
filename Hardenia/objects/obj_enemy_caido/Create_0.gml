@@ -96,5 +96,9 @@ preparar = function(_chave, _vida, _furia) {
     hp_max = round(_vida * _forca);
     hp = hp_max;
     sprite_index = walk_sprite;
+    // a mascara e o corpo do proprio Caido (a parte opaca da folha de andar, 60 x 48 antes da escala).
+    // Com a do esqueleto (34 x 62) golpe de lado passava por ele sem acertar (issue #108). A folha de
+    // andar fica como mascara nas poses de golpe tambem, para o tamanho nao mudar no meio
+    mask_index = walk_sprite;
     rodizio_trocar();
 };
