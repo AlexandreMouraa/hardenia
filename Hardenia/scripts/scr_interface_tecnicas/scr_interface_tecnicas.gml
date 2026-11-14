@@ -181,11 +181,11 @@ function painel_premium(_x1, _y1, _x2, _y2, _cor, _foco, _vida = 1, _esc = 1) {
     var _fase = ((_rel * 0.33 + _x1 * 0.0007) mod 1);
     var _bx = _x1 - _w * 0.25 + _fase * _w * 1.5;
     var _bw = _w * 0.18;
-    var _bint = (_foco ? 0.22 : 0.10) * _a;
+    // fraca de proposito: o texto branco fica por cima dela e tem de continuar legivel
+    var _bint = (_foco ? 0.11 : 0.06) * _a;
     var _l = clamp(_bx - _bw, _x1, _x2);
     var _m = clamp(_bx, _x1, _x2);
     var _r = clamp(_bx + _bw, _x1, _x2);
-    if (_m > _l) draw_rectangle_colour(_l, _y1, _m, _y2, c_black, c_white, c_white, c_black, false);
     draw_set_alpha(_bint);
     if (_m > _l) draw_rectangle_colour(_l, _y1, _m, _y2, c_black, c_white, c_white, c_black, false);
     if (_r > _m) draw_rectangle_colour(_m, _y1, _r, _y2, c_white, c_black, c_black, c_white, false);
