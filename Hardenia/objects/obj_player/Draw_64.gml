@@ -149,9 +149,11 @@ draw_set_halign(fa_left);
 
 // HUD: inimigos restantes ou portao aberto
 draw_set_halign(fa_right);
-if (_inimigos > 0) {
+var _ondas = ondas_total();
+if (_inimigos > 0 || onda_pendente()) {
     draw_set_color(c_white);
-    texto(_w - 16 * _esc, 12 * _esc, "INIMIGOS: " + string(_inimigos), _esc, _esc, 0);
+    // com ondas, a leva atual vem antes da contagem
+    texto(_w - 16 * _esc, 12 * _esc, (_ondas > 1 ? "ONDA " + string(global.onda) + "/" + string(_ondas) + "   " : "") + "INIMIGOS: " + string(_inimigos), _esc, _esc, 0);
 } else if (_fase > 0 && room != sala_final()) {
     draw_set_color(c_yellow);
     draw_set_alpha(_piscar);
@@ -232,6 +234,13 @@ if (room == room_next(room_first) && global.tentativas == 1 && tempo_na_sala < 3
     draw_set_alpha(min(1, (300 - tempo_na_sala) / 60));
     draw_set_color(c_white);
     texto(_w / 2, _h * 0.2, "DERROTE TODOS OS INIMIGOS PARA ABRIR O PORTÃO", _esc, _esc, 0);
+    draw_set_alpha(1);
+}
+// a leva nova chegou: aviso grande no meio, que apaga (scr_variacao)
+if (global.onda_aviso > 0 && !is_dead) {
+    draw_set_alpha(min(1, global.onda_aviso / 20));
+    draw_set_color(make_colour_rgb(255, 120, 90));
+    titulo(_w / 2, _h * 0.3, "ONDA " + string(global.onda) + " DE " + string(ondas_total()), _esc * 1.6);
     draw_set_alpha(1);
 }
 

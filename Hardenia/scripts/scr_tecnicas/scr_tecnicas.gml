@@ -170,7 +170,7 @@ function tecnica_ganhar(_chave) {
 
 // o portao espera o bau: sem isso daria para sair sem nem ver a escolha
 function portao_aberto() {
-    if (instance_number(obj_enemy) > 0 || instance_exists(obj_tecnicas)) {
+    if (instance_number(obj_enemy) > 0 || instance_exists(obj_tecnicas) || onda_pendente()) {
         return false;
     }
     var _fechado = false;
