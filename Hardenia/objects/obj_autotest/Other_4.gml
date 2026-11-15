@@ -79,10 +79,11 @@ if (testar_formas) {
 }
 
 // grade de navegacao: cada parede inflada pelo tamanho do jogador, assim o
-// caminho e para o centro dele
+// caminho e para o centro dele. Direita e embaixo com 1 px a menos: a parede termina na
+// borda da celula e o pixel a mais fechava uma celula inteira, isolando as alas do Patio
 grade = mp_grid_create(0, 0, ceil(room_width / 8), ceil(room_height / 8), 8, 8);
 with (obj_wall) {
-    mp_grid_add_rectangle(other.grade, bbox_left - 8, bbox_top - 14, bbox_right + 8, bbox_bottom + 14);
+    mp_grid_add_rectangle(other.grade, bbox_left - 8, bbox_top - 14, bbox_right + 7, bbox_bottom + 13);
 }
 
 // checagens de level design, uma vez por sala
