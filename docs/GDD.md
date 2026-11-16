@@ -59,8 +59,9 @@ O texto na tela fica em `scripts/scr_historia` e em `scripts/scr_tecnicas`.
 
 ## Estrutura da run
 
-- Cinco salas em sequência, com 3 arranjos de inimigos cada, sorteados por run. Duelos
-  nas Catacumbas e no Cemitério, e o Rei Morto, em 3 fases, no Trono.
+- Cinco salas em sequência, com 3 arranjos de inimigos cada, sorteados por run. Um duelo
+  em cada mapa antes do Trono, com os 4 Caídos em ordem sorteada (o das Ruínas é o mais
+  fácil), e o Rei Morto, em 3 fases, no Trono.
 - Morrer zera a run. No aparelho ficam só opções e recordes: o que passa de uma run
   para a outra continua sendo só o que o jogador aprendeu.
 - Desafio do dia: a mesma run para todo mundo, com ranking próprio.
