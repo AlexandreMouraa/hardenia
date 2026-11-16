@@ -356,6 +356,7 @@ if (tempo_na_sala == 2 && instance_exists(obj_enemy_chefe)) {
     cena_abrir(_rei.x, _rei.y, "O Rei Morto", _voltou ? global.fala_rei_de_novo : global.fala_rei, make_colour_rgb(235, 60, 50), _voltou ? 110 : 210);
     musica(snd_musica_rei, 500);
     sfx(snd_sino, 3, false, 0.7, 0, 0.8);
+    voz_tocar_chave("obj_enemy_chefe", "notar");
     exit;
 }
 
