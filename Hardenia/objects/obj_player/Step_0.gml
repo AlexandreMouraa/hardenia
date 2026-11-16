@@ -423,6 +423,24 @@ if (is_dashing) {
     _move_x = _h * _passo * _norm;
     _move_y = _v * _passo * _norm;
 }
+// INVESTIDA (Furia da alabarda): 20 px por quadro ate o fim da linha que o golpe ja cobriu
+if (furia_investida > 0 && !is_dashing) {
+    var _passo_inv = min(20, furia_investida);
+    furia_investida -= _passo_inv;
+    var _vx = lengthdir_x(_passo_inv, furia_investida_dir);
+    var _vy = lengthdir_y(_passo_inv, furia_investida_dir);
+    _move_x += (abs(_vx) < 0.001) ? 0 : _vx;
+    _move_y += (abs(_vy) < 0.001) ? 0 : _vy;
+}
+// TEMPESTADE (Furia das adagas): os cortes que faltam, a cada 8 quadros
+if (furia_pulsos > 0) {
+    furia_pulso_timer -= 1;
+    if (furia_pulso_timer <= 0) {
+        furia_pulsos -= 1;
+        furia_pulso_timer = 8;
+        furia_pulso();
+    }
+}
 // terceiro golpe do combo: passo curto para a frente, que da peso ao golpe
 if (ataque_impulso > 0 && !is_dashing) {
     ataque_impulso -= 1;
