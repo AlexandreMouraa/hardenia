@@ -76,5 +76,10 @@ fechar = function() {
     if (instance_exists(obj_player)) {
         window_set_cursor(cr_none);
     }
+    if (modo == "controles_iniciais") {
+        global.salvo.dicas.controles_iniciais = true;
+        salvo_gravar();
+        with (obj_menu) entrar_na_run();
+    }
     instance_destroy();
 };

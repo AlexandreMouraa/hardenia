@@ -45,11 +45,11 @@ if (modo == "opcoes") {
     }
     draw_set_color(c_gray);
     texto(_w / 2, _h / 2 + 136 * _esc, global.toque_ativo ? "Toque no que quer mudar" : ((global.ultimo_aparelho == "controle") ? "ALAVANCA: escolher e mudar    A: confirmar    B: voltar" : "W / S: escolher    A / D ou ENTER: mudar    ESC: voltar"), _esc * 0.85, _esc * 0.85, 0);
-} else if (modo == "como_jogar") {
+} else if (modo == "como_jogar" || modo == "controles_iniciais") {
     titulo(_w / 2, _h * 0.13, "Como jogar", _esc * 2);
     var _linhas = [
         ["Andar", "WASD ou setas", "alavanca", "polegar à esquerda da tela"],
-        ["Golpe (seguidos: combo)", "clique ou J", "RB ou X", "ATACAR"],
+        ["Golpe (seguidos: combo)", "clique esquerdo ou J", "RB ou X", "ATACAR"],
         ["Golpe carregado (quebra escudo)", "segurar o ataque", "segurar o ataque", "segurar ATACAR"],
         ["Dash (atravessa o golpe)", "espaço", "A ou LB", "DASH"],
         ["Estocada (quebra escudo)", "atacar no dash", "atacar no dash", "ATACAR no dash"],
@@ -75,7 +75,7 @@ if (modo == "opcoes") {
     draw_set_halign(fa_center);
     draw_set_color(c_ltgray);
     texto(_w / 2, _h * 0.8, "Saia da zona vermelha antes do golpe. Depois do golpe o inimigo fica apagado: é a hora de bater.", _esc * 0.95, _esc * 0.95, 0);
-    texto(_w / 2, _h * 0.8 + 22 * _esc, "Morrer recomeça a run sem as técnicas. O que fica é o que você aprendeu.", _esc * 0.95, _esc * 0.95, 0);
+    texto(_w / 2, _h * 0.8 + 22 * _esc, "A mira é automática. A direção do guerreiro ajuda a escolher o alvo perto.", _esc * 0.95, _esc * 0.95, 0);
 } else {
     titulo(_w / 2, _h * 0.13, "Créditos", _esc * 2);
     var _cred = [
@@ -98,7 +98,12 @@ if (modo == "opcoes") {
 }
 if (modo != "opcoes") {
     draw_set_color(c_gray);
-    texto(_w / 2, _h - 30 * _esc, global.toque_ativo ? "Toque para voltar" : ((global.ultimo_aparelho == "controle") ? "B: voltar" : "ESC, ENTER ou clique: voltar"), _esc * 0.85, _esc * 0.85, 0);
+    if (modo == "controles_iniciais") {
+        texto(_w / 2, _h - 30 * _esc, global.toque_ativo ? "Toque para jogar" :
+            (global.ultimo_aparelho == "controle" ? "A: jogar" : "ENTER ou clique: jogar"), _esc, _esc, 0);
+    } else {
+        texto(_w / 2, _h - 30 * _esc, global.toque_ativo ? "Toque para voltar" : ((global.ultimo_aparelho == "controle") ? "B: voltar" : "ESC, ENTER ou clique: voltar"), _esc * 0.85, _esc * 0.85, 0);
+    }
 }
 draw_set_color(c_white);
 draw_set_halign(fa_left);

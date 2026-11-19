@@ -33,7 +33,8 @@ function salvo_ler() {
         // so o que ja existe: arquivo antigo ou mexido nao quebra o jogo
         var _campos = variable_struct_get_names(global.salvo);
         for (var _i = 0; _i < array_length(_campos); _i++) {
-            if (variable_struct_exists(_d, _campos[_i])) {
+            if (variable_struct_exists(_d, _campos[_i])
+                && (_campos[_i] != "dicas" || is_struct(_d.dicas))) {
                 variable_struct_set(global.salvo, _campos[_i], variable_struct_get(_d, _campos[_i]));
             }
         }
@@ -46,7 +47,9 @@ function salvo_ler() {
             global.op_tremor = _d.tremor;
             global.op_flash = _d.flash;
             global.op_ambiente = _d.ambiente;
-            global.op_dicas = _d.dicas;
+        }
+        if (variable_struct_exists(_d, "op_dicas")) {
+            global.op_dicas = _d.op_dicas;
         }
     } catch (_erro) {
         // arquivo estragado: comeca do zero
@@ -65,7 +68,7 @@ function salvo_gravar() {
         tremor: global.op_tremor,
         flash: global.op_flash,
         ambiente: global.op_ambiente,
-        dicas: global.op_dicas,
+        op_dicas: global.op_dicas,
         marcas: global.marcas_morte,
     };
     var _campos = variable_struct_get_names(global.salvo);

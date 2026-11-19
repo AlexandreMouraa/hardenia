@@ -94,6 +94,17 @@ comecar = function() {
 
 // comeca a run: zera o tempo e avisa o site (estatisticas de partidas)
 comecar_run = function() {
+    if (global.op_dicas && !instance_exists(obj_autotest)
+        && !variable_struct_exists(global.salvo.dicas, "controles_iniciais")) {
+        with (instance_create_depth(0, 0, -9000, obj_opcoes)) {
+            modo = "controles_iniciais";
+        }
+        exit;
+    }
+    entrar_na_run();
+};
+
+entrar_na_run = function() {
     global.run_frames = 0;
     rede_evento("inicio");
     ir_para_sala(Room1);
