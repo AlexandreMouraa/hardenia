@@ -32,8 +32,16 @@ for (var _i = 0; _i < _n; _i++) {
                 var _foco = cursor == _i || cursor == _j;
                 draw_set_color(_foco ? make_colour_rgb(190, 165, 104) : make_colour_rgb(53, 66, 76));
                 draw_set_alpha(_foco ? 0.85 : 0.35);
-                draw_line_width(_u.x + (_ini[0] + 70) * _u.e, _u.y + (_ini[1] + 48) * _u.e,
-                    _u.x + (_fim[0] + 70) * _u.e, _u.y + _fim[1] * _u.e, _foco ? 2 * _u.e : _u.e);
+                var _x1 = _u.x + (_ini[0] + 70) * _u.e;
+                var _y1 = _u.y + (_ini[1] + 48) * _u.e;
+                var _x2 = _u.x + (_fim[0] + 70) * _u.e;
+                var _y2 = _u.y + _fim[1] * _u.e;
+                draw_line_width(_x1, _y1, _x2, _y2, _foco ? 2 * _u.e : _u.e);
+                if (_foco) {
+                    var _t = ((current_time + _j * 140) mod 1450) / 1450;
+                    draw_set_color(make_colour_rgb(255, 228, 154));
+                    draw_circle(lerp(_x1, _x2, _t), lerp(_y1, _y2, _t), 2.5 * _u.e, false);
+                }
             }
         }
     }
@@ -47,9 +55,10 @@ for (var _i = 0; _i < _n; _i++) {
     var _estado = tecnica_estado(_def);
     var _cor = variable_struct_get(global.caidos, _def.caido).cor;
     var _ativa = tem_tecnica(_def.chave);
-    tecnica_painel(_u, _p[0], _p[1], 140, 48, _ativa ? make_colour_rgb(43, 52, 54) : make_colour_rgb(22, 29, 37));
-    tecnica_painel(_u, _p[0], _p[1], 3, 48, _cor);
-    tecnica_painel(_u, _p[0], _p[1], 140, 48, cursor == _i ? c_white : (_ativa ? _cor : make_colour_rgb(69, 82, 93)), true);
+    var _r = tecnica_ret(_u, _p[0], _p[1], 140, 48);
+    var _entrada = clamp((tempo - _i) / 12, 0, 1);
+    tecnica_moldura(_r[0], _r[1], _r[2], _r[3], _u.e, _cor, cursor == _i, _entrada);
+    tecnica_painel(_u, _p[0] + 6, _p[1] + 9, 2, 23, _cor);
     tecnica_icone(_def.chave, _u.x + (_p[0] + 17) * _u.e, _u.y + (_p[1] + 19) * _u.e, 9 * _u.e, _cor);
     draw_set_color(c_white);
     tecnica_texto(_u, _p[0] + 33, _p[1] + 5, _def.nome, 0.65, 102);
@@ -57,6 +66,7 @@ for (var _i = 0; _i < _n; _i++) {
     var _legenda = _ativa ? "[OK] ADQUIRIDA" : (_estado == "REQUISITOS CUMPRIDOS" ? "PODE SER OFERECIDA" : _estado);
     tecnica_texto(_u, _p[0] + 9, _p[1] + 35, _legenda, 0.48);
 }
+draw_set_alpha(1);
 tecnica_painel(_u, 664, 112, 264, 360, make_colour_rgb(23, 30, 39));
 var _cor = variable_struct_get(global.caidos, _d.caido).cor;
 tecnica_icone(_d.chave, _u.x + 691 * _u.e, _u.y + 142 * _u.e, 15 * _u.e, _cor);
