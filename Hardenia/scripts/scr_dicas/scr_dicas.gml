@@ -15,7 +15,7 @@ function dica_botao(_acao) {
     var _mouse = (global.ultimo_aparelho == "mouse");
     switch (_acao) {
         case "mover": return _toque ? "O polegar à esquerda da tela" : (_pad ? "A alavanca" : "WASD ou as setas");
-        case "golpe": return _toque ? "ATACAR" : (_pad ? "RB ou X" : (_mouse ? "CLIQUE" : "J ou CLIQUE"));
+        case "golpe": return _toque ? "ATACAR" : (_pad ? "RB ou X" : (_mouse ? "CLIQUE ESQUERDO" : "J ou CLIQUE ESQUERDO"));
         case "dash": return _toque ? "DASH" : (_pad ? "A ou LB" : "ESPAÇO");
         case "giro": return _toque ? "GIRO" : (_pad ? "B" : (_mouse ? "CLIQUE DIREITO" : "K ou CLIQUE DIREITO"));
     }
@@ -25,14 +25,14 @@ function dica_botao(_acao) {
 function dica_texto(_k) {
     switch (_k) {
         case "mover": return dica_botao("mover") + " move o guerreiro.";
-        case "golpe": return dica_botao("golpe") + ": golpe. Ele vira sozinho para o inimigo mais perto.";
+        case "golpe": return dica_botao("golpe") + ": golpe. A mira é automática e favorece inimigos na sua frente.";
         // so para quem usa o mouse: o cursor some e nao mira, e isso confundia a turma
         case "mira": return "O mouse não mira: o golpe vai sozinho no inimigo mais perto de onde você anda. Só o clique importa.";
         case "zona": return "Saia da zona vermelha antes do golpe. " + dica_botao("dash") + ": o dash atravessa.";
         // sem numeros: o combo e o golpe forte mudam com a arma (scr_armas)
         case "combo": return "Golpes seguidos fazem um combo. O último é mais forte e empurra.";
         case "apagado": return "Inimigo apagado acabou de atacar: é a hora de bater.";
-        case "giro": return "Cercado? " + dica_botao("giro") + ": o giro acerta todos em volta.";
+        case "giro": return "Cercado? " + dica_botao("giro") + ": giro especial. Acerta todos em volta.";
         case "escudo": return arma_def().quebra ? "Escudo: com esta arma, qualquer golpe quebra." : "Escudo: só quebra com golpe carregado, estocada ou giro.";
         case "estocada": return "Atacar logo depois do dash solta a estocada, um golpe mais longo.";
         case "carga": return "Segure " + dica_botao("golpe") + " até o guerreiro piscar e solte: golpe carregado.";
