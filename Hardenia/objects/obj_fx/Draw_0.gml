@@ -110,6 +110,18 @@ switch (tipo) {
         break;
 
     case "corte":
+        if (global.op_flash) {
+            gpu_set_blendmode(bm_add);
+            draw_set_color(cor);
+            draw_set_alpha(0.24 * sqr(_t));
+            draw_circle(x, y, 6 + raio * (1 - _t) * 0.28, false);
+            draw_set_color(c_white);
+            draw_set_alpha(0.42 * sqr(_t));
+            draw_circle(x, y, 3 + raio * (1 - _t) * 0.13, false);
+            draw_set_alpha(1);
+            gpu_set_blendmode(bm_normal);
+            draw_set_color(c_white);
+        }
         // risco fino que cresce rapido e apaga: mostra quem levou o golpe
         var _meia = raio * min(1, (1 - _t) * 3 + 0.3);
         var _larg = espessura * _t;

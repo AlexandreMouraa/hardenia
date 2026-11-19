@@ -20,21 +20,13 @@ for (var _i = 0; _i < 2; _i++) {
     var _def = arma_def(_chave);
     var _cor = arma_cor(_chave);
     var _foco = (escolhido >= 0) ? (_i == escolhido) : (_i == cursor);
-    var _sobe = _foco ? 6 * _esc : 0;
+    var _sobe = ((_foco ? 6 : 0) - 8 * sqr(1 - _surgir)) * _esc;
     var _cx = (_r[0] + _r[2]) / 2;
     var _top = _r[1] - _sobe;
     var _fim = _r[3] - _sobe;
     var _alfa = _surgir * ((escolhido >= 0 && _i != escolhido) ? 0.25 : 1);
-    draw_set_alpha(_alfa);
-    draw_set_color(make_colour_rgb(24, 18, 20));
-    draw_rectangle(_r[0], _top, _r[2], _fim, false);
+    tecnica_moldura(_r[0], _top, _r[2], _fim, _esc, _cor, _foco, _alfa);
     draw_set_color(_cor);
-    draw_rectangle(_r[0], _top, _r[2], _top + 6 * _esc, false);
-    draw_rectangle(_r[0], _top, _r[2], _fim, true);
-    if (_foco) {
-        draw_rectangle(_r[0] - 1, _top - 1, _r[2] + 1, _fim + 1, true);
-        draw_rectangle(_r[0] - 2, _top - 2, _r[2] + 2, _fim + 2, true);
-    }
     texto(_cx, _top + 16 * _esc, (_i == 0) ? "FICAR COM" : "TROCAR POR", _esc * 0.75, _esc * 0.75, 0);
     arma_icone(_chave, _cx, _top + 62 * _esc, 18 * _esc, _cor);
     draw_set_alpha(_alfa);

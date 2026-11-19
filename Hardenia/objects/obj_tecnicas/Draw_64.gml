@@ -18,15 +18,16 @@ for (var _i = 0; _i < _n; _i++) {
     var _caido = variable_struct_get(global.caidos, _def.caido);
     var _x = (960 - (_n * 272 + (_n - 1) * 20)) / 2 + _i * 292;
     var _foco = _i == cursor;
-    var _y = _foco ? 117 : 123;
+    var _entrada = min(1, tempo / 16);
+    var _y = (_foco ? 117 : 123) + 8 * sqr(1 - _entrada);
     var _ativa = escolhido < 0 || escolhido == _i;
-    draw_set_alpha(_ativa ? 1 : 0.35);
-    tecnica_painel(_u, _x, _y, 272, 330, make_colour_rgb(27, 33, 42));
-    tecnica_painel(_u, _x, _y, 272, 4, _caido.cor);
+    var _alfa = _entrada * (_ativa ? 1 : 0.35);
+    var _r = tecnica_ret(_u, _x, _y, 272, 330);
+    tecnica_moldura(_r[0], _r[1], _r[2], _r[3], _u.e, _caido.cor, _foco, _alfa);
+    tecnica_painel(_u, _x + 8, _y + 7, 256, 2, _caido.cor);
     if (variable_struct_exists(_def, "caido2")) {
-        tecnica_painel(_u, _x + 136, _y, 136, 4, variable_struct_get(global.caidos, _def.caido2).cor);
+        tecnica_painel(_u, _x + 136, _y + 7, 128, 2, variable_struct_get(global.caidos, _def.caido2).cor);
     }
-    tecnica_painel(_u, _x, _y, 272, 330, _foco ? c_white : make_colour_rgb(76, 88, 99), true);
     tecnica_icone(_def.chave, _u.x + (_x + 35) * _u.e, _u.y + (_y + 35) * _u.e, 17 * _u.e, _caido.cor);
     draw_set_color(_caido.cor);
     tecnica_texto(_u, _x + 65, _y + 17, variable_struct_exists(_def, "requer") ? "COMBINAÇÃO" : _caido.nome, 0.65);

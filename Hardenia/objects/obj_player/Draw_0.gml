@@ -31,6 +31,16 @@ if (is_attacking) {
     _dx = lengthdir_x(_ida, ataque_dir);
     _dy = lengthdir_y(_ida, ataque_dir);
 }
+if (is_attacking && golpe_atual == 3 && global.op_flash) {
+    var _eco = clamp(attack_anim_timer / attack_anim_duration, 0, 1);
+    var _cor_eco = arma_cor();
+    for (var _i = 2; _i >= 1; _i--) {
+        var _dist = _i * (6 + 7 * (1 - _eco));
+        draw_sprite_ext(sprite_index, image_index,
+            x + _dx - lengthdir_x(_dist, ataque_dir), y + _dy - lengthdir_y(_dist, ataque_dir),
+            _sx, _sy, 0, _cor_eco, image_alpha * _eco * (0.39 - _i * 0.1));
+    }
+}
 draw_sprite_ext(sprite_index, image_index, x + _dx, y + _dy, _sx, _sy, 0, image_blend, image_alpha);
 if (brilho > 0) {
     gpu_set_blendmode(bm_add);

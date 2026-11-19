@@ -154,3 +154,39 @@ function arvore_posicao(_i) {
     var _fila = [0, 1, 0, 1, 0, 1, 0, 1, 2, 4, 4, 4, 4][_i];
     return [32 + _col * 154, 142 + _fila * 58];
 }
+
+// Moldura compartilhada entre cartas e arvore. O relogio so anima o desenho.
+function tecnica_moldura(_x, _y, _dir, _baixo, _e, _cor, _foco, _opacidade) {
+    var _ouro = make_colour_rgb(199, 159, 90);
+    var _raio = 8 * _e;
+    var _pulso = 0.5 + 0.5 * sin(current_time / 240);
+    if (_foco) {
+        draw_set_alpha(_opacidade * (0.14 + 0.18 * _pulso));
+        draw_set_color(_ouro);
+        var _halo = (3 + _pulso * 2) * _e;
+        draw_roundrect_ext(_x - _halo, _y - _halo, _dir + _halo, _baixo + _halo, _raio, _raio, false);
+    }
+    draw_set_alpha(_opacidade);
+    draw_set_color(make_colour_rgb(19, 16, 24));
+    draw_roundrect_ext(_x, _y, _dir, _baixo, _raio, _raio, false);
+    var _topo = merge_colour(make_colour_rgb(27, 22, 30), _cor, _foco ? 0.23 : 0.12);
+    var _base = make_colour_rgb(20, 17, 25);
+    var _margem = 6 * _e;
+    draw_rectangle_colour(_x + _margem, _y + 2 * _e, _dir - _margem, _baixo - 2 * _e,
+        _topo, _topo, _base, _base, false);
+    if (_foco) {
+        var _t = (current_time mod 2200) / 2200;
+        var _faixa = lerp(_y + _margem, _baixo - _margem, _t);
+        draw_set_alpha(_opacidade * 0.16 * sin(pi * _t));
+        draw_set_color(_ouro);
+        draw_line_width(_x + _margem, _faixa, _dir - _margem, _faixa, 2 * _e);
+    }
+    draw_set_alpha(_opacidade);
+    draw_set_color(_foco ? _ouro : merge_colour(_ouro, _base, 0.42));
+    draw_roundrect_ext(_x, _y, _dir, _baixo, _raio, _raio, true);
+    var _inset = 3 * _e;
+    draw_set_alpha(_opacidade * 0.5);
+    draw_roundrect_ext(_x + _inset, _y + _inset, _dir - _inset, _baixo - _inset,
+        _raio - _inset, _raio - _inset, true);
+    draw_set_alpha(_opacidade);
+}
