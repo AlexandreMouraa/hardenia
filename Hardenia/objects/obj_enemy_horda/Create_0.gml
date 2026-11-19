@@ -19,3 +19,5 @@ acordar = function() {};
 separar_timer = 1 + instance_number(obj_enemy_horda) mod 6;
 // sem parede no meio vai reto: o mapa de direcoes (campo_rumo) so anda de celula em celula
 reto = true;
+// a horda nao acorda (ja nasce vindo): a voz dela e ao nascer
+voz_tocar(id, "notar");

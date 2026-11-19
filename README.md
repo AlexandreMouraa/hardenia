@@ -66,7 +66,7 @@ IA: peça para ela ler o [AGENTS.md](AGENTS.md) antes de mexer.
 | Golpe carregado (anda devagar enquanto carrega) | Segurar o ataque e soltar quando o personagem piscar |
 | Estocada (golpe mais comprido) | Atacar durante o dash ou logo no fim dele |
 | Golpe especial (acerta todos em volta, recarga de 3 s) | Clique direito ou `K` |
-| Giro Furioso (com a barra de Fúria cheia) | Segurar o clique direito ou `K` |
+| Golpe da Fúria (com a barra de Fúria cheia; cada arma tem o seu) | Segurar o clique direito ou `K` |
 | Dash (2 cargas, invencível durante o impulso) | `Espaço` |
 | Pausar / continuar | `Esc` |
 | Voltar ao menu (na pausa) | `M` |
@@ -105,10 +105,15 @@ Ali, `L` ou um toque no botão de baixo mede quantos inimigos o aparelho aguenta
   oferece primeiro as técnicas dele.
 - **Armas dos Caídos** (`scripts/scr_armas`, `obj_arma_chao`, `obj_arma_escolha`): o
   Caído vencido larga a arma ao lado de onde caiu. Chegando perto, o jogador escolhe
-  ficar com a da mão ou trocar; a que sai fica no chão. **Machado do Carrasco:** lento,
-  largo, todo golpe quebra escudo. **Adagas do Batedor:** rápidas e curtas, combo de 4.
-  **Alabarda da Sentinela:** alcance longo, golpe estreito. A arma se perde na morte. O
-  Sapador não deixa arma.
+  ficar com a da mão ou trocar; a que sai fica no chão. Cada arma tem o próprio golpe
+  forte (o último do combo e o carregado) e a própria Fúria. **Espada:** o golpe de
+  sempre; Fúria: Giro Furioso, 3 de dano em volta. **Machado do Carrasco:** lento,
+  largo, todo golpe quebra escudo; o forte é um impacto no chão, em área; Fúria:
+  Terremoto, 4 de dano e empurrão enorme em volta. **Adagas do Batedor:** rápidas e
+  curtas, combo de 4; o forte são dois cortes com avanço; Fúria: Tempestade, três cortes
+  em volta e o dash recarregado. **Alabarda da Sentinela:** alcance longo, golpe
+  estreito; o forte atravessa a fila; Fúria: Investida, avanço de 240 px que fere quem
+  estiver no caminho. A arma se perde na morte. O Sapador não deixa arma.
 - **O Rei Morto** (`obj_enemy_chefe`): 3 fases, uma a cada terço da vida, com
   rodízio próprio.
 - **Variação** (`scripts/scr_variacao`): cada sala tem 3 arranjos de inimigos,
@@ -137,6 +142,10 @@ Ali, `L` ou um toque no botão de baixo mede quantos inimigos o aparelho aguenta
   golpe ficam por cima dela, sempre claros.
 - **Som** (`scripts/scr_som`): `musica()` troca a música suave, `som_fundo()` faz o
   mesmo com o som de fundo, `sfx()` toca efeito com o volume das opções.
+- **Voz dos inimigos** (`scripts/scr_vozes`): cada tipo tem um som ao notar o
+  jogador, um antes do golpe e uma morte. A tabela `global.vozes` diz o arquivo, o
+  tom e o volume de cada um: tipo novo ganha voz numa linha. Os arquivos saem de
+  `tools/gerar_sons_vozes.py`.
 - **Fontes** (`scripts/scr_fonte`): `texto()` e `titulo()`, com acento, iguais no
   Windows e no navegador.
 - **Dicas** (`scripts/scr_dicas`): ensinam cada golpe na hora em que serve.

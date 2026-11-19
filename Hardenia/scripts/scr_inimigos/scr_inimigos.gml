@@ -319,6 +319,7 @@ function golpe_acertar(_enemy, _dano, _knockback, _forte, _quebra, _origem_x = u
 
 // _dir: para onde o golpe empurrou
 function inimigo_morrer(_enemy, _dir, _forte) {
+    voz_tocar(_enemy, "morte");
     if (_enemy.bomba && _enemy.state == 1) {
         bomba_apagar(_enemy.zona.cx, _enemy.zona.cy, 1 - _enemy.state_timer / _enemy.ataque.aviso);
     }
