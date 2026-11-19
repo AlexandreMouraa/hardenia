@@ -70,7 +70,8 @@ $problemas | ForEach-Object { Write-Host ("  {0} {1}: {2}" -f $_[2], $_[3], $_[4
 $resumo = $linhas | Where-Object { $_[3] -eq "resumo" } | Select-Object -Last 1
 if ($resumo) { Write-Host "  $($resumo[4])" }
 
-if ($problemas.Count -eq 0 -and $resumo -and $resumo[4] -match "vitorias=$Runs ") {
+$esperado = if ($Extra -split " " -contains "-curandeiro") { "^curandeiro=OK " } else { "vitorias=$Runs " }
+if ($problemas.Count -eq 0 -and $resumo -and $resumo[4] -match $esperado) {
     Write-Host "OK"
     exit 0
 }

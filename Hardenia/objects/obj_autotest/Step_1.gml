@@ -43,6 +43,12 @@ if (frame > 60 * 60 * 40) {
     exit;
 }
 
+if (testar_curandeiro) {
+    if (room == Room2) tempo_sala += 1;
+    testar_cura_inimiga();
+    exit;
+}
+
 // abertura e final: passam sozinhos, com um print de cada carta na primeira run
 if (instance_exists(obj_abertura) || instance_exists(obj_final)) {
     var _texto = instance_exists(obj_abertura) ? instance_find(obj_abertura, 0) : instance_find(obj_final, 0);
