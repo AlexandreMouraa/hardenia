@@ -142,6 +142,10 @@ Ali, `L` ou um toque no botão de baixo mede quantos inimigos o aparelho aguenta
   golpe ficam por cima dela, sempre claros.
 - **Som** (`scripts/scr_som`): `musica()` troca a música suave, `som_fundo()` faz o
   mesmo com o som de fundo, `sfx()` toca efeito com o volume das opções.
+- **Voz dos inimigos** (`scripts/scr_vozes`): cada tipo tem um som ao notar o
+  jogador, um antes do golpe e uma morte. A tabela `global.vozes` diz o arquivo, o
+  tom e o volume de cada um: tipo novo ganha voz numa linha. Os arquivos saem de
+  `tools/gerar_sons_vozes.py`.
 - **Fontes** (`scripts/scr_fonte`): `texto()` e `titulo()`, com acento, iguais no
   Windows e no navegador.
 - **Dicas** (`scripts/scr_dicas`): ensinam cada golpe na hora em que serve.
