@@ -117,6 +117,7 @@ acordar = function() {
         if (!acordado && point_distance(x, y, other.x, other.y) <= other.raio_alerta) {
             acordado = true;
             alerta = 30;
+            voz_tocar(id, "notar");
             memoria_x = obj_player.x;
             memoria_y = obj_player.y;
             procura = procura_max;

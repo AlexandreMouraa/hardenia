@@ -81,6 +81,7 @@ switch (state) {
             if (_dist <= ataque.gatilho && collision_line(x, y, obj_player.x, obj_player.y, obj_wall, false, true) == noone && vez_pegar()) {
                 state = 1;
                 state_timer = ataque.aviso;
+                voz_tocar(id, "aviso");
                 // a direcao trava no inicio do aviso: o jogador ve onde o golpe cai e tem tempo de sair
                 attack_dir = _dir;
                 if (ao_mirar != undefined) {
