@@ -60,6 +60,21 @@ hud_dano = 0;
 hud_dano_max = 30;
 hud_cura = 0;
 hud_cura_max = 40;
+// a barra desenhada corre atras da vida de verdade, so no desenho (Draw_64)
+hud_vida_vis = hp;
+// levou golpe nesta sala? Limpar sem levar nenhum devolve 1 de vida (issue #111)
+dano_na_sala = false;
+// ganhar vida: nunca passa do maximo, pisca na barra e sobe um "+1" verde do guerreiro
+curar = function(_quanto) {
+    if (hp <= 0 || hp >= hp_max) {
+        return false;
+    }
+    hp = min(hp_max, hp + _quanto);
+    global.vida = hp;
+    hud_cura = hud_cura_max;
+    fx_numero(x, y, "+" + string(_quanto), make_colour_rgb(120, 230, 120));
+    return true;
+};
 // golpe que pegou. A morte fica no fim do Step
 // quem acertou o ultimo golpe e a frase da tela de morte (frase_de_morte, em scr_mapa)
 morto_por = "";
@@ -69,6 +84,7 @@ levar_dano = function(_dano) {
     global.vida = hp;
     invuln_timer = 45;
     hud_dano = hud_dano_max;
+    dano_na_sala = true;
     if (hp > 0) {
         impacto(5, 7);
     }
@@ -207,31 +223,92 @@ golpear = function(_carregado = false) {
         _gx = x + _cx * _k;
         _gy = y + _cy * _k;
     }
-    var _golpe = instance_create_layer(_gx, _gy, "Instances", obj_attack);
-    _golpe.quebra_escudo = _carregado || _arma.quebra;
-    if (!_forte) {
-        _golpe.damage = _arma.dano;
-        _golpe.knockback = _arma.empurra;
-        _golpe.image_xscale = _arma.escala;
-        _golpe.image_yscale = _arma.escala;
-    }
-    if (_forte) {
-        _golpe.forte = true;
-        _golpe.damage = _arma.dano_forte;
-        _golpe.knockback = _arma.empurra_forte;
-        _golpe.image_xscale = _arma.escala_forte;
-        _golpe.image_yscale = _arma.escala_forte;
-        if (tem_tecnica("bomba_combo")) {
-            // no alvo; sem alvo, a frente, sem cair dentro da parede
-            var _ate = golpe_mirado ? point_distance(x, y, _alvo.x, _alvo.y) : 150;
-            _ate = linha_ate_parede(x, y, _dir, _ate);
-            bomba_jogador(x, y, x + lengthdir_x(_ate, _dir), y + lengthdir_y(_ate, _dir), 24, 0, 1);
-            tecnica_contar("bomba_combo");
-        }
-    }
+    // ULTIMO INSTANTE (golpe_dobrado) dobra o dano deste golpe, seja qual for a forma dele
+    var _dobro = 1;
     if (golpe_dobrado) {
         golpe_dobrado = false;
-        _golpe.damage *= 2;
+        _dobro = 2;
+    }
+    var _quebra = _carregado || _arma.quebra;
+    // BOMBA DE MAO: ate onde ela vai se decide antes do golpe, porque o impacto e a estocada longa
+    // acertam na hora e o alvo mirado pode ja ter morrido quando a bomba sair
+    var _bomba_ate = -1;
+    if (_forte && tem_tecnica("bomba_combo")) {
+        // no alvo; sem alvo, a frente, sem cair dentro da parede
+        _bomba_ate = linha_ate_parede(x, y, _dir, golpe_mirado ? point_distance(x, y, _alvo.x, _alvo.y) : 150);
+    }
+    // a forma do golpe forte vem da arma (scr_armas): a espada e as adagas usam a area de sempre
+    // (obj_attack, 8 quadros na frente); o machado e a alabarda acertam de uma vez, em area ou em linha
+    var _tipo = _forte ? _arma.forte : "arco";
+    if (_tipo == "arco" || _tipo == "duplo") {
+        var _golpe = instance_create_layer(_gx, _gy, "Instances", obj_attack);
+        _golpe.quebra_escudo = _quebra;
+        // o golpe acerta no arco desenhado (centro no guerreiro, raio da arma mais a folga, abertura
+        // da arma), e nao no quadrado em volta de (_gx, _gy): o que se ve e o que pega (issue #108)
+        _golpe.setor = true;
+        _golpe.ox = x;
+        _golpe.oy = y;
+        _golpe.raio = (_forte ? _arma.raio_forte : _arma.raio) + GOLPE_FOLGA;
+        _golpe.abertura = _forte ? _arma.arco_forte : _arma.arco;
+        _golpe.dir = _dir;
+        if (!_forte) {
+            _golpe.damage = _arma.dano * _dobro;
+            _golpe.knockback = _arma.empurra;
+            _golpe.image_xscale = _arma.escala;
+            _golpe.image_yscale = _arma.escala;
+        } else {
+            _golpe.forte = true;
+            // adagas: o primeiro dos dois cortes tira 1 e empurra pouco; o forte e o segundo
+            _golpe.damage = (_tipo == "duplo" ? 1 : _arma.dano_forte) * _dobro;
+            _golpe.knockback = (_tipo == "duplo") ? _arma.empurra : _arma.empurra_forte;
+            _golpe.image_xscale = _arma.escala_forte;
+            _golpe.image_yscale = _arma.escala_forte;
+        }
+    }
+    if (_tipo == "duplo") {
+        // segundo corte: 6 quadros depois e 14 px mais a frente, aonde o avanco maior leva o guerreiro
+        var _g2 = instance_create_layer(_gx + lengthdir_x(14, _dir), _gy + lengthdir_y(14, _dir), "Instances", obj_attack);
+        _g2.atraso = 6;
+        _g2.forte = true;
+        _g2.quebra_escudo = _quebra;
+        // o mesmo arco, saindo de onde o avanco deixa o guerreiro 6 quadros depois (8 px por quadro
+        // de impulso, pela metade)
+        _g2.setor = true;
+        _g2.ox = x + lengthdir_x(14, _dir);
+        _g2.oy = y + lengthdir_y(14, _dir);
+        _g2.raio = _arma.raio_forte + GOLPE_FOLGA;
+        _g2.abertura = _arma.arco_forte;
+        _g2.dir = _dir;
+        _g2.damage = _arma.dano_forte * _dobro;
+        _g2.knockback = _arma.empurra_forte;
+        _g2.image_xscale = _arma.escala_forte;
+        _g2.image_yscale = _arma.escala_forte;
+    }
+    if (_tipo == "impacto") {
+        // machado: a lamina cai no ponto do golpe e o chao responde em volta dele. 72 px de raio: um
+        // pouco alem da area do forte da espada (36 + 40), em todas as direcoes a partir do ponto
+        golpe_em_volta(_gx, _gy, 72, _arma.dano_forte * _dobro, _arma.empurra_forte, true, _quebra);
+        impacto(3, 7);
+        fx_onda(_gx, _gy, 110, arma_cor());
+    }
+    if (_tipo == "estocada") {
+        // alabarda: a ponta atravessa a fila, 150 px (o alcance comum dela e 50 + a area), cortado na parede
+        var _comp = linha_ate_parede(x, y, _dir, 150);
+        golpe_em_linha(x, y, _dir, _comp, 18, _arma.dano_forte * _dobro, _arma.empurra_forte, true, _quebra);
+        with (instance_create_depth(x, y, depth - 1, obj_fx)) {
+            tipo = "estocada";
+            dir = _dir;
+            dono = other.id;
+            raio = _comp;
+            espessura = 10;
+            cor = arma_cor();
+            vida_max = 12;
+            vida = vida_max;
+        }
+    }
+    if (_bomba_ate >= 0) {
+        bomba_jogador(x, y, x + lengthdir_x(_bomba_ate, _dir), y + lengthdir_y(_bomba_ate, _dir), 24, 0, 1);
+        tecnica_contar("bomba_combo");
     }
     // arco de corte desenhado (o golpe em si, obj_attack, e invisivel). O
     // segundo varre ao contrario; o terceiro e mais largo e mais claro
@@ -269,7 +346,9 @@ golpear = function(_carregado = false) {
         combo_janela = 0;
         attack_cooldown = _arma.recarga_forte;
         attack_anim_duration = 14;
-        ataque_impulso = 4;
+        // adagas: avanco maior, que leva o guerreiro ate o segundo corte; alabarda: a ponta vai e o
+        // corpo quase nao sai do lugar
+        ataque_impulso = (_tipo == "duplo") ? 8 : ((_tipo == "estocada") ? 2 : 4);
     } else {
         // espada: mesma recarga do ataque antigo (20 frames), um inimigo comum morre
         // no mesmo tempo de antes; mais 14 frames para emendar o proximo
@@ -284,6 +363,18 @@ golpear = function(_carregado = false) {
     }
     is_attacking = true;
     attack_anim_timer = attack_anim_duration;
+    // golpe forte: imagem fantasma do guerreiro na cor da arma, que fica para tras e apaga (so
+    // desenho, como o rastro do dash). Pedido dos lideres: golpes com mais cara de Hades
+    if (_forte) {
+        with (instance_create_depth(x, y, depth + 1, obj_fx)) {
+            tipo = "rastro";
+            sprite_index = other.sprite_index;
+            image_index = other.image_index;
+            cor = merge_colour(arma_cor(), c_white, 0.3);
+            vida_max = 12;
+            vida = vida_max;
+        }
+    }
     // segundo golpe mais agudo, para o combo ter um ritmo de ouvido. Cada arma tem o seu tom
     sfx(_forte ? snd_golpe_forte : snd_attack, 1, false, 1, 0, (golpe_atual == 2 ? 1.12 : 1) * _arma.tom);
 };
@@ -393,37 +484,118 @@ girar = function() {
 // devagar enquanto segura, e por isso nao da para usar sem pensar
 especial_carga = 0;
 especial_carga_max = 20;
-giro_furioso = function() {
-    especial_carga = 0;
-    cancelar_carga();
-    combo_passo = 0;
-    combo_janela = 0;
-    // a barra zera depois de acertar: este golpe nao enche a proxima
-    golpe_em_volta(x, y, 140, 3, 60, true, true);
-    global.furia = 0;
-    global.giros_furiosos += 1;
-    global.lento = max(global.lento, 24);
-    global.flash = max(global.flash, 0.22);
-    invuln_timer = max(invuln_timer, 40);
-    impacto(6, 12);
-    fx_onda(x, y, 160, make_colour_rgb(255, 120, 60));
+// a Furia de cada arma (scr_armas): a espada gira; o machado bate no chao (TERREMOTO); a alabarda
+// avanca em linha (INVESTIDA, o avanco sai no Step); as adagas cortam em volta tres vezes
+// seguidas (TEMPESTADE, os cortes seguintes saem no Step)
+furia_investida = 0;     // px que faltam do avanco
+furia_investida_dir = 0;
+furia_pulsos = 0;        // cortes da Tempestade que ainda faltam
+furia_pulso_timer = 0;
+// um corte da Tempestade: em volta, perto, 1 de dano
+furia_pulso = function() {
+    golpe_em_volta(x, y, 118, 1, 30, true, true);
     with (instance_create_depth(x, y, depth - 1, obj_fx)) {
         tipo = "arco";
         dono = other.id;
         abertura = 360;
-        raio = 138;
-        espessura = 40;
-        cor = make_colour_rgb(255, 90, 40);
-        borda = make_colour_rgb(255, 210, 140);
+        raio = 116;
+        espessura = 26;
+        cor = arma_cor();
+        borda = make_colour_rgb(255, 230, 200);
         intensidade = 1.8;
-        vida_max = 18;
+        vida_max = 12;
         vida = vida_max;
+    }
+    sfx(snd_giro, 1, false, 1, 0, 1.3);
+};
+giro_furioso = function() {
+    var _arma = arma_def();
+    especial_carga = 0;
+    cancelar_carga();
+    combo_passo = 0;
+    combo_janela = 0;
+    var _cor = (_arma.caido == "") ? make_colour_rgb(255, 90, 40) : arma_cor();
+    var _raio_fx = 138;
+    var _espessura_fx = 40;
+    switch (_arma.furia) {
+        case "TERREMOTO":
+            // maior e mais forte que o giro, e empurra para longe: abre espaco em vez de so ferir
+            golpe_em_volta(x, y, 190, 4, 80, true, true);
+            global.lento = max(global.lento, 36);
+            global.flash = max(global.flash, 0.3);
+            impacto(10, 22);
+            fx_onda(x, y, 230, _cor);
+            _raio_fx = 188;
+            _espessura_fx = 50;
+            break;
+        case "INVESTIDA":
+            // para o alvo mirado, ou para onde o guerreiro olha; para na parede. O golpe sai agora, na
+            // linha toda; o corpo chega la nos quadros seguintes (Step), invencivel no caminho
+            var _alvo = mira_alvo();
+            var _dir = (_alvo != noone) ? point_direction(x, y, _alvo.x, _alvo.y) : point_direction(0, 0, face_h, face_v);
+            var _comp = linha_ate_parede(x, y, _dir, 240);
+            ataque_dir = _dir;
+            golpe_em_linha(x, y, _dir, _comp, 30, 3, 60, true, true);
+            furia_investida = _comp;
+            furia_investida_dir = _dir;
+            global.lento = max(global.lento, 16);
+            global.flash = max(global.flash, 0.22);
+            impacto(4, 10);
+            with (instance_create_depth(x, y, depth - 1, obj_fx)) {
+                tipo = "estocada";
+                dir = _dir;
+                dono = other.id;
+                raio = _comp;
+                espessura = 30;
+                cor = _cor;
+                vida_max = 16;
+                vida = vida_max;
+            }
+            _raio_fx = 70;
+            _espessura_fx = 24;
+            break;
+        case "TEMPESTADE":
+            // tres cortes, um agora e dois a cada 8 quadros (Step); o dash volta inteiro para sair logo
+            furia_pulso();
+            furia_pulsos = 2;
+            furia_pulso_timer = 8;
+            dash_charges = dash_charges_max;
+            global.lento = max(global.lento, 16);
+            global.flash = max(global.flash, 0.18);
+            impacto(4, 8);
+            _raio_fx = 0;
+            break;
+        default:
+            // espada, o Giro Furioso de sempre. A barra zera depois de acertar: este golpe nao enche a proxima
+            golpe_em_volta(x, y, 140, 3, 60, true, true);
+            global.lento = max(global.lento, 24);
+            global.flash = max(global.flash, 0.22);
+            impacto(6, 12);
+            fx_onda(x, y, 160, make_colour_rgb(255, 120, 60));
+            break;
+    }
+    global.furia = 0;
+    global.giros_furiosos += 1;
+    invuln_timer = max(invuln_timer, 40);
+    if (_raio_fx > 0) {
+        with (instance_create_depth(x, y, depth - 1, obj_fx)) {
+            tipo = "arco";
+            dono = other.id;
+            abertura = 360;
+            raio = _raio_fx;
+            espessura = _espessura_fx;
+            cor = _cor;
+            borda = make_colour_rgb(255, 210, 140);
+            intensidade = 1.8;
+            vida_max = 18;
+            vida = vida_max;
+        }
     }
     attack_cooldown = max(attack_cooldown, 20);
     attack_anim_duration = 14;
     attack_anim_timer = attack_anim_duration;
     is_attacking = true;
-    sfx(snd_giro, 1, false, 1, 0, 0.75);
+    sfx(snd_giro, 1, false, 1, 0, 0.75 * _arma.tom);
     som(snd_explosao, 0.7);
 };
 
@@ -450,19 +622,22 @@ if (!variable_global_exists("tentativas")) {
 facing_dir = 3; // 0 = esquerda, 1 = direita, 2 = cima, 3 = baixo
 
 idle_frames = 4;
-walk_frames = 4;
+walk_frames = 8;
 slash_frames = 6;
 
 anim_timer = 0;
 anim_speed = 6;
+anim_speed_andar = 3;
+anim_speed_parado = 16;
 anim_frame = 0;
 
 is_attacking = false;
 attack_anim_timer = 0;
 attack_anim_duration = 12;
 
-sprite_index = spr_player_idle;
-// mascara fixa: sem ela a colisao muda de tamanho a cada animacao e prende na parede
+sprite_index = spr_heroi_parado;
+// mascara fixa: sem ela a colisao muda de tamanho a cada animacao e prende na parede. Continua
+// a do heroi antigo (spr_player_idle, 19 x 34 no meio do corpo): trocar o desenho nao muda o jogo
 mask_index = spr_player_idle;
 image_speed = 0;
 image_index = facing_dir * idle_frames;

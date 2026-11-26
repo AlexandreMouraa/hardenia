@@ -135,11 +135,15 @@ function barra_chefe(_nome, _hp, _hp_max, _cor, _marcas, _fala, _fala_alfa) {
 }
 
 // ---------- duelos: quando a sala fica limpa, um Caido aparece ----------
-// Os dois da run saem do sorteio, sem repetir. vida e furia: para ajustar jogando. furia acima de 1
-// da mais aviso e mais recarga: o primeiro duelo vem na segunda sala, com poucas tecnicas. Com
-// tudo igual, o robo desatento (50%) morria 13 vezes ali
+// Um em cada mapa antes do Trono: os quatro da run saem do sorteio, sem repetir (issue #94). vida e
+// furia: para ajustar jogando. furia acima de 1 da mais aviso e mais recarga.
+// Ruinas: o mais facil, porque e onde se aprende e o jogador so tem a tecnica do comeco.
+// Catacumbas e Cemiterio: os valores de quando eram os dois unicos duelos (com tudo igual nas
+// Catacumbas, o robo desatento (50%) morria 13 vezes ali). Patio: no meio dos dois
 global.duelos = [
+    { sala: Room1, vida: 18, furia: 1.5 },
     { sala: Room_Tunel, vida: 26, furia: 1.25 },
+    { sala: Room2, vida: 32, furia: 1.1 },
     { sala: Room3, vida: 40, furia: 1 },
 ];
 global.caidos_chaves = ["carrasco", "batedor", "sapador", "sentinela"];
@@ -147,6 +151,8 @@ global.caidos_ordem = [];
 global.duelos_feitos = 0;
 // salas que ja tiveram duelo nesta run
 global.duelos_salas = [];
+// qual Caido apareceu em cada sala nesta run (nome da sala -> chave): a tela do caminho mostra
+global.duelos_caidos = {};
 // quem acabou de cair: o proximo bau traz o que ele deixou
 global.caido_vencido = "";
 // quem ja apareceu nesta sessao: da segunda vez a fala e outra (zera no menu)
@@ -156,6 +162,7 @@ function duelos_zerar() {
     global.caidos_ordem = [];
     global.duelos_feitos = 0;
     global.duelos_salas = [];
+    global.duelos_caidos = {};
     global.caido_vencido = "";
 }
 
@@ -169,7 +176,8 @@ function duelo_da_sala() {
 }
 
 function duelo_pendente() {
-    return duelo_da_sala() != undefined && !array_contains(global.duelos_salas, room);
+    // o Caido so vem depois da ultima onda da sala (scr_variacao)
+    return duelo_da_sala() != undefined && !array_contains(global.duelos_salas, room) && !onda_pendente();
 }
 
 // a ordem dos Caidos desta run. O robo gira a lista, para ver os quatro em 3 runs
@@ -234,6 +242,7 @@ function duelo_tentar() {
     }
     duelo_curou = true;
     array_push(global.duelos_salas, room);
+    variable_struct_set(global.duelos_caidos, room_get_name(room), _chave);
     global.duelos_feitos += 1;
     var _lugar = duelo_lugar(x, y);
     with (instance_create_layer(_lugar[0], _lugar[1], "Instances", obj_enemy_caido)) {
@@ -242,6 +251,7 @@ function duelo_tentar() {
     fx_onda(_lugar[0], _lugar[1], 120, _def.cor);
     fx_faiscas(_lugar[0], _lugar[1], 90, _def.cor, 12);
     sfx(snd_sino, 3, false, 0.8);
+    voz_tocar_chave("caido_" + _chave, "notar");
     musica(snd_musica_duelo, 400);
     var _visto = variable_struct_exists(global.caidos_vistos, _chave);
     variable_struct_set(global.caidos_vistos, _chave, true);

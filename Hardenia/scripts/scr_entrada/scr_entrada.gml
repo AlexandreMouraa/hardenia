@@ -50,7 +50,9 @@ function pad_ler() {
         global.ultimo_aparelho = "controle";
         global.toque_ativo = false;
     } else if (keyboard_check_pressed(vk_anykey) || mouse_check_button_pressed(mb_any)) {
-        global.ultimo_aparelho = global.toque_ativo ? "toque" : "teclado";
+        // "mouse" separado do teclado: as dicas falam de clique para quem clica (issue #110). No
+        // toque o clique e o dedo, entao continua "toque"
+        global.ultimo_aparelho = global.toque_ativo ? "toque" : (mouse_check_button_pressed(mb_any) ? "mouse" : "teclado");
     }
 }
 

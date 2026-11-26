@@ -30,7 +30,7 @@ for (var _i = 0; _i < array_length(itens); _i++) {
     var _meio = (_r[1] + _r[3]) / 2;
     draw_set_alpha(_foco ? 0.78 : 0.42);
     draw_set_color(_foco ? make_colour_rgb(90, 14, 20) : c_black);
-    draw_rectangle(_r[0], _r[1] + 2 * _esc, _r[2], _r[3] - 2 * _esc, false);
+    ret_redondo(_r[0], _r[1] + 2 * _esc, _r[2], _r[3] - 2 * _esc, 10 * _esc, draw_get_colour());
     draw_set_alpha(1);
     draw_set_color(_foco ? c_white : c_ltgray);
     titulo(_r[0] + 12 * _esc, _meio, itens[_i].nome, _esc * 1.25);

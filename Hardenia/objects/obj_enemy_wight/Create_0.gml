@@ -18,3 +18,9 @@ ataque = {
     recarga: 50,
     avanco: 0,
 };
+// varredura e, logo atras dela, uma segunda mais curta (aviso 36, recarga 14): sair da primeira
+// e voltar na hora e erro. A terceira vez volta a varredura longa (issue #109)
+rodizio = [
+    ataque,
+    { forma: "arco", gatilho: 80, alcance: 100, tamanho: 50, aviso: 36, duracao: 20, acerto: 10, recarga: 14, avanco: 0 },
+];

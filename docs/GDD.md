@@ -32,7 +32,8 @@ leitura de padrão), Hollow Knight (precisão de movimento 2D), Hades
 - Armas dos Caídos: o Caído vencido larga a arma que usava (o machado do Carrasco, as
   adagas do Batedor, a alabarda da Sentinela), e o guerreiro escolhe se troca a espada
   por ela. Não é arma mágica: é a arma de quem morreu antes, e se perde na morte, como
-  as técnicas.
+  as técnicas. Cada arma muda o jeito de lutar: tem golpe forte e Fúria próprios (o
+  machado bate no chão, a alabarda atravessa a fila, as adagas cortam duas vezes).
 - Kit de combate enxuto (ex: ataque básico, dash/esquiva, talvez um
   bloqueio/parry) — a limitação de ferramentas é proposital.
 
@@ -59,8 +60,9 @@ O texto na tela fica em `scripts/scr_historia` e em `scripts/scr_tecnicas`.
 
 ## Estrutura da run
 
-- Cinco salas em sequência, com 3 arranjos de inimigos cada, sorteados por run. Duelos
-  nas Catacumbas e no Cemitério, e o Rei Morto, em 3 fases, no Trono.
+- Cinco salas em sequência, com 3 arranjos de inimigos cada, sorteados por run. Um duelo
+  em cada mapa antes do Trono, com os 4 Caídos em ordem sorteada (o das Ruínas é o mais
+  fácil), e o Rei Morto, em 3 fases, no Trono.
 - Morrer zera a run. No aparelho ficam só opções e recordes: o que passa de uma run
   para a outra continua sendo só o que o jogador aprendeu.
 - Desafio do dia: a mesma run para todo mundo, com ranking próprio.

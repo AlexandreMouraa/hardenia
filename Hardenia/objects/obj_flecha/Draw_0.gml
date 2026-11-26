@@ -1,8 +1,9 @@
-// agora ela e o unico aviso no ar: maior que o sprite, com um rastro curto de luz
-var _tx = lengthdir_x(46, direcao);
-var _ty = lengthdir_y(46, direcao);
-var _lx = lengthdir_x(2, direcao + 90);
-var _ly = lengthdir_y(2, direcao + 90);
+// agora ela e o unico aviso no ar: maior que o sprite, com um rastro de luz. Rastro de 90 px
+// (era 46): a turma nao via a flecha passar (issue #109)
+var _tx = lengthdir_x(90, direcao);
+var _ty = lengthdir_y(90, direcao);
+var _lx = lengthdir_x(3, direcao + 90);
+var _ly = lengthdir_y(3, direcao + 90);
 var _cor = make_colour_rgb(255, 225, 190);
 gpu_set_blendmode(bm_add);
 draw_primitive_begin(pr_trianglelist);

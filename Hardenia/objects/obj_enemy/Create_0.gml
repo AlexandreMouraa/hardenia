@@ -19,6 +19,18 @@ ataque = {
     recarga: 40,
     avanco: 0,
 };
+// rodizio: ataques que se alternam, um por recarga (Step, fim do estado 3). Vazio: so `ataque`.
+// A turma pediu um padrao de ataques menos previsivel (issue #109). O esqueleto comum alterna o
+// corte com uma estocada curta e rapida: aviso de 28 em vez de 45, para quem ja aprendeu o ritmo
+// do corte ter de olhar o aviso. Os filhos definem o seu, ou ficam com o ataque unico
+rodizio = [];
+rodizio_vez = 0;
+if (object_index == obj_enemy) {
+    rodizio = [
+        ataque,
+        { forma: "linha", gatilho: 90, alcance: 96, tamanho: 14, aviso: 28, duracao: 14, acerto: 8, recarga: 36, avanco: 0 },
+    ];
+}
 // elite: "escudo", "explosao" ou "invocacao" (elites_aplicar, em scr_inimigos)
 elite = "";
 escudo = false;
@@ -105,6 +117,7 @@ acordar = function() {
         if (!acordado && point_distance(x, y, other.x, other.y) <= other.raio_alerta) {
             acordado = true;
             alerta = 30;
+            voz_tocar(id, "notar");
             memoria_x = obj_player.x;
             memoria_y = obj_player.y;
             procura = procura_max;

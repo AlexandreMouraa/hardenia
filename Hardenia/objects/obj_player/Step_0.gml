@@ -131,7 +131,7 @@ if (!venceu && room == sala_final() && instance_number(obj_enemy) == 0) {
     venceu = true;
     cancelar_carga();
     brilho = 0;
-    sprite_index = spr_player_idle;
+    sprite_index = spr_heroi_parado;
     image_index = facing_dir * idle_frames;
     image_alpha = 1;
     window_set_cursor(cr_default);
@@ -144,9 +144,18 @@ if (!venceu && room == sala_final() && instance_number(obj_enemy) == 0) {
     salvo_vitoria(global.tentativas, frames_para_ms(global.run_frames));
 }
 
+// leva acabou e ainda ha ondas nesta sala (scr_variacao): um respiro e vem a proxima
+if (instance_number(obj_enemy) == 0 && onda_pendente() && !is_dead && global.lento <= 0) {
+    global.onda_espera += 1;
+    if (global.onda_espera >= 50) {
+        onda_proxima();
+    }
+}
+global.onda_aviso = max(0, global.onda_aviso - 1);
+
 // sala limpa: quantas tentativas cada sala custou (estatisticas do site). Nas salas de duelo,
 // ainda falta o Caido (scr_duelos)
-if (!sala_limpa_enviada && instance_number(obj_enemy) == 0 && !duelo_tentar()) {
+if (!sala_limpa_enviada && instance_number(obj_enemy) == 0 && !onda_pendente() && !duelo_tentar()) {
     sala_limpa_enviada = true;
     rede_evento("sala", { tentativa: global.tentativas, tempo_ms: frames_para_ms(tempo_na_sala) });
     // limpar uma fase pela primeira vez na run devolve 1 de vida. Voltar a uma fase
@@ -155,10 +164,13 @@ if (!sala_limpa_enviada && instance_number(obj_enemy) == 0 && !duelo_tentar()) {
     var _fase = mapa_indice(room);
     if (_fase > global.fase_curada) {
         global.fase_curada = _fase;
-        if (hp > 0 && hp < hp_max && !duelo_curou) {
-            hp += 1;
-            global.vida = hp;
-            hud_cura = hud_cura_max;
+        if (!duelo_curou) {
+            curar(1);
+        }
+        // limpar a sala sem levar golpe vale mais 1: premia quem joga bem, e a turma pediu mais
+        // vida ao longo da run (issue #111). So na primeira vez, como a cura de cima
+        if (!dano_na_sala) {
+            curar(1);
         }
         // o bau da proxima tecnica, onde o ultimo caiu. O chefe nao deixa: a run acabou
         if (room != sala_final() && tecnicas_restantes() > 0) {
@@ -340,6 +352,8 @@ if (_especial_preso && global.furia >= FURIA_MAX && !is_dashing) {
 // mede a sala no primeiro frame, com a tela ainda escurecida: a mascara de colisao ja criou
 // as paredes, e nao da tranco na primeira perseguicao
 if (tempo_na_sala == 0) {
+    global.onda = 1;
+    global.onda_espera = 0;
     campo_preparar();
     arranjo_aplicar();
     elites_aplicar();
@@ -356,6 +370,7 @@ if (tempo_na_sala == 2 && instance_exists(obj_enemy_chefe)) {
     cena_abrir(_rei.x, _rei.y, "O Rei Morto", _voltou ? global.fala_rei_de_novo : global.fala_rei, make_colour_rgb(235, 60, 50), _voltou ? 110 : 210);
     musica(snd_musica_rei, 500);
     sfx(snd_sino, 3, false, 0.7, 0, 0.8);
+    voz_tocar_chave("obj_enemy_chefe", "notar");
     exit;
 }
 
@@ -423,6 +438,24 @@ if (is_dashing) {
     _move_x = _h * _passo * _norm;
     _move_y = _v * _passo * _norm;
 }
+// INVESTIDA (Furia da alabarda): 20 px por quadro ate o fim da linha que o golpe ja cobriu
+if (furia_investida > 0 && !is_dashing) {
+    var _passo_inv = min(20, furia_investida);
+    furia_investida -= _passo_inv;
+    var _vx = lengthdir_x(_passo_inv, furia_investida_dir);
+    var _vy = lengthdir_y(_passo_inv, furia_investida_dir);
+    _move_x += (abs(_vx) < 0.001) ? 0 : _vx;
+    _move_y += (abs(_vy) < 0.001) ? 0 : _vy;
+}
+// TEMPESTADE (Furia das adagas): os cortes que faltam, a cada 8 quadros
+if (furia_pulsos > 0) {
+    furia_pulso_timer -= 1;
+    if (furia_pulso_timer <= 0) {
+        furia_pulsos -= 1;
+        furia_pulso_timer = 8;
+        furia_pulso();
+    }
+}
 // terceiro golpe do combo: passo curto para a frente, que da peso ao golpe
 if (ataque_impulso > 0 && !is_dashing) {
     ataque_impulso -= 1;
@@ -488,7 +521,7 @@ if (is_attacking) {
 }
 
 if (is_attacking) {
-    sprite_index = spr_player_slash;
+    sprite_index = spr_heroi_golpe;
     var _progress = 1 - (attack_anim_timer / attack_anim_duration);
     anim_frame = floor(_progress * slash_frames);
     if (anim_frame >= slash_frames) {
@@ -500,23 +533,29 @@ if (is_attacking) {
     }
     image_index = facing_dir * slash_frames + anim_frame;
 } else if (is_dashing) {
-    sprite_index = spr_player_walk;
+    sprite_index = spr_heroi_andar;
     image_index = facing_dir * walk_frames + 1;
 } else if (_h != 0 || _v != 0) {
-    sprite_index = spr_player_walk;
+    sprite_index = spr_heroi_andar;
     anim_timer += 1;
-    if (anim_timer >= anim_speed) {
+    // 8 quadros de caminhada a cada 3 passos do jogo: o ciclo e o som do passo duram o mesmo
+    // que com os 4 quadros do heroi antigo (anim_speed 6)
+    if (anim_timer >= anim_speed_andar) {
         anim_timer = 0;
         anim_frame = (anim_frame + 1) mod walk_frames;
-        if (anim_frame mod 2 == 0) {
+        if (anim_frame mod 4 == 0) {
             passo_som();
         }
     }
     image_index = facing_dir * walk_frames + anim_frame;
 } else {
-    sprite_index = spr_player_idle;
+    sprite_index = spr_heroi_parado;
+    // vindo da caminhada (8 quadros) ou do golpe (6): volta ao primeiro, para nao cair na linha de outra direcao
+    if (anim_frame >= idle_frames) {
+        anim_frame = 0;
+    }
     anim_timer += 1;
-    if (anim_timer >= anim_speed) {
+    if (anim_timer >= anim_speed_parado) {
         anim_timer = 0;
         anim_frame = (anim_frame + 1) mod idle_frames;
     }

@@ -81,6 +81,7 @@ switch (state) {
             if (_dist <= ataque.gatilho && collision_line(x, y, obj_player.x, obj_player.y, obj_wall, false, true) == noone && vez_pegar()) {
                 state = 1;
                 state_timer = ataque.aviso;
+                voz_tocar(id, "aviso");
                 // a direcao trava no inicio do aviso: o jogador ve onde o golpe cai e tem tempo de sair
                 attack_dir = _dir;
                 if (ao_mirar != undefined) {
@@ -205,6 +206,11 @@ switch (state) {
         state_timer -= 1;
         if (state_timer <= 0) {
             state = 0;
+            // proximo ataque do rodizio, para quem tem (issue #109)
+            if (array_length(rodizio) > 0) {
+                rodizio_vez = (rodizio_vez + 1) mod array_length(rodizio);
+                ataque = rodizio[rodizio_vez];
+            }
             if (ao_voltar != undefined) {
                 ao_voltar();
             }

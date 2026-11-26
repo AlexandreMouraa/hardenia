@@ -1,7 +1,7 @@
 // Dicas: ensinam os golpes na hora em que servem, uma de cada vez, em vez de um texto no comeco.
 // Cada uma aparece uma vez neste aparelho (scr_salvo), e ligar as dicas de novo nas opcoes zera.
 // Dica nova: acrescentar em DICAS_ORDEM, e o caso em cada funcao abaixo. So desenho: nao mexe na run.
-#macro DICAS_ORDEM ["mover", "golpe", "zona", "combo", "apagado", "giro", "escudo", "estocada", "carga", "furia", "bau", "portao"]
+#macro DICAS_ORDEM ["mover", "golpe", "mira", "zona", "combo", "apagado", "giro", "escudo", "estocada", "carga", "furia", "bau", "portao"]
 global.dica_agora = "";
 global.dica_tempo = 0;
 global.dica_espera = 60;
@@ -10,11 +10,14 @@ global.dica_espera = 60;
 function dica_botao(_acao) {
     var _toque = global.toque_ativo;
     var _pad = (global.ultimo_aparelho == "controle");
+    // quem clica ve so o clique; quem usa o teclado ve a tecla (a turma achou o tutorial do mouse
+    // confuso, issue #110)
+    var _mouse = (global.ultimo_aparelho == "mouse");
     switch (_acao) {
         case "mover": return _toque ? "O polegar à esquerda da tela" : (_pad ? "A alavanca" : "WASD ou as setas");
-        case "golpe": return _toque ? "ATACAR" : (_pad ? "RB ou X" : "CLIQUE ou J");
+        case "golpe": return _toque ? "ATACAR" : (_pad ? "RB ou X" : (_mouse ? "CLIQUE ESQUERDO" : "J ou CLIQUE ESQUERDO"));
         case "dash": return _toque ? "DASH" : (_pad ? "A ou LB" : "ESPAÇO");
-        case "giro": return _toque ? "GIRO" : (_pad ? "B" : "CLIQUE DIREITO ou K");
+        case "giro": return _toque ? "GIRO" : (_pad ? "B" : (_mouse ? "CLIQUE DIREITO" : "K ou CLIQUE DIREITO"));
     }
     return "";
 }
@@ -22,16 +25,18 @@ function dica_botao(_acao) {
 function dica_texto(_k) {
     switch (_k) {
         case "mover": return dica_botao("mover") + " move o guerreiro.";
-        case "golpe": return dica_botao("golpe") + ": golpe. Ele vira sozinho para o inimigo mais perto.";
+        case "golpe": return dica_botao("golpe") + ": golpe. A mira é automática e favorece inimigos na sua frente.";
+        // so para quem usa o mouse: o cursor some e nao mira, e isso confundia a turma
+        case "mira": return "O mouse não mira: o golpe vai sozinho no inimigo mais perto de onde você anda. Só o clique importa.";
         case "zona": return "Saia da zona vermelha antes do golpe. " + dica_botao("dash") + ": o dash atravessa.";
         // sem numeros: o combo e o golpe forte mudam com a arma (scr_armas)
         case "combo": return "Golpes seguidos fazem um combo. O último é mais forte e empurra.";
         case "apagado": return "Inimigo apagado acabou de atacar: é a hora de bater.";
-        case "giro": return "Cercado? " + dica_botao("giro") + ": o giro acerta todos em volta.";
+        case "giro": return "Cercado? " + dica_botao("giro") + ": giro especial. Acerta todos em volta.";
         case "escudo": return arma_def().quebra ? "Escudo: com esta arma, qualquer golpe quebra." : "Escudo: só quebra com golpe carregado, estocada ou giro.";
         case "estocada": return "Atacar logo depois do dash solta a estocada, um golpe mais longo.";
         case "carga": return "Segure " + dica_botao("golpe") + " até o guerreiro piscar e solte: golpe carregado.";
-        case "furia": return "Fúria cheia: segure " + dica_botao("giro") + " para soltar o Giro Furioso.";
+        case "furia": return "Fúria cheia: segure " + dica_botao("giro") + " para soltar " + arma_def().furia + ".";
         case "bau": return "Encoste no baú para ver o que os Caídos deixaram.";
         case "portao": return "O portão abriu. A seta amarela aponta para ele.";
         case "leve": return "O aparelho estava lento: ligamos o ambiente leve. Dá para mudar em Opções.";
@@ -46,6 +51,8 @@ function dica_pede(_k) {
     switch (_k) {
         case "mover": return tempo_na_sala > 40;
         case "golpe": return _perto < 260;
+        // logo depois do primeiro golpe por clique, com inimigo a vista
+        case "mira": return global.ultimo_aparelho == "mouse" && is_attacking && _perto < 300;
         case "zona":
             var _tem = false;
             with (obj_enemy) {
@@ -140,10 +147,10 @@ function dica_desenhar() {
     var _y = _h * 0.74;
     draw_set_alpha(0.72 * _alfa);
     draw_set_color(make_colour_rgb(20, 12, 12));
-    draw_rectangle(_w / 2 - _lg, _y - 16 * _esc, _w / 2 + _lg, _y + 16 * _esc, false);
+    ret_redondo(_w / 2 - _lg, _y - 16 * _esc, _w / 2 + _lg, _y + 16 * _esc, 16 * _esc, make_colour_rgb(20, 12, 12));
     draw_set_alpha(_alfa);
     draw_set_color(make_colour_rgb(235, 120, 80));
-    draw_rectangle(_w / 2 - _lg, _y - 16 * _esc, _w / 2 - _lg + 3 * _esc, _y + 16 * _esc, false);
+    borda_redonda(_w / 2 - _lg, _y - 16 * _esc, _w / 2 + _lg, _y + 16 * _esc, 16 * _esc, max(1, 1.5 * _esc));
     draw_set_color(c_white);
     draw_set_halign(fa_center);
     draw_set_valign(fa_middle);

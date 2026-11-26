@@ -5,7 +5,9 @@ if (tempo < 8) {
 }
 var _volta = keyboard_check_pressed(vk_escape) || pad_volta();
 if (modo != "opcoes") {
-    if (_volta || aperto_de_passar()) {
+    var _toque = modo == "controles_iniciais" && global.toque_ativo
+        && toque_tap_em([0, 0, display_get_gui_width(), display_get_gui_height()]);
+    if (_volta || aperto_de_passar() || _toque) {
         fechar();
     }
     exit;

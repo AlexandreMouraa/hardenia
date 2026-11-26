@@ -227,6 +227,28 @@ function zona_toca_retangulo(_z, _l, _t, _r, _b) {
     return ponto_na_zona(_z, _l, _t);
 }
 
+// o setor (o arco do golpe do jogador: centro, raio, abertura em graus e direcao) encosta no
+// retangulo? Testa o centro, os cantos e o meio dos lados do retangulo: um deles a menos de _raio
+// e dentro da abertura basta. Com o retangulo em cima do centro, encosta sempre. E a mesma conta
+// para o golpe (obj_attack) e para o robo decidir quando bater (obj_autotest), senao um nao bate
+// onde o outro acerta (issue #108)
+// folga do golpe alem do arco desenhado (raio em scr_armas): a lamina pega quem esta na beira
+#macro GOLPE_FOLGA 6
+function setor_toca_retangulo(_ox, _oy, _raio, _abertura, _dir, _l, _t, _r, _b) {
+    if (_ox >= _l && _ox <= _r && _oy >= _t && _oy <= _b) return true;
+    var _mx = (_l + _r) / 2;
+    var _my = (_t + _b) / 2;
+    var _px = [_mx, _l, _r, _l, _r, _mx, _mx, _l, _r];
+    var _py = [_my, _t, _t, _b, _b, _t, _b, _my, _my];
+    for (var _i = 0; _i < 9; _i++) {
+        if (point_distance(_ox, _oy, _px[_i], _py[_i]) <= _raio
+            && abs(angle_difference(_dir, point_direction(_ox, _oy, _px[_i], _py[_i]))) <= _abertura / 2) {
+            return true;
+        }
+    }
+    return false;
+}
+
 // o golpe acerta o jogador? Parede entre o ponto de onde o golpe saiu e o jogador
 // protege, mesmo com a zona passando por cima dela
 function zona_acerta_jogador(_z) {
@@ -287,6 +309,8 @@ function golpe_acertar(_enemy, _dano, _knockback, _forte, _quebra, _origem_x = u
             impacto(6, 6);
             chute_camera(_dir_golpe, 9);
             fx_onda(_enemy.x, _enemy.y, 58, make_colour_rgb(255, 180, 90));
+            // clarao branco curto no ponto do acerto, por cima da onda (so desenho)
+            fx_onda(_enemy.x, _enemy.y, 26, c_white);
             fx_faiscas(_enemy.x, _enemy.y, _dir_golpe, make_colour_rgb(255, 200, 120), 8);
             fx_corte(_enemy.x, _enemy.y, _dir_golpe, make_colour_rgb(255, 170, 80), 50);
         } else {
@@ -319,6 +343,7 @@ function golpe_acertar(_enemy, _dano, _knockback, _forte, _quebra, _origem_x = u
 
 // _dir: para onde o golpe empurrou
 function inimigo_morrer(_enemy, _dir, _forte) {
+    voz_tocar(_enemy, "morte");
     if (_enemy.bomba && _enemy.state == 1) {
         bomba_apagar(_enemy.zona.cx, _enemy.zona.cy, 1 - _enemy.state_timer / _enemy.ataque.aviso);
     }
@@ -332,6 +357,11 @@ function inimigo_morrer(_enemy, _dir, _forte) {
         arma_largar(_enemy.caido, _enemy.x, _enemy.y);
         musica(musica_da_sala(), 2000);
         salvo_caido_livre(_enemy.caido);
+        // vencer o duelo devolve 1 de vida (a cura de limpar a sala veio antes dele): com um Caido
+        // em cada mapa, a run ficou mais longa e a turma pediu mais vida (issue #111)
+        if (instance_exists(obj_player)) {
+            obj_player.curar(1);
+        }
     }
     // a bomba espera um instante: pode pegar outro que sangra, e a corrente cresce sem recursao
     if (_enemy.sangra > 0 && tem_tecnica("sangue_polvora")) {

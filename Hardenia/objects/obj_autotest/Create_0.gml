@@ -64,6 +64,8 @@ ataques_formas = [
 // -grupo: na primeira sala, o robo fica parado e confere o comportamento em grupo:
 // visao, memoria, alerta dos vizinhos e cerco (print "cerco" e "grupo=1" no resumo)
 testar_grupo = false;
+testar_curandeiro = false;
+curandeiro_passo_teste = 0;
 // -tecnicas: comeca a run com todas as tecnicas, para cada efeito rodar e entrar no resumo
 // ("tecnicas=N", quantas fizeram efeito). Sem ela, fica com a primeira carta de cada oferta
 todas_tecnicas = false;
@@ -147,6 +149,7 @@ for (var _i = 1; _i <= parameter_count(); _i++) {
     if (parameter_string(_i) == "-semarmas") {
         pegar_armas = false;
     }
+    if (parameter_string(_i) == "-curandeiro") testar_curandeiro = true;
     if (parameter_string(_i) == "-grupo") {
         testar_grupo = true;
     }
@@ -224,6 +227,76 @@ exception_unhandled_handler(function(_ex) {
     game_end(2);
     return 0;
 });
+
+// Cena curta no Patio: deixa o inimigo conjurar por conta propria e usa o caminho real de dano.
+testar_cura_inimiga = function() {
+    if (room != Room2) {
+        room_goto(Room2);
+        return;
+    }
+    if (tempo_sala < 3) return;
+    var _curador = instance_find(obj_enemy_curandeiro, 0);
+    var _aliado = instance_find(obj_enemy_defensor, 0);
+    if (_curador == noone || _aliado == noone || tempo_sala > 360) {
+        log("FALHA_curandeiro", "faltou inimigo ou o teste excedeu o tempo");
+        encerrar(1);
+        return;
+    }
+    switch (curandeiro_passo_teste) {
+        case 0:
+            // Centro livre do Patio 0.10, com os outros inimigos fora da cena.
+            with (obj_enemy) {
+                if (id != _curador && id != _aliado) instance_destroy();
+            }
+            obj_player.x = 1000;
+            obj_player.y = 850;
+            _curador.x = 1100;
+            _curador.y = 810;
+            _curador.acordado = true;
+            _curador.cura_recarga = 0;
+            _aliado.x = 920;
+            _aliado.y = 810;
+            _aliado.state = 3;
+            _aliado.state_timer = 420;
+            _aliado.hp = _aliado.vida_maxima_cura - 2;
+            curandeiro_passo_teste = 1;
+            break;
+        case 1:
+            if (_curador.cura_conjurando && _curador.cura_tempo == 32) pedir_print("cura_conjuracao");
+            if (_aliado.hp == _aliado.vida_maxima_cura && _curador.cura_pulso > 0) {
+                pedir_print("cura_concluida");
+                curandeiro_passo_teste = 2;
+            }
+            break;
+        case 2:
+            _aliado.hp -= 2;
+            _curador.cura_recarga = 0;
+            curandeiro_passo_teste = 3;
+            break;
+        case 3:
+            if (_curador.cura_conjurando && _curador.cura_tempo < 40) {
+                golpe_acertar(_curador, 1, 0, false, false);
+                if (_curador.cura_conjurando || _curador.cura_interrompida <= 0) {
+                    log("FALHA_curandeiro", "golpe nao interrompeu");
+                    encerrar(1);
+                    return;
+                }
+                pedir_print("cura_interrompida");
+                curandeiro_passo_teste = 4;
+            }
+            break;
+        case 4:
+            if (_curador.cura_interrompida > 0 || global.hitstop > 0) return;
+            if (_aliado.hp != _aliado.vida_maxima_cura - 2) {
+                log("FALHA_curandeiro", "a cura cancelada restaurou vida");
+                encerrar(1);
+                return;
+            }
+            log("resumo", "curandeiro=OK cura=2 interrupcao=1");
+            encerrar(0);
+            break;
+    }
+};
 
 // Entrada do robo. Teclas simuladas (keyboard_key_press) nao funcionam com a
 // janela sem foco, entao: movimento, dash e Enter da vitoria o obj_player le
