@@ -2,6 +2,11 @@ if (global.game_paused || global.hitstop > 0) {
     exit;
 }
 
+if (atraso > 0) {
+    atraso -= 1;
+    exit;
+}
+
 if (!especial) {
     lifetime -= 1;
     if (lifetime <= 0) {

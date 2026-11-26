@@ -42,6 +42,9 @@ for (var _i = 0; _i < 2; _i++) {
     texto_ext(_cx, _top + 96 * _esc, _def.nome, 18, (_r[2] - _r[0] - 16 * _esc) / (_esc * 1.05), _esc * 1.05, _esc * 1.05, 0);
     draw_set_color(c_ltgray);
     texto_ext(_cx, _top + 136 * _esc, _def.texto, 19, (_r[2] - _r[0] - 20 * _esc) / (_esc * 0.75), _esc * 0.75, _esc * 0.75, 0);
+    // a Furia da arma, na cor dela: cada uma tem a sua (scr_armas)
+    draw_set_color(_cor);
+    texto_ext(_cx, _top + 176 * _esc, "FÚRIA, " + _def.furia + ": " + _def.furia_texto, 17, (_r[2] - _r[0] - 20 * _esc) / (_esc * 0.65), _esc * 0.65, _esc * 0.65, 0);
     if (!global.toque_ativo) {
         draw_set_color(c_gray);
         texto(_cx, _fim - 18 * _esc, string(_i + 1), _esc * 0.8, _esc * 0.8, 0);
@@ -49,7 +52,7 @@ for (var _i = 0; _i < 2; _i++) {
 }
 draw_set_alpha(_surgir);
 draw_set_color(c_ltgray);
-texto(_w / 2, _h / 2 + 122 * _esc, global.toque_ativo ? "Toque na sua escolha" : ((global.ultimo_aparelho == "controle") ? "ALAVANCA para escolher    A confirma    B fica" : "A / D ou 1 2 para escolher    ENTER confirma    ESC fica"), _esc * 0.75, _esc * 0.75, 0);
+texto(_w / 2, _h / 2 + 166 * _esc, global.toque_ativo ? "Toque na sua escolha" : ((global.ultimo_aparelho == "controle") ? "ALAVANCA para escolher    A confirma    B fica" : "A / D ou 1 2 para escolher    ENTER confirma    ESC fica"), _esc * 0.75, _esc * 0.75, 0);
 draw_set_alpha(1);
 draw_set_halign(fa_left);
 draw_set_valign(fa_top);

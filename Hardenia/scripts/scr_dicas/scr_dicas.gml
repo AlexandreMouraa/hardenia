@@ -31,7 +31,7 @@ function dica_texto(_k) {
         case "escudo": return arma_def().quebra ? "Escudo: com esta arma, qualquer golpe quebra." : "Escudo: só quebra com golpe carregado, estocada ou giro.";
         case "estocada": return "Atacar logo depois do dash solta a estocada, um golpe mais longo.";
         case "carga": return "Segure " + dica_botao("golpe") + " até o guerreiro piscar e solte: golpe carregado.";
-        case "furia": return "Fúria cheia: segure " + dica_botao("giro") + " para soltar o Giro Furioso.";
+        case "furia": return "Fúria cheia: segure " + dica_botao("giro") + " para soltar " + arma_def().furia + ".";
         case "bau": return "Encoste no baú para ver o que os Caídos deixaram.";
         case "portao": return "O portão abriu. A seta amarela aponta para ele.";
         case "leve": return "O aparelho estava lento: ligamos o ambiente leve. Dá para mudar em Opções.";
