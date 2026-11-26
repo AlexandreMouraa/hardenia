@@ -43,6 +43,53 @@ function run_zerar() {
     }
     global.tecnica_semente = global.run_semente;
     global.ofertas_feitas = 0;
+    global.ciclo = 1;
+}
+
+// ---------- ciclos: depois do Trono, as mesmas fases mais duras (issue #139) ----------
+// Os lideres pediram uma run de uns 15 minutos. Vencer o Trono oferece seguir para o ciclo
+// seguinte: as tecnicas, a arma e a Furia ficam; a vida volta cheia e as curas e baus das fases
+// voltam; os Caidos voltam. Morrer num ciclo depois do primeiro encerra a jornada (obj_player)
+#macro CICLOS_MAX 3
+
+function ciclo_seguir() {
+    if (instance_exists(obj_mapa) || global.ciclo >= CICLOS_MAX) {
+        return;
+    }
+    global.ciclo += 1;
+    global.vida = VIDA_MAX;
+    global.fase_curada = -1;
+    duelos_zerar();
+    with (instance_create_depth(0, 0, -10000, obj_mapa)) {
+        destino = global.mapa_fases[0].sala;
+        de = -1;
+        para = 0;
+    }
+}
+
+// roda no inimigo, quando ele nasce (sala, onda ou duelo). Valores para ajustar jogando: cada
+// ciclo a mais soma 2 de vida aos comuns e encurta aviso (10%) e descanso (15%). O Rei e os
+// Caidos ganham 40% de vida; os Caidos tambem atacam mais rapido (furia menor)
+function ciclo_endurecer() {
+    var _extra = global.ciclo - 1;
+    if (_extra <= 0) {
+        return;
+    }
+    if (object_index == obj_enemy_chefe || object_index == obj_enemy_caido) {
+        hp_max = round(hp_max * (1 + 0.4 * _extra));
+        hp = hp_max;
+        if (object_index == obj_enemy_caido) {
+            furia *= power(0.9, _extra);
+        }
+        return;
+    }
+    if (leve || imovel) {
+        return;
+    }
+    hp += 2 * _extra;
+    vida_maxima_cura = hp;
+    ataque.aviso = round(ataque.aviso * power(0.9, _extra));
+    ataque.recarga = round(ataque.recarga * power(0.85, _extra));
 }
 // no codigo solto: a sala aberta direto pela IDE, sem passar pelo menu, tambem funciona
 run_zerar();

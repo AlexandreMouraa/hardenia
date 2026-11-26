@@ -113,6 +113,11 @@ if (global.hitstop > 0) {
 if (is_dead) {
     death_timer -= 1;
     if (death_timer <= 0) {
+        // nos ciclos depois do Trono a vitoria ja foi contada: morrer encerra a jornada
+        if (global.ciclo > 1) {
+            room_goto(Room_Menu);
+            exit;
+        }
         // a morte recomeca a run. Fora do caminho (sala de teste) recomeca a sala
         global.tentativas += 1;
         run_zerar();
@@ -135,13 +140,16 @@ if (!venceu && room == sala_final() && instance_number(obj_enemy) == 0) {
     image_index = facing_dir * idle_frames;
     image_alpha = 1;
     window_set_cursor(cr_default);
-    if (rede_ativa()) {
+    // o ranking e o recorde sao da primeira vitoria; os ciclos depois do Trono ficam fora
+    if (rede_ativa() && global.ciclo == 1) {
         vitoria_estado = "nome";
         keyboard_string = "";
     }
     final_espera = 150;
     musica(snd_musica_final, 3000);
-    salvo_vitoria(global.tentativas, frames_para_ms(global.run_frames));
+    if (global.ciclo == 1) {
+        salvo_vitoria(global.tentativas, frames_para_ms(global.run_frames));
+    }
 }
 
 // leva acabou e ainda ha ondas nesta sala (scr_variacao): um respiro e vem a proxima
@@ -226,7 +234,7 @@ if (venceu) {
             if (pedido_nome < 0 && toque_tap_em(_botoes_nome.escrever)) {
                 pedido_nome = get_string_async("Seu nome para o ranking", vitoria_nome);
             } else if (pedido_nome < 0 && toque_tap_em(_botoes_nome.pular)) {
-                room_goto(Room_Menu);
+                vitoria_estado = "fim";
             }
         } else if (pedido_nome < 0 && pad_novo(gp_face4)) {
             // com controle: Y abre o teclado do sistema; A com o nome vazio pula o ranking
@@ -240,8 +248,9 @@ if (venceu) {
         if (vitoria_espera > game_get_speed(gamespeed_fps) * 10) {
             vitoria_estado = "falhou";
         }
-    } else if (_enter_apertado) {
-        room_goto(Room_Menu);
+    } else {
+        // seguir para o proximo ciclo ou voltar ao menu (Create, vitoria_escolher)
+        vitoria_escolher();
     }
     exit;
 }

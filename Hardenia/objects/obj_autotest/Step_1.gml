@@ -186,7 +186,7 @@ if (room == Room_Menu) {
             if (!usar_horda && !todas_tecnicas && variable_struct_names_count(elites_vistas) < 3) {
                 log("FALHA_elite", "so " + string(variable_struct_names_count(elites_vistas)) + " habilidades apareceram");
             }
-            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes) + " danos=" + string(danos) + " avisos_max=" + string(avisos_max) + " combos=" + string(combos) + " elites=" + string(variable_struct_names_count(elites_vistas)) + (carregar ? " carregados=" + string(carregados) : "") + (usar_especial ? " especiais=" + string(especiais) : "") + (usar_estocada ? " estocadas=" + string(estocadas) : "") + (testar_formas ? " formas=" + string(variable_struct_names_count(formas_vistas)) : "") + (testar_grupo ? " grupo=" + string(grupo_ok) : "") + (usar_toque ? " toque=1" : "") + " tecnicas=" + string(variable_struct_names_count(global.tecnica_usos)) + " furia=" + string(global.giros_furiosos) + " duelos=" + string(duelos_vencidos) + " ondas=" + string(global.ondas_feitas) + " armas=" + string(variable_struct_names_count(armas_usadas)) + ((arma_forcada != "") ? " arma=" + arma_forcada : ""));
+            log("resumo", "runs=" + string(runs_feitas) + " vitorias=" + string(vitorias) + " mortes=" + string(mortes_total) + " golpes_inimigos=" + string(golpes) + " danos=" + string(danos) + " avisos_max=" + string(avisos_max) + " combos=" + string(combos) + " elites=" + string(variable_struct_names_count(elites_vistas)) + (carregar ? " carregados=" + string(carregados) : "") + (usar_especial ? " especiais=" + string(especiais) : "") + (usar_estocada ? " estocadas=" + string(estocadas) : "") + (testar_formas ? " formas=" + string(variable_struct_names_count(formas_vistas)) : "") + (testar_grupo ? " grupo=" + string(grupo_ok) : "") + (usar_toque ? " toque=1" : "") + " tecnicas=" + string(variable_struct_names_count(global.tecnica_usos)) + " furia=" + string(global.giros_furiosos) + " duelos=" + string(duelos_vencidos) + " ondas=" + string(global.ondas_feitas) + " armas=" + string(variable_struct_names_count(armas_usadas)) + ((arma_forcada != "") ? " arma=" + arma_forcada : "") + (testar_ciclos ? " ciclos=" + string(ciclos_vencidos) : ""));
             encerrar(0);
             exit;
         }
@@ -413,6 +413,11 @@ if (_p.is_dead) {
         if (mortes_total <= 6) {
             pedir_print("morte");
         }
+        // no Ciclo 2 em diante morrer encerra a jornada: o jogo volta ao menu sozinho
+        if (global.ciclo > 1) {
+            runs_feitas += 1;
+            log("run_fim", "morreu no ciclo " + string(global.ciclo) + " tentativas=" + string(global.tentativas));
+        }
         if (mortes_run >= 25) {
             log("FALHA_desistiu", "25 mortes na mesma run");
             terminar_run("desistiu");
@@ -428,10 +433,18 @@ if (_p.venceu) {
         exit;
     }
     espera += 1;
+    // a opcao da tela de vitoria: com -ciclos segue do Ciclo 1 para o 2; senao, o menu
+    var _segue = testar_ciclos && global.ciclo == 1;
+    _p.vitoria_opcao = _segue ? 0 : array_length(_p.vitoria_opcoes()) - 1;
     if (espera == 30) {
-        vitorias += 1;
-        log("vitoria", "tentativas=" + string(global.tentativas));
-        if (vitorias <= 2) {
+        // vitorias conta runs (o autotest.ps1 espera vitorias=runs); os ciclos vencidos vao a parte
+        if (global.ciclo > 1) {
+            ciclos_vencidos += 1;
+        } else {
+            vitorias += 1;
+        }
+        log("vitoria", "tentativas=" + string(global.tentativas) + (global.ciclo > 1 ? " ciclo=" + string(global.ciclo) : ""));
+        if (vitorias + ciclos_vencidos <= 2) {
             pedir_print("vitoria");
         }
     }
@@ -439,9 +452,12 @@ if (_p.venceu) {
     if (espera == 40 && _p.vitoria_estado == "nome") {
         keyboard_string = nome_robo;
     }
-    if (espera == 60) {
+    if (espera == 60 && _segue) {
+        log("ciclo", "segue para o ciclo " + string(global.ciclo + 1));
+        bot_enter = true;
+    } else if (espera == 60) {
         runs_feitas += 1;
-        log("run_fim", "vitoria tentativas=" + string(global.tentativas));
+        log("run_fim", "vitoria tentativas=" + string(global.tentativas) + (global.ciclo > 1 ? " ciclo=" + string(global.ciclo) : ""));
         bot_enter = true;
     }
     // ranking: Enter de novo a cada segundo ate voltar ao menu (espera a resposta)

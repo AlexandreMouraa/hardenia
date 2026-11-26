@@ -156,7 +156,7 @@ if (global.tecnica_ultimo != "" && current_time - global.tecnica_ultimo_ms < 130
 var _fase = mapa_indice(room) + 1;
 draw_set_halign(fa_center);
 draw_set_color(c_white);
-texto(_w / 2, 12 * _esc, _fase > 0 ? (global.desafio ? "DESAFIO DO DIA   " : "") + "FASE " + string(_fase) + " / " + string(array_length(global.mapa_fases)) : "TESTE DE HORDA", _esc, _esc, 0);
+texto(_w / 2, 12 * _esc, _fase > 0 ? (global.desafio ? "DESAFIO DO DIA   " : "") + (global.ciclo > 1 ? "CICLO " + string(global.ciclo) + "   " : "") + "FASE " + string(_fase) + " / " + string(array_length(global.mapa_fases)) : "TESTE DE HORDA", _esc, _esc, 0);
 draw_set_halign(fa_left);
 
 // HUD: inimigos restantes ou portao aberto
@@ -273,7 +273,7 @@ if (is_dead) {
     draw_set_color(c_white);
     texto(_w / 2, _h / 2 + 24 * _esc, frase_morte, _esc, _esc, 0);
     draw_set_color(c_ltgray);
-    texto(_w / 2, _h / 2 + 46 * _esc, "A run recomeça.", _esc * 0.85, _esc * 0.85, 0);
+    texto(_w / 2, _h / 2 + 46 * _esc, global.ciclo > 1 ? "A jornada termina no Ciclo " + string(global.ciclo) + "." : "A run recomeça.", _esc * 0.85, _esc * 0.85, 0);
     draw_set_color(c_white);
 } else if (venceu && final_espera == 0 && !instance_exists(obj_final)) {
     draw_set_alpha(0.7);
@@ -282,10 +282,16 @@ if (is_dead) {
     draw_set_alpha(1);
     var _y = _h / 2 - 130 * _esc;
     draw_set_color(c_red);
-    titulo(_w / 2, _y, "Vitória", _esc * 3);
+    titulo(_w / 2, _y, global.ciclo > 1 ? "Ciclo " + string(global.ciclo) + " vencido" : "Vitória", _esc * 3);
     draw_set_color(c_white);
     texto(_w / 2, _y + 52 * _esc, "O último guerreiro venceu em " + string(global.tentativas) + " tentativa(s), em " + tempo_texto(frames_para_ms(global.run_frames)) + ".", _esc, _esc, 0);
-    var _voltar = global.toque_ativo ? "TOQUE NA TELA PARA VOLTAR AO MENU" : "PRESSIONE ENTER PARA VOLTAR AO MENU";
+    // seguir de ciclo ou voltar ao menu (obj_player Create, vitoria_escolher)
+    var _escolha = (vitoria_estado != "nome" && vitoria_estado != "enviando");
+    if (_escolha && global.ciclo < CICLOS_MAX) {
+        draw_set_color(c_ltgray);
+        texto(_w / 2, _y + 76 * _esc, "No Ciclo " + string(global.ciclo + 1) + " os inimigos voltam mais fortes. As técnicas e a arma ficam.", _esc * 0.85, _esc * 0.85, 0);
+    }
+    var _opcoes = vitoria_opcoes();
 
     if (vitoria_estado == "nome") {
         draw_set_color(vitoria_nome_recusado ? c_red : c_ltgray);
@@ -324,19 +330,24 @@ if (is_dead) {
             texto(_w / 2 + 170 * _esc, _ly, string(_linha.tentativas) + " tent.   " + tempo_texto(_linha.tempo_ms), _esc * 0.9, _esc * 0.9, 0);
         }
         draw_set_halign(fa_center);
-        draw_set_color(c_white);
-        draw_set_alpha(_piscar);
-        texto(_w / 2, _y + (156 + max(_n, 1) * 22) * _esc, _voltar, _esc, _esc, 0);
-        draw_set_alpha(1);
-    } else {
-        if (vitoria_estado == "falhou") {
-            draw_set_color(c_ltgray);
-            texto(_w / 2, _y + 100 * _esc, "SEM CONEXÃO COM O RANKING", _esc, _esc, 0);
+    } else if (vitoria_estado == "falhou") {
+        draw_set_color(c_ltgray);
+        texto(_w / 2, _y + 100 * _esc, "SEM CONEXÃO COM O RANKING", _esc, _esc, 0);
+    }
+    if (_escolha) {
+        for (var _o = 0; _o < array_length(_opcoes); _o++) {
+            var _r = vitoria_opcao_ret(_o);
+            if (global.toque_ativo) {
+                toque_botao_ret(_r);
+            } else {
+                var _sel = (_o == vitoria_opcao);
+                draw_set_color(_sel ? c_yellow : c_ltgray);
+                draw_set_alpha(_sel ? 0.55 + 0.45 * _piscar : 0.8);
+                texto(_w / 2, (_r[1] + _r[3]) / 2, _sel ? "> " + _r[4] + " <" : _r[4], _esc, _esc, 0);
+            }
         }
-        draw_set_color(c_white);
-        draw_set_alpha(_piscar);
-        texto(_w / 2, _y + 132 * _esc, _voltar, _esc, _esc, 0);
         draw_set_alpha(1);
+        draw_set_color(c_white);
     }
 }
 

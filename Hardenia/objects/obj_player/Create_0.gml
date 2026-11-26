@@ -166,7 +166,8 @@ pedido_nome = -1; // resposta pendente do teclado do aparelho (Other_63)
 enviar_nome = function() {
     var _nome = string_trim(vitoria_nome);
     if (_nome == "") {
-        room_goto(Room_Menu);
+        // sem nome: pula o ranking e vai para a escolha (seguir de ciclo ou menu)
+        vitoria_estado = "fim";
         return;
     }
     req_vitoria = rede_post("/api/vitoria", {
@@ -654,6 +655,72 @@ vitoria_espera = 0;
 vitoria_posicao = 0;
 vitoria_total = 0;
 vitoria_ranking = [];
+// depois da vitoria: 0 = seguir para o proximo ciclo (se houver), o ultimo = voltar ao menu
+vitoria_opcao = 0;
+vitoria_mouse_x = -1;
+vitoria_mouse_y = -1;
+vitoria_opcoes = function() {
+    if (global.ciclo < CICLOS_MAX) {
+        return ["SEGUIR PARA O CICLO " + string(global.ciclo + 1), "VOLTAR AO MENU"];
+    }
+    return ["VOLTAR AO MENU"];
+};
+// [esquerda, cima, direita, baixo, texto] de cada opcao, abaixo do ranking quando ele aparece
+vitoria_opcao_ret = function(_i) {
+    var _w = display_get_gui_width();
+    var _h = display_get_gui_height();
+    var _esc = max(1, _h / 540);
+    var _y = _h / 2 - 130 * _esc;
+    var _topo = (vitoria_estado == "enviado") ? 150 + max(array_length(vitoria_ranking), 1) * 22 : 150;
+    var _cy = _y + (_topo + _i * 40) * _esc;
+    return [_w / 2 - 170 * _esc, _cy - 16 * _esc, _w / 2 + 170 * _esc, _cy + 16 * _esc, vitoria_opcoes()[_i]];
+};
+// teclado e controle: cima/baixo e Enter (ou A). Mouse e toque: a opcao embaixo do ponteiro.
+// O robo escolhe pela vitoria_opcao e aperta o Enter dele (obj_autotest)
+vitoria_escolher = function() {
+    if (instance_exists(obj_mapa)) {
+        return;
+    }
+    var _opcoes = vitoria_opcoes();
+    var _n = array_length(_opcoes);
+    vitoria_opcao = clamp(vitoria_opcao, 0, _n - 1);
+    var _confirma = false;
+    if (instance_exists(obj_autotest)) {
+        _confirma = obj_autotest.bot_enter;
+    } else {
+        var _dv = (keyboard_check_pressed(vk_down) || keyboard_check_pressed(ord("S")) || global.pad_novo_v > 0) - (keyboard_check_pressed(vk_up) || keyboard_check_pressed(ord("W")) || global.pad_novo_v < 0);
+        if (_dv != 0 && _n > 1) {
+            vitoria_opcao = (vitoria_opcao + _dv + _n) mod _n;
+            sfx(snd_menu_mover, 1, false, 0.6);
+        }
+        _confirma = keyboard_check_pressed(vk_enter) || pad_confirma();
+        var _mx = ponteiro_gui_x(0);
+        var _my = ponteiro_gui_y(0);
+        var _andou = (_mx != vitoria_mouse_x || _my != vitoria_mouse_y);
+        vitoria_mouse_x = _mx;
+        vitoria_mouse_y = _my;
+        for (var _i = 0; _i < _n; _i++) {
+            var _r = vitoria_opcao_ret(_i);
+            var _sobre = point_in_rectangle(_mx, _my, _r[0], _r[1], _r[2], _r[3]);
+            if (_sobre && _andou) {
+                vitoria_opcao = _i;
+            }
+            if ((_sobre && mouse_check_button_pressed(mb_left)) || (global.toque_ativo && toque_tap_em(_r))) {
+                vitoria_opcao = _i;
+                _confirma = true;
+            }
+        }
+    }
+    if (!_confirma) {
+        return;
+    }
+    sfx(snd_confirm, 1, false);
+    if (_opcoes[vitoria_opcao] == "VOLTAR AO MENU") {
+        room_goto(Room_Menu);
+    } else {
+        ciclo_seguir();
+    }
+};
 req_vitoria = -1;
 req_ranking = -1;
 

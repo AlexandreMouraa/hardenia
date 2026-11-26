@@ -106,6 +106,9 @@ grupo_chegou = false;
 usar_horda = false;
 // -desafio: joga o desafio do dia (com -api, testa o ranking dele)
 usar_desafio = false;
+// -ciclos: venceu o Trono, segue para o Ciclo 2 (issue #139); sem ela, volta ao menu como antes
+testar_ciclos = false;
+ciclos_vencidos = 0;
 // -toque: joga pelos controles de toque, com dedos de mentira (scr_toque), e reprova se o
 // direcional nao andar para onde o robo mandou
 usar_toque = false;
@@ -161,6 +164,9 @@ for (var _i = 1; _i <= parameter_count(); _i++) {
     }
     if (parameter_string(_i) == "-desafio") {
         usar_desafio = true;
+    }
+    if (parameter_string(_i) == "-ciclos") {
+        testar_ciclos = true;
     }
 }
 for (var _i = 1; _i < parameter_count(); _i++) {

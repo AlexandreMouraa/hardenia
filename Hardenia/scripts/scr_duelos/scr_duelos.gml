@@ -247,6 +247,7 @@ function duelo_tentar() {
     var _lugar = duelo_lugar(x, y);
     with (instance_create_layer(_lugar[0], _lugar[1], "Instances", obj_enemy_caido)) {
         preparar(_chave, _duelo.vida, _duelo.furia);
+        ciclo_endurecer();
     }
     fx_onda(_lugar[0], _lugar[1], 120, _def.cor);
     fx_faiscas(_lugar[0], _lugar[1], 90, _def.cor, 12);
