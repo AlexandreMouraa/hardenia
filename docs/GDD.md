@@ -46,11 +46,11 @@ Dark Souls (punição justa, leitura de padrão) e Hollow Knight (precisão de m
 
 ## Loop principal
 
-1. Entrar numa sala; os inimigos chegam em ondas (2 nas Ruínas, 3 nas outras fases).
+1. Nas salas antes do Trono, os inimigos chegam em ondas: 2 nas Ruínas e 3 nas demais.
 2. Ler os avisos, desviar, bater na hora em que o inimigo fica exposto.
-3. Sala limpa: o último inimigo deixa um baú com **3 técnicas para escolher 1**.
-4. Em cada mapa antes do Trono, um **duelo** com um dos Caídos, que deixa a arma dele.
-5. O portão abre e o caminho entre as fases mostra onde o guerreiro está.
+3. Depois da última onda, enfrentar um dos Caídos em **duelo**. Ao vencer, é possível pegar a arma dele, exceto no caso do Sapador.
+4. Depois do duelo, abrir o baú e escolher **uma das técnicas oferecidas**, se ainda houver técnicas para aprender.
+5. Com o duelo vencido e a escolha do baú resolvida, o portão abre. O caminho entre as fases mostra onde o guerreiro está.
 6. Morrer zera a run: volta às Ruínas, com vida cheia, e as tentativas sobem.
 7. Vencer o Rei Morto encerra a run, com tentativas e tempo no ranking do site.
 
@@ -60,11 +60,11 @@ Dark Souls (punição justa, leitura de padrão) e Hollow Knight (precisão de m
 |---|---|---|
 | Ruínas | esqueletos | Caído mais fácil |
 | Catacumbas (túnel) | esqueletos, ghouls, wights, arqueiros e conjuradores | Caído |
-| Pátio do Castelo | ghouls, arqueiros, defensores e curandeiros | Caído |
-| Cemitério Gelado | wights | Caído |
+| Pátio do Castelo | ghouls, arqueiros, defensores, curandeiros e, conforme o arranjo, esqueletos | Caído |
+| Cemitério Gelado | wights e, conforme o arranjo, ghouls, arqueiros e conjuradores | Caído |
 | O Trono | o Rei Morto, em 3 fases | — |
 
-- Cada sala tem 3 arranjos de inimigos, sorteados por run.
+- Cada sala antes do Trono tem 3 arranjos de inimigos, sorteados por run.
 - Os 4 Caídos aparecem em ordem sorteada, sem repetir.
 - **Desafio do dia:** a mesma run (arranjos, Caídos e cartas) para todo mundo, com
   ranking próprio.
