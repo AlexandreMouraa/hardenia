@@ -151,6 +151,8 @@ global.caidos_ordem = [];
 global.duelos_feitos = 0;
 // salas que ja tiveram duelo nesta run
 global.duelos_salas = [];
+// qual Caido apareceu em cada sala nesta run (nome da sala -> chave): a tela do caminho mostra
+global.duelos_caidos = {};
 // quem acabou de cair: o proximo bau traz o que ele deixou
 global.caido_vencido = "";
 // quem ja apareceu nesta sessao: da segunda vez a fala e outra (zera no menu)
@@ -160,6 +162,7 @@ function duelos_zerar() {
     global.caidos_ordem = [];
     global.duelos_feitos = 0;
     global.duelos_salas = [];
+    global.duelos_caidos = {};
     global.caido_vencido = "";
 }
 
@@ -238,6 +241,7 @@ function duelo_tentar() {
     }
     duelo_curou = true;
     array_push(global.duelos_salas, room);
+    variable_struct_set(global.duelos_caidos, room_get_name(room), _chave);
     global.duelos_feitos += 1;
     var _lugar = duelo_lugar(x, y);
     with (instance_create_layer(_lugar[0], _lugar[1], "Instances", obj_enemy_caido)) {

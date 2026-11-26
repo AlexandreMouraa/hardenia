@@ -237,76 +237,173 @@ function ir_para_sala(_sala) {
     }
 }
 
+// ponto da estrada na posicao _pos (0 = primeira fase, 1 = segunda...; pode ser fracionada ou
+// negativa). A estrada serpenteia: fase par em cima, impar embaixo, em curva suave entre elas
+function mapa_ponto(_x0, _passo, _cy, _amp, _pos) {
+    return [_x0 + _pos * _passo, _cy - _amp * cos(pi * _pos)];
+}
+
 // desenha o caminho na GUI, centrado em _cy. O marcador (o guerreiro) fica em
 // _pos: 0 = primeira fase, 1 = segunda...; entre dois pontos, esta andando.
-// -0.6 = ainda antes da primeira fase (saindo do menu)
-function mapa_desenhar(_cy, _esc, _pos, _alpha) {
+// -0.6 = ainda antes da primeira fase (saindo do menu). _amp: quanto a estrada sobe e desce.
+// _chegada: 0 a 1, desde que o guerreiro pisou na fase nova (anel de luz abrindo); 1 = sem anel
+function mapa_desenhar(_cy, _esc, _pos, _alpha, _amp = 30, _chegada = 1) {
     var _w = display_get_gui_width();
     var _tem_final = (global.mapa_final != "");
     var _n = array_length(global.mapa_fases) + (_tem_final ? 1 : 0);
-    var _x0 = _w * 0.16;
-    var _x1 = _w * 0.84;
+    var _x0 = _w * 0.17;
+    var _x1 = _w * 0.83;
     var _passo = (_x1 - _x0) / (_n - 1);
+    var _a = _amp * _esc;
     var _vermelho = make_colour_rgb(196, 22, 28);
-    var _apagado = make_colour_rgb(70, 60, 60);
+    var _apagado = make_colour_rgb(110, 96, 98);
+    var _fundo_no = make_colour_rgb(16, 10, 12);
     var _pulso = 0.5 + 0.5 * sin(current_time / 180);
 
+    // o painel premium das cartas (scr_interface_tecnicas) atras da estrada
     draw_set_alpha(_alpha);
-    // estrada: pintada ate onde o guerreiro chegou, tracejada dali em diante
-    var _ate = _x0 + clamp(_pos, 0, _n - 1) * _passo;
-    draw_line_width_colour(_x0, _cy, _ate, _cy, 4 * _esc, _vermelho, _vermelho);
-    for (var _x = _ate; _x < _x1; _x += 14 * _esc) {
-        draw_line_width_colour(_x, _cy, min(_x + 7 * _esc, _x1), _cy, 2 * _esc, _apagado, _apagado);
+    painel_premium(_x0 - 84 * _esc, _cy - _a - 96 * _esc, _x1 + 84 * _esc, _cy + _a + 76 * _esc, make_colour_rgb(120, 20, 24), false, 1, _esc);
+    draw_set_alpha(_alpha);
+
+    // estrada em curva: sulco escuro por baixo, vermelha ate onde o guerreiro chegou, pontilhada
+    // dali em diante. Trechos curtos de reta, com um disco em cada emenda para a curva ficar lisa
+    var _fim_t = _n - 1;
+    var _ate_t = clamp(_pos, 0, _fim_t);
+    var _dt = 0.04;
+    draw_set_colour(make_colour_rgb(10, 6, 8));
+    for (var _t = 0; _t < _fim_t - 0.0001; _t += _dt) {
+        var _p0 = mapa_ponto(_x0, _passo, _cy, _a, _t);
+        var _p1 = mapa_ponto(_x0, _passo, _cy, _a, min(_t + _dt, _fim_t));
+        draw_line_width(_p0[0], _p0[1] + _esc, _p1[0], _p1[1] + _esc, 11 * _esc);
+        draw_circle(_p1[0], _p1[1] + _esc, 5.5 * _esc, false);
+    }
+    // o leito da estrada, um pouco mais claro que o sulco, para ela aparecer no painel escuro
+    draw_set_colour(make_colour_rgb(52, 38, 40));
+    for (var _t = 0; _t < _fim_t - 0.0001; _t += _dt) {
+        var _p0 = mapa_ponto(_x0, _passo, _cy, _a, _t);
+        var _p1 = mapa_ponto(_x0, _passo, _cy, _a, min(_t + _dt, _fim_t));
+        draw_line_width(_p0[0], _p0[1], _p1[0], _p1[1], 7 * _esc);
+        draw_circle(_p1[0], _p1[1], 3.5 * _esc, false);
+    }
+    draw_set_colour(_vermelho);
+    for (var _t = 0; _t < _ate_t - 0.0001; _t += _dt) {
+        var _p0 = mapa_ponto(_x0, _passo, _cy, _a, _t);
+        var _p1 = mapa_ponto(_x0, _passo, _cy, _a, min(_t + _dt, _ate_t));
+        draw_line_width(_p0[0], _p0[1], _p1[0], _p1[1], 5 * _esc);
+        draw_circle(_p1[0], _p1[1], 2.5 * _esc, false);
+    }
+    draw_set_colour(_apagado);
+    for (var _t = ceil(_ate_t / 0.1 + 0.5) * 0.1; _t < _fim_t; _t += 0.1) {
+        var _pp = mapa_ponto(_x0, _passo, _cy, _a, _t);
+        draw_circle(_pp[0], _pp[1], 1.8 * _esc, false);
+    }
+    // brasas correndo pelo trecho ja andado (posicoes pelo relogio, sem random)
+    if (_ate_t > 0.01) {
+        gpu_set_blendmode(bm_add);
+        draw_set_colour(make_colour_rgb(255, 150, 70));
+        for (var _b = 0; _b < 14; _b++) {
+            var _f = ((current_time / 2600) + _b * 0.071) mod 1;
+            var _pb = mapa_ponto(_x0, _passo, _cy, _a, _ate_t * _f);
+            var _sobe = (3 + 9 * (0.5 + 0.5 * sin(_b * 2.3 + current_time / 400))) * _esc;
+            draw_set_alpha(_alpha * (0.25 + 0.5 * (0.5 + 0.5 * sin(_b * 1.7 + current_time / 150))));
+            draw_circle(_pb[0], _pb[1] - _sobe, 1.6 * _esc, false);
+        }
+        gpu_set_blendmode(bm_normal);
+        draw_set_alpha(_alpha);
     }
 
+    // as fases: medalhoes redondos. Vermelho e ouro onde ja passou, branco na atual, apagado adiante
     draw_set_halign(fa_center);
-    draw_set_valign(fa_top);
+    draw_set_valign(fa_middle);
     for (var _i = 0; _i < _n; _i++) {
-        var _px = _x0 + _i * _passo;
+        var _pn = mapa_ponto(_x0, _passo, _cy, _a, _i);
+        var _px = _pn[0];
+        var _py = _pn[1];
         var _final = (_tem_final && _i == _n - 1);
-        var _chegou = (_pos >= _i - 0.001);
-        var _aqui = (abs(_pos - _i) < 0.001);
-        var _r = (_final ? 13 : 10) * _esc;
-        if (_final) {
-            // final trancado: losango apagado
-            draw_primitive_begin(pr_trianglefan);
-            draw_vertex_colour(_px, _cy - _r, c_black, _alpha);
-            draw_vertex_colour(_px + _r, _cy, c_black, _alpha);
-            draw_vertex_colour(_px, _cy + _r, c_black, _alpha);
-            draw_vertex_colour(_px - _r, _cy, c_black, _alpha);
-            draw_primitive_end();
-            draw_set_colour(_apagado);
-            draw_line_width(_px, _cy - _r, _px + _r, _cy, 2 * _esc);
-            draw_line_width(_px + _r, _cy, _px, _cy + _r, 2 * _esc);
-            draw_line_width(_px, _cy + _r, _px - _r, _cy, 2 * _esc);
-            draw_line_width(_px - _r, _cy, _px, _cy - _r, 2 * _esc);
-            draw_set_colour(c_gray);
-            texto(_px, _cy + 22 * _esc, global.mapa_final, _esc * 0.8, _esc * 0.8, 0);
-            draw_set_colour(_apagado);
-            texto(_px, _cy + 40 * _esc, "EM BREVE", _esc * 0.65, _esc * 0.65, 0);
-            continue;
-        }
+        var _ultima = (!_final && _i == array_length(global.mapa_fases) - 1);
+        var _chegou = (!_final && _pos >= _i - 0.001);
+        var _aqui = (!_final && abs(_pos - _i) < 0.001);
+        var _r = (_ultima ? 17 : 14) * _esc + (_aqui ? 2 * _esc : 0);
         if (_aqui) {
-            // fase atual: anel pulsando
-            draw_set_colour(c_white);
-            draw_set_alpha(_alpha * (0.3 + 0.5 * _pulso));
-            draw_circle(_px, _cy, _r + (4 + 4 * _pulso) * _esc, true);
+            // fase atual: halo pulsando, e o anel de luz abrindo na chegada
+            gpu_set_blendmode(bm_add);
+            draw_set_colour(make_colour_rgb(255, 120, 80));
+            draw_set_alpha(_alpha * (0.14 + 0.18 * _pulso));
+            draw_circle(_px, _py, _r + (9 + 6 * _pulso) * _esc, false);
+            if (_chegada < 1) {
+                draw_set_colour(make_colour_rgb(255, 210, 150));
+                for (var _k = 0; _k < 3; _k++) {
+                    draw_set_alpha(_alpha * (1 - _chegada) * 0.8);
+                    draw_circle(_px, _py, _r + (_chegada * 46 + _k) * _esc, true);
+                }
+            }
+            gpu_set_blendmode(bm_normal);
             draw_set_alpha(_alpha);
         }
-        draw_set_colour(_chegou ? _vermelho : c_black);
-        draw_circle(_px, _cy, _r, false);
-        draw_set_colour(_chegou ? c_white : _apagado);
-        draw_circle(_px, _cy, _r, true);
+        var _aro = _aqui ? c_white : (_chegou ? PREMIUM_OURO : _apagado);
+        draw_set_colour(make_colour_rgb(6, 4, 6));
+        draw_circle(_px, _py + 2 * _esc, _r + 1.5 * _esc, false);
+        draw_set_colour(_aro);
+        draw_circle(_px, _py, _r, false);
+        draw_set_colour(_chegou ? PREMIUM_OURO_ESCURO : _fundo_no);
+        draw_circle(_px, _py, _r - 2.5 * _esc, false);
+        draw_set_colour(_chegou ? _vermelho : _fundo_no);
+        draw_circle(_px, _py, _r - 4 * _esc, false);
+        if (_chegou) {
+            // um brilho no alto do medalhao
+            gpu_set_blendmode(bm_add);
+            draw_set_alpha(_alpha * 0.22);
+            draw_set_colour(c_white);
+            draw_ellipse(_px - _r * 0.55, _py - _r * 0.68, _px + _r * 0.55, _py - _r * 0.05, false);
+            gpu_set_blendmode(bm_normal);
+            draw_set_alpha(_alpha);
+        }
+        if (_ultima) {
+            // o Trono: uma coroa em cima do medalhao
+            var _cb = _py - _r - 3 * _esc;
+            draw_set_colour(_chegou ? PREMIUM_OURO : _apagado);
+            for (var _k = -1; _k <= 1; _k++) {
+                draw_triangle(_px + (_k * 7 - 4.5) * _esc, _cb, _px + _k * 7 * _esc, _cb - (_k == 0 ? 11 : 8) * _esc, _px + (_k * 7 + 4.5) * _esc, _cb, false);
+            }
+            draw_line_width(_px - 11.5 * _esc, _cb, _px + 11.5 * _esc, _cb, 2 * _esc);
+        }
+        draw_set_colour(_final ? _apagado : (_chegou ? c_white : c_gray));
+        texto(_px, _py, _final ? "?" : string(_i + 1), _esc * 0.85, _esc * 0.85, 0);
+        // nome embaixo; e o Caido daquela fase, quando ja apareceu nesta run, com a cor dele
+        var _ny = _py + _r + 14 * _esc;
+        if (_final) {
+            draw_set_colour(c_gray);
+            texto(_px, _ny, global.mapa_final, _esc * 0.8, _esc * 0.8, 0);
+            draw_set_colour(_apagado);
+            texto(_px, _ny + 18 * _esc, "EM BREVE", _esc * 0.65, _esc * 0.65, 0);
+            continue;
+        }
         draw_set_colour(_aqui ? c_white : (_chegou ? c_ltgray : c_gray));
-        texto(_px, _cy + 22 * _esc, string(_i + 1) + ". " + global.mapa_fases[_i].nome, _esc * 0.8, _esc * 0.8, 0);
+        texto(_px, _ny, global.mapa_fases[_i].nome, _esc * 0.8, _esc * 0.8, 0);
+        var _nome_sala = room_get_name(global.mapa_fases[_i].sala);
+        if (variable_struct_exists(global.duelos_caidos, _nome_sala)) {
+            var _cdef = variable_struct_get(global.caidos, variable_struct_get(global.duelos_caidos, _nome_sala));
+            draw_set_font(global.fonte_texto);
+            var _lgc = string_width(_cdef.nome) * FONTE_ESCALA * _esc * 0.6 / 2;
+            draw_set_colour(_cdef.cor);
+            draw_circle(_px - _lgc - 7 * _esc, _ny + 19 * _esc, 3.2 * _esc, false);
+            texto(_px + 3 * _esc, _ny + 18 * _esc, _cdef.nome, _esc * 0.6, _esc * 0.6, 0);
+        }
     }
 
-    // o guerreiro andando pela estrada, de frente para a direita
-    var _mx = _x0 + _pos * _passo;
+    // o guerreiro andando pela estrada, de frente para a direita, com uma luz no chao
+    var _pm = mapa_ponto(_x0, _passo, _cy, _a, _pos);
     var _andando = (abs(_pos - round(_pos)) > 0.001);
     var _quadro = _andando ? (current_time div 120) mod 4 : 0;
     var _spr = _andando ? spr_player_walk : spr_player_idle;
-    draw_sprite_ext(_spr, 1 * 4 + _quadro, _mx, _cy - 42 * _esc, 1.6 * _esc, 1.6 * _esc, 0, c_white, _alpha);
+    var _chao = _pm[1] - (_andando ? 4 : 18) * _esc;
+    gpu_set_blendmode(bm_add);
+    draw_set_alpha(_alpha * 0.25);
+    draw_set_colour(make_colour_rgb(255, 180, 120));
+    draw_ellipse(_pm[0] - 18 * _esc, _chao - 6 * _esc, _pm[0] + 18 * _esc, _chao + 5 * _esc, false);
+    gpu_set_blendmode(bm_normal);
+    draw_set_alpha(_alpha);
+    draw_sprite_ext(_spr, 1 * 4 + _quadro, _pm[0], _chao - 36 * _esc, 1.6 * _esc, 1.6 * _esc, 0, c_white, _alpha);
 
     draw_set_alpha(1);
     draw_set_colour(c_white);

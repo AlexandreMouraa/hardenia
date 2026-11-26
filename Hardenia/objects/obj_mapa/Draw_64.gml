@@ -20,14 +20,19 @@ var _pos = lerp(_ini, para, _t);
 
 draw_set_halign(fa_center);
 draw_set_valign(fa_middle);
-draw_set_colour(c_ltgray);
+draw_set_colour(PREMIUM_OURO);
 draw_set_alpha(_entrada);
-texto(_w / 2, _h * 0.3, "FASE " + string(para + 1) + " DE " + string(array_length(global.mapa_fases)), _esc, _esc, 0);
+texto(_w / 2, _h * 0.13, "FASE " + string(para + 1) + " DE " + string(array_length(global.mapa_fases)), _esc, _esc, 0);
 draw_set_colour(c_white);
-titulo(_w / 2, _h * 0.3 + 40 * _esc, global.mapa_fases[para].nome, _esc * 2.2);
+titulo(_w / 2, _h * 0.13 + 40 * _esc, global.mapa_fases[para].nome, _esc * 2.2);
+// a frase da fase, que antes so aparecia na sala: aqui, enquanto o guerreiro anda
+draw_set_colour(c_ltgray);
+draw_set_alpha(_entrada * clamp((tempo - 30) / 20, 0, 1));
+texto(_w / 2, _h * 0.13 + 86 * _esc, global.mapa_fases[para].frase, _esc * 0.85, _esc * 0.85, 0);
 draw_set_alpha(1);
 
-mapa_desenhar(_h * 0.56, _esc, _pos, _entrada);
+// o anel de luz abre quando o guerreiro pisa na fase nova (a andada acaba no quadro 78)
+mapa_desenhar(_h * 0.63, _esc, _pos, _entrada, 30, clamp((tempo - 78) / 26, 0, 1));
 
 if (tempo > pode_pular) {
     draw_set_halign(fa_center);
