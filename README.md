@@ -1,6 +1,11 @@
 # Hardenia — O Último Guerreiro
 
-Roguelike/souslike 2D hardcore feito no GameMaker, como atividade de faculdade.
+Roguelike de ação 2D, hardcore e justo, feito no GameMaker como atividade da
+disciplina de Jogos Digitais da UFG. **Versão 1.0**, entregue em 25/11/2026.
+
+**Jogar:** https://hardenia.177-136-207-112.sslip.io (no navegador, sem instalar; o
+zip de Windows está no mesmo site). Funciona com teclado e mouse, controle de
+videogame e toque.
 
 ## Premissa
 
@@ -10,8 +15,9 @@ considerado o mais fraco de todos. Sem poderes, sem armadura lendária, sem
 armas mágicas, sem habilidades especiais. Só uma coisa: persistência.
 
 Cada morte é uma tentativa de descobrir como vencer. A narrativa acompanha a
-transformação de "o guerreiro mais fraco" para "o guerreiro que aprendeu" —
-não é o personagem que fica mais forte, é o jogador.
+transformação de "o guerreiro mais fraco" para "o guerreiro que aprendeu".
+Dentro da run ele aprende técnicas e pega armas dos Caídos, mas tudo se perde na
+morte: quem fica mais forte de uma run para a outra é o jogador.
 
 Mais detalhes em [docs/GDD.md](docs/GDD.md).
 
@@ -79,6 +85,8 @@ IA: peça para ela ler o [AGENTS.md](AGENTS.md) antes de mexer.
 
 **Controle de videogame:** alavanca ou direcional para andar, `RB`, `RT` ou `X` para atacar (segurar carrega), `A`, `LB` ou `LT` para o dash, `B` para o giro (segurar: Giro Furioso), `Start` para pausar. Nas telas, `A` confirma e `B` volta. O código fica em `scripts/scr_entrada`.
 
+**Antes da primeira partida** o jogo mostra os controles, e quem joga de mouse é avisado de que o cursor não mira: o golpe vai sozinho no inimigo mais perto.
+
 **Tablet e celular:** os controles aparecem no primeiro toque. O polegar na metade esquerda da tela vira o direcional, e os botões ficam à direita: atacar (segurar carrega), dash, giro e pausa. O golpe vira sozinho para o inimigo mais perto. Mexer o mouse ou usar o teclado esconde tudo de novo.
 
 ## Teste de horda
@@ -90,13 +98,20 @@ Ali, `L` ou um toque no botão de baixo mede quantos inimigos o aparelho aguenta
 
 ## Como a run funciona
 
-- Cinco salas em sequência: **Ruínas** (esqueletos) → **Catacumbas** (túnel com os
-  três tipos) → **Pátio** (ghouls) → **Cemitério** (wights) → **O Trono** (chefe). A câmera segue o jogador; o HUD mostra a tentativa,
-  as cargas de dash, a fase e quantos inimigos faltam.
+- Cinco salas em sequência: **Ruínas** (esqueletos) → **Catacumbas** (túnel com
+  esqueletos, ghouls, wights, arqueiros e conjuradores) → **Pátio** (ghouls, arqueiros,
+  defensores e curandeiros) → **Cemitério** (wights) → **O Trono** (chefe). A câmera
+  segue o jogador; o HUD mostra a tentativa, as cargas de dash, a fase e quantos
+  inimigos faltam.
+- **Ondas** (`scripts/scr_variacao`): os inimigos de cada sala chegam em ondas,
+  duas nas Ruínas e três nas Catacumbas, no Pátio e no Cemitério, com um respiro
+  entre elas e `ONDA N/M` no HUD. A run vencedora, que levava de 2,6 a 6 minutos,
+  passou para uns 7 a 15.
 - O portão só abre quando a sala está limpa. O portão que leva adiante acende,
   e uma seta amarela na borda da tela aponta para ele quando está fora de vista.
 - A barra mostra a **vida**: 5 golpes até morrer. Ela passa de uma sala para a
-  outra, e limpar uma fase pela primeira vez na run devolve 1.
+  outra. Volta 1 ao limpar uma fase pela primeira vez na run, ao vencer o Caído e
+  ao limpar uma sala sem levar golpe.
 - Ao morrer, a run recomeça na primeira fase, com a vida cheia, e o contador de
   **tentativas** sobe. Uma caveira fica no chão onde o guerreiro caiu.
 - **Duelos** (`scripts/scr_duelos`, `obj_enemy_caido`): em cada mapa antes do Trono
@@ -122,10 +137,13 @@ Ali, `L` ou um toque no botão de baixo mede quantos inimigos o aparelho aguenta
   arranjos, Caídos e cartas para todo mundo, com ranking próprio.
 - Todo inimigo avisa antes de atacar: pisca, mostra `!` e desenha no chão a
   zona onde o golpe vai cair. Saia da zona ou atravesse com o dash.
-- Cada tipo age de um jeito. **Esqueleto:** golpe curto. **Ghoul:** rápido e
-  frágil, dá um bote em linha e fica exposto no fim. **Wight:** lento e duro,
-  varre um arco largo com aviso longo. Depois do golpe o inimigo fica apagado: é a
-  hora de bater nele.
+- Cada tipo age de um jeito, e esqueleto, ghoul e wight alternam dois golpes.
+  **Esqueleto:** golpe curto. **Ghoul:** rápido e frágil, dá um bote em linha e
+  fica exposto no fim. **Wight:** lento e duro, varre um arco largo com aviso
+  longo. **Arqueiro:** atira de longe e mostra a linha da flecha antes do tiro.
+  **Conjurador:** marca um círculo onde o jogador está e uma bomba cai nele.
+  **Defensor** e **curandeiro:** ver [docs/PATIO_E_LEGADO.md](docs/PATIO_E_LEGADO.md).
+  Depois do golpe o inimigo fica apagado: é a hora de bater nele.
 - Os inimigos agem em grupo: a parede bloqueia a visão, quem perde o jogador vai
   até o último lugar onde o viu, quem vê ou apanha chama os vizinhos, cada um
   chega por um lado e só 2 atacam ao mesmo tempo. Os outros rondam perto.
@@ -191,10 +209,11 @@ Ali, `L` ou um toque no botão de baixo mede quantos inimigos o aparelho aguenta
   deixa. O portão espera o baú. Valem até a próxima morte, e nada passa para a run
   seguinte. O sorteio usa gerador próprio, para não mexer na sequência aleatória de que o
   robô depende. Técnica nova: acrescentar em `global.tecnicas_lista` e tratar o efeito.
-- **Mapa de progresso** (`scripts/scr_mapa`, `obj_mapa`): ao entrar numa fase
-  nova, o guerreiro anda no mapa até ela (2,5 s, Enter ou clique pula); a pausa mostra
-  onde você está. As fases ficam em `global.mapa_fases` (fase nova: acrescentar
-  lá); o último ponto, o chefe final, aparece como "em breve".
+- **Caminho entre as fases** (`scripts/scr_mapa`, `obj_mapa`): ao entrar numa fase
+  nova, o guerreiro anda até ela numa estrada em curva, com um medalhão por fase, a
+  coroa do Trono e o Caído que apareceu em cada uma (2,5 s, Enter ou clique pula); a
+  pausa mostra onde você está. As fases ficam em `global.mapa_fases` (fase nova:
+  acrescentar lá).
 - **Câmera:** agora em código (`obj_player`, End Step), centrada e presa nas
   bordas, seguindo com um leve atraso, mais o tremor.
 
