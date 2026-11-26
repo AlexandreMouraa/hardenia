@@ -39,13 +39,15 @@ global.arranjos = [
 // sorteio proprio, a partir da semente da run: quem joga o desafio ve o mesmo que os outros, mesmo
 // escolhendo outras cartas. Quem esta comecando ve as Ruinas como elas sao
 function arranjo_indice(_fase, _n) {
+    // cada ciclo depois do Trono anda um arranjo (scr_mapa): a mesma sala, outra gente
+    var _ciclo = global.ciclo - 1;
     if (instance_exists(obj_autotest)) {
-        return global.runs_zeradas mod _n;
+        return (global.runs_zeradas + _ciclo) mod _n;
     }
-    if (_fase == 0 && global.tentativas == 1 && !global.desafio) {
+    if (_fase == 0 && global.tentativas == 1 && !global.desafio && _ciclo == 0) {
         return 0;
     }
-    return (((global.run_semente + _fase * 104729) * 16807) mod 2147483647) mod _n;
+    return ((((global.run_semente + _fase * 104729) * 16807) mod 2147483647) + _ciclo) mod _n;
 }
 
 // chamada no primeiro frame da sala (obj_player, Step), antes das elites
@@ -115,6 +117,7 @@ function onda_proxima() {
             var _e = instance_create_layer(_lista[_i][1], _lista[_i][2], "Instances", _lista[_i][0]);
             fx_onda(_lista[_i][1], _lista[_i][2], 70, make_colour_rgb(200, 40, 40));
             with (_e) {
+                ciclo_endurecer();
                 if (instance_exists(obj_player)) {
                     acordado = true;
                     alerta = 30;

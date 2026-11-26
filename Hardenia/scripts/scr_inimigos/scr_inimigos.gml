@@ -627,6 +627,12 @@ function dificuldade_aplicar() {
         hp_max = 80;
         hp = hp_max;
     }
+    // depois do Trono, o ciclo seguinte endurece todo mundo (scr_mapa)
+    if (global.ciclo > 1) {
+        with (obj_enemy) {
+            ciclo_endurecer();
+        }
+    }
 }
 
 // chamada no primeiro frame da sala (obj_player, Step)

@@ -45,6 +45,10 @@ function rede_evento(_tipo, _dados = undefined) {
     if (room != Room_Menu && mapa_indice(room) < 0) {
         return -1;
     }
+    // os ciclos depois do Trono ficam fora: as estatisticas do site sao das fases como elas sao
+    if (global.ciclo > 1) {
+        return -1;
+    }
     if (is_undefined(_dados)) {
         _dados = {};
     }
