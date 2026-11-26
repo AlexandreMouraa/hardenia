@@ -85,8 +85,7 @@ global.ondas_feitas = 0;  // levas chamadas nesta sessao (o robo registra)
 function ondas_total(_sala = room) {
     for (var _i = 0; _i < array_length(global.ondas_sala); _i++) {
         if (global.ondas_sala[_i].sala == _sala) {
-            // cada ciclo depois do Trono traz uma leva a mais (scr_mapa)
-            return global.ondas_sala[_i].n + global.ciclo - 1;
+            return global.ondas_sala[_i].n;
         }
     }
     return 1;
@@ -113,11 +112,6 @@ function onda_proxima() {
         var _lista = [];
         for (var _k = 1; _k <= _n && array_length(_lista) == 0; _k++) {
             _lista = _def.lista[(_base + (global.onda - 1) * _k) mod _n];
-        }
-        // com as levas a mais dos ciclos a conta acima pode so cair no vazio: vai para outro
-        // arranjo com gente (o vazio e sempre o primeiro)
-        if (array_length(_lista) == 0 && _n > 1) {
-            _lista = _def.lista[1 + (_base + global.onda) mod (_n - 1)];
         }
         for (var _i = 0; _i < array_length(_lista); _i++) {
             var _e = instance_create_layer(_lista[_i][1], _lista[_i][2], "Instances", _lista[_i][0]);

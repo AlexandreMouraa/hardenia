@@ -49,7 +49,7 @@ function run_zerar() {
 // ---------- ciclos: depois do Trono, as mesmas fases mais duras (issue #139) ----------
 // Os lideres pediram uma run de uns 15 minutos. Vencer o Trono oferece seguir para o ciclo
 // seguinte: as tecnicas, a arma e a Furia ficam; a vida volta cheia e as curas e baus das fases
-// voltam; os Caidos voltam. Morrer num ciclo depois do primeiro encerra a jornada (obj_player)
+// voltam; os Caidos voltam; cada sala vem com outro arranjo (scr_variacao). Morrer num ciclo depois do primeiro encerra a jornada (obj_player)
 #macro CICLOS_MAX 3
 
 function ciclo_seguir() {
@@ -68,15 +68,17 @@ function ciclo_seguir() {
 }
 
 // roda no inimigo, quando ele nasce (sala, onda ou duelo). Valores para ajustar jogando: cada
-// ciclo a mais soma 2 de vida aos comuns e encurta aviso (10%) e descanso (15%). O Rei e os
-// Caidos ganham 40% de vida; os Caidos tambem atacam mais rapido (furia menor)
+// ciclo a mais soma 1 de vida aos comuns e encurta aviso (10%) e descanso (15%). O Rei e os
+// Caidos ganham 30% de vida; os Caidos tambem atacam mais rapido (furia menor). As ondas sao as
+// mesmas: com uma a mais e +2 de vida, o robo passou de 150 s so nas Catacumbas do Ciclo 2
+// (4 levas de ~50 s), e uma pessoa levaria o dobro
 function ciclo_endurecer() {
     var _extra = global.ciclo - 1;
     if (_extra <= 0) {
         return;
     }
     if (object_index == obj_enemy_chefe || object_index == obj_enemy_caido) {
-        hp_max = round(hp_max * (1 + 0.4 * _extra));
+        hp_max = round(hp_max * (1 + 0.3 * _extra));
         hp = hp_max;
         if (object_index == obj_enemy_caido) {
             furia *= power(0.9, _extra);
@@ -86,7 +88,7 @@ function ciclo_endurecer() {
     if (leve || imovel) {
         return;
     }
-    hp += 2 * _extra;
+    hp += _extra;
     vida_maxima_cura = hp;
     ataque.aviso = round(ataque.aviso * power(0.9, _extra));
     ataque.recarga = round(ataque.recarga * power(0.85, _extra));
