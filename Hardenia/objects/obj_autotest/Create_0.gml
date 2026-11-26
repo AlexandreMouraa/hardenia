@@ -221,8 +221,8 @@ log = function(_evento, _detalhe) {
 print_pendente = "";
 prints_feitos = 0;
 prints_max = 80;
-pedir_print = function(_nome) {
-    if (prints_feitos < prints_max && print_pendente == "") {
+pedir_print = function(_nome, _sempre = false) {
+    if ((_sempre || prints_feitos < prints_max) && print_pendente == "") {
         print_pendente = _nome;
     }
 };

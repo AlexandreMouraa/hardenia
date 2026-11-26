@@ -64,7 +64,7 @@ if (instance_exists(obj_abertura) || instance_exists(obj_final)) {
 // mapa da proxima fase (obj_mapa): passa sozinho; print na primeira run
 if (instance_exists(obj_mapa)) {
     if (run_atual <= 1 && obj_mapa.tempo == 90) {
-        pedir_print("mapa");
+        pedir_print("mapa", global.ciclo > 1 && obj_mapa.para == 0);
     }
     exit;
 }
@@ -444,8 +444,9 @@ if (_p.venceu) {
             vitorias += 1;
         }
         log("vitoria", "tentativas=" + string(global.tentativas) + (global.ciclo > 1 ? " ciclo=" + string(global.ciclo) : ""));
+        // a tela de vitoria tem a escolha do ciclo: sai sempre, mesmo depois do limite de prints
         if (vitorias + ciclos_vencidos <= 2) {
-            pedir_print("vitoria");
+            pedir_print("vitoria", true);
         }
     }
     // com rede (-api) a vitoria pede nome: digita antes do primeiro Enter
@@ -473,8 +474,11 @@ if (_p.venceu) {
     exit;
 }
 
-if (tempo_sala > 60 * 150 && room != Room_Horda) {
-    log("FALHA_timeout_sala", "150s sem sair da sala");
+// no Ciclo 2 em diante os inimigos aguentam mais: as Catacumbas (3 ondas de 12 e o Caido) passam
+// de 150 s por pouco (issue #139). O Ciclo 1 fica com o limite de sempre
+var _limite_sala = (global.ciclo > 1) ? 225 : 150;
+if (tempo_sala > 60 * _limite_sala && room != Room_Horda) {
+    log("FALHA_timeout_sala", string(_limite_sala) + "s sem sair da sala");
     pedir_print("timeout");
     terminar_run("timeout");
     exit;
