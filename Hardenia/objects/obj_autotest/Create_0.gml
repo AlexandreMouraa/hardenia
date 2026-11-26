@@ -300,7 +300,7 @@ testar_cura_inimiga = function() {
 
 // Entrada do robo. Teclas simuladas (keyboard_key_press) nao funcionam com a
 // janela sem foco, entao: movimento, dash e Enter da vitoria o obj_player le
-// destas variaveis; ataque, pausa e Enter do menu sao os proprios eventos de
+// destas variaveis; ataque e pausa sao os proprios eventos de
 // tecla, chamados com event_perform. O clique (-mouse) tambem e variavel
 bot_h = 0;
 bot_v = 0;

@@ -1,3 +1,7 @@
+// Com o robo, so ele aciona o menu; entrada real contaminaria o teste (#136).
+if (instance_exists(obj_autotest)) {
+    exit;
+}
 toque_detectar();
 
 // mapa da fase 1, abertura ou outra tela aberta: quem cuida da entrada sao eles
@@ -46,7 +50,7 @@ if (mouse_check_button_pressed(mb_left)) {
     exit;
 }
 
-// Enter e o evento de tecla (KeyPress_13), que tambem e o que o robo aperta
+// Enter e tratado no evento de tecla (KeyPress_13).
 if (keyboard_check_pressed(vk_space) || keyboard_check_pressed(ord("J")) || pad_confirma()) {
     acionar(itens[cursor].acao);
 }
