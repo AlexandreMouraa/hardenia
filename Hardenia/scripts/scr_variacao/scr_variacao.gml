@@ -65,6 +65,70 @@ function arranjo_aplicar() {
     }
 }
 
+// ---------- ondas: limpar a sala traz a leva seguinte ----------
+// Os lideres pediram uma run de uns 15 minutos (12/11/2026); a vencedora levava de 2,6 a 6. Em vez
+// de mapas novos, cada sala tem 2 ou 3 levas, tiradas dos arranjos dela (os mesmos lugares, outra
+// leva). O bau, o portao e o Caido vem depois da ultima. O Trono fica com uma so
+global.ondas_sala = [
+    { sala: Room1, n: 2 },
+    { sala: Room_Tunel, n: 3 },
+    { sala: Room2, n: 3 },
+    { sala: Room3, n: 3 },
+];
+global.onda = 1;          // a leva atual desta sala
+global.onda_espera = 0;   // frames desde que a leva acabou; a proxima vem com 50 (um respiro)
+global.onda_aviso = 0;    // frames do aviso "ONDA 2 DE 3" na tela
+global.ondas_feitas = 0;  // levas chamadas nesta sessao (o robo registra)
+
+function ondas_total(_sala = room) {
+    for (var _i = 0; _i < array_length(global.ondas_sala); _i++) {
+        if (global.ondas_sala[_i].sala == _sala) {
+            return global.ondas_sala[_i].n;
+        }
+    }
+    return 1;
+}
+
+function onda_pendente() {
+    return global.onda < ondas_total();
+}
+
+// a proxima leva: o arranjo seguinte ao da sala (pulando o vazio, que e a propria sala), nos
+// lugares dele, ja acordada e atras do jogador
+function onda_proxima() {
+    global.onda += 1;
+    global.ondas_feitas += 1;
+    global.onda_aviso = 90;
+    global.onda_espera = 0;
+    for (var _a = 0; _a < array_length(global.arranjos); _a++) {
+        var _def = global.arranjos[_a];
+        if (_def.sala != room) {
+            continue;
+        }
+        var _n = array_length(_def.lista);
+        var _base = arranjo_indice(mapa_indice(room), _n);
+        var _lista = [];
+        for (var _k = 1; _k <= _n && array_length(_lista) == 0; _k++) {
+            _lista = _def.lista[(_base + (global.onda - 1) * _k) mod _n];
+        }
+        for (var _i = 0; _i < array_length(_lista); _i++) {
+            var _e = instance_create_layer(_lista[_i][1], _lista[_i][2], "Instances", _lista[_i][0]);
+            fx_onda(_lista[_i][1], _lista[_i][2], 70, make_colour_rgb(200, 40, 40));
+            with (_e) {
+                if (instance_exists(obj_player)) {
+                    acordado = true;
+                    alerta = 30;
+                    memoria_x = obj_player.x;
+                    memoria_y = obj_player.y;
+                    procura = procura_max;
+                }
+            }
+        }
+        break;
+    }
+    sfx(snd_sino, 1, false, 0.9);
+}
+
 // ---------- desafio do dia ----------
 // o dia e o de Greenwich: o mesmo para todo mundo, em qualquer fuso
 function desafio_hoje() {

@@ -144,9 +144,18 @@ if (!venceu && room == sala_final() && instance_number(obj_enemy) == 0) {
     salvo_vitoria(global.tentativas, frames_para_ms(global.run_frames));
 }
 
+// leva acabou e ainda ha ondas nesta sala (scr_variacao): um respiro e vem a proxima
+if (instance_number(obj_enemy) == 0 && onda_pendente() && !is_dead && global.lento <= 0) {
+    global.onda_espera += 1;
+    if (global.onda_espera >= 50) {
+        onda_proxima();
+    }
+}
+global.onda_aviso = max(0, global.onda_aviso - 1);
+
 // sala limpa: quantas tentativas cada sala custou (estatisticas do site). Nas salas de duelo,
 // ainda falta o Caido (scr_duelos)
-if (!sala_limpa_enviada && instance_number(obj_enemy) == 0 && !duelo_tentar()) {
+if (!sala_limpa_enviada && instance_number(obj_enemy) == 0 && !onda_pendente() && !duelo_tentar()) {
     sala_limpa_enviada = true;
     rede_evento("sala", { tentativa: global.tentativas, tempo_ms: frames_para_ms(tempo_na_sala) });
     // limpar uma fase pela primeira vez na run devolve 1 de vida. Voltar a uma fase
@@ -343,6 +352,8 @@ if (_especial_preso && global.furia >= FURIA_MAX && !is_dashing) {
 // mede a sala no primeiro frame, com a tela ainda escurecida: a mascara de colisao ja criou
 // as paredes, e nao da tranco na primeira perseguicao
 if (tempo_na_sala == 0) {
+    global.onda = 1;
+    global.onda_espera = 0;
     campo_preparar();
     arranjo_aplicar();
     elites_aplicar();

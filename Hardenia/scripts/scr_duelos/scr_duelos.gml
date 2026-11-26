@@ -176,7 +176,8 @@ function duelo_da_sala() {
 }
 
 function duelo_pendente() {
-    return duelo_da_sala() != undefined && !array_contains(global.duelos_salas, room);
+    // o Caido so vem depois da ultima onda da sala (scr_variacao)
+    return duelo_da_sala() != undefined && !array_contains(global.duelos_salas, room) && !onda_pendente();
 }
 
 // a ordem dos Caidos desta run. O robo gira a lista, para ver os quatro em 3 runs
