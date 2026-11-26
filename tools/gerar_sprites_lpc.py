@@ -51,6 +51,14 @@ def tingir(img, cor, forca=1.0):
     return Image.fromarray(a.astype(np.uint8))
 
 
+def acinzentar(img):
+    """tira a cor da peca (o cabelo do LPC vem ruivo) para o tingir mandar sozinho"""
+    a = np.asarray(img).astype(float)
+    cinza = a[..., :3].max(axis=2, keepdims=True)
+    a[..., :3] = cinza
+    return Image.fromarray(a.astype(np.uint8))
+
+
 def juntar(cache, camadas):
     """camadas de tras para a frente: caminho, ou (caminho, cor)"""
     fundo = None
@@ -117,8 +125,10 @@ def grande(cache, camadas, colunas, cel=128):
     em 64 e seria cortada. Camadas de tras para a frente, como em juntar"""
     saida = Image.new("RGBA", (cel * len(colunas), cel * 4), (0, 0, 0, 0))
     for c in camadas:
-        caminho, cor = c if isinstance(c, tuple) else (c, None)
+        caminho, cor = (c[0], c[1]) if isinstance(c, tuple) else (c, None)
         img = peca(cache, caminho)
+        if isinstance(c, tuple) and len(c) > 2:
+            img = acinzentar(img)
         if cor:
             img = tingir(img, cor)
         e = img.height // 4
@@ -169,6 +179,39 @@ def caidos(cache, saida):
     grande(cache, sentinela("slash", alabarda + "attack_slash/behind/halberd.png", alabarda + "attack_slash/halberd.png"), GOLPE).save(saida / "caido_sentinela_golpe.png")
 
 
+def heroi(cache, saida):
+    """o ultimo guerreiro, como na capa do jogo: armadura escura, capa vermelha rasgada e
+    espada longa. Mesma familia de pecas dos inimigos. Linhas na ordem do obj_player:
+    esquerda, direita, cima, baixo. Quadros de 128, como os Caidos, por causa da espada"""
+    global ORDEM
+    antes = ORDEM
+    ORDEM = [1, 3, 0, 2]
+    aco = (92, 90, 108)
+    vermelho = (215, 38, 44)
+    espada = "weapon/sword/longsword_alt/"
+
+    def corpo(a):
+        return ["body/bodies/male/%s.png" % a, ("feet/armour/plate/male/%s.png" % a, aco), ("legs/armour/plate/male/%s.png" % a, aco),
+                ("torso/armour/plate/male/%s.png" % a, aco), ("arms/armour/plate/male/%s.png" % a, aco), "head/heads/human/male/%s.png" % a,
+                ("hair/long_messy/adult/%s.png" % a, (78, 66, 70), True), ("cape/tattered/fg/%s.png" % a, vermelho)]
+
+    def inteiro(a, colunas):
+        return grande(cache, [("cape/tattered/bg/%s.png" % a, vermelho), espada + "%s/behind/longsword_alt.png" % a] + corpo(a) + [espada + "%s/longsword_alt.png" % a], colunas)
+
+    inteiro("walk", ANDAR).save(saida / "heroi_andar.png")
+    inteiro("slash", list(range(6))).save(saida / "heroi_golpe.png")
+    # parado: o corpo respira em 2 quadros (cada um duas vezes); a espada nao tem folha de
+    # parado no LPC, entao vem do quadro em pe da caminhada
+    respira = [0, 0, 1, 1]
+    em_pe = [0, 0, 0, 0]
+    parado = grande(cache, [("cape/tattered/bg/idle.png", vermelho)], respira)
+    parado.alpha_composite(grande(cache, [espada + "walk/behind/longsword_alt.png"], em_pe))
+    parado.alpha_composite(grande(cache, corpo("idle"), respira))
+    parado.alpha_composite(grande(cache, [espada + "walk/longsword_alt.png"], em_pe))
+    parado.save(saida / "heroi_parado.png")
+    ORDEM = antes
+
+
 def projeteis(saida):
     """flecha e magia, feitas aqui mesmo: 32 x 32, apontando para a direita (o jogo gira)"""
     f = Image.new("RGBA", (32, 32), (0, 0, 0, 0))
@@ -191,6 +234,7 @@ def principal():
     chefe(cache, saida)
     horda(cache, saida)
     caidos(cache, saida)
+    heroi(cache, saida)
     projeteis(saida)
 
 

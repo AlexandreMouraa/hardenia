@@ -131,7 +131,7 @@ if (!venceu && room == sala_final() && instance_number(obj_enemy) == 0) {
     venceu = true;
     cancelar_carga();
     brilho = 0;
-    sprite_index = spr_player_idle;
+    sprite_index = spr_heroi_parado;
     image_index = facing_dir * idle_frames;
     image_alpha = 1;
     window_set_cursor(cr_default);
@@ -509,7 +509,7 @@ if (is_attacking) {
 }
 
 if (is_attacking) {
-    sprite_index = spr_player_slash;
+    sprite_index = spr_heroi_golpe;
     var _progress = 1 - (attack_anim_timer / attack_anim_duration);
     anim_frame = floor(_progress * slash_frames);
     if (anim_frame >= slash_frames) {
@@ -521,23 +521,29 @@ if (is_attacking) {
     }
     image_index = facing_dir * slash_frames + anim_frame;
 } else if (is_dashing) {
-    sprite_index = spr_player_walk;
+    sprite_index = spr_heroi_andar;
     image_index = facing_dir * walk_frames + 1;
 } else if (_h != 0 || _v != 0) {
-    sprite_index = spr_player_walk;
+    sprite_index = spr_heroi_andar;
     anim_timer += 1;
-    if (anim_timer >= anim_speed) {
+    // 8 quadros de caminhada a cada 3 passos do jogo: o ciclo e o som do passo duram o mesmo
+    // que com os 4 quadros do heroi antigo (anim_speed 6)
+    if (anim_timer >= anim_speed_andar) {
         anim_timer = 0;
         anim_frame = (anim_frame + 1) mod walk_frames;
-        if (anim_frame mod 2 == 0) {
+        if (anim_frame mod 4 == 0) {
             passo_som();
         }
     }
     image_index = facing_dir * walk_frames + anim_frame;
 } else {
-    sprite_index = spr_player_idle;
+    sprite_index = spr_heroi_parado;
+    // vindo da caminhada (8 quadros) ou do golpe (6): volta ao primeiro, para nao cair na linha de outra direcao
+    if (anim_frame >= idle_frames) {
+        anim_frame = 0;
+    }
     anim_timer += 1;
-    if (anim_timer >= anim_speed) {
+    if (anim_timer >= anim_speed_parado) {
         anim_timer = 0;
         anim_frame = (anim_frame + 1) mod idle_frames;
     }
