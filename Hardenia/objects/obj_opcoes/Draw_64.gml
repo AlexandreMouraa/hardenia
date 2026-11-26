@@ -74,8 +74,10 @@ if (modo == "opcoes") {
     }
     draw_set_halign(fa_center);
     draw_set_color(c_ltgray);
-    texto(_w / 2, _h * 0.8, "Saia da zona vermelha antes do golpe. Depois do golpe o inimigo fica apagado: é a hora de bater.", _esc * 0.95, _esc * 0.95, 0);
-    texto(_w / 2, _h * 0.8 + 22 * _esc, "Morrer recomeça a run sem as técnicas. O que fica é o que você aprendeu.", _esc * 0.95, _esc * 0.95, 0);
+    // o mouse nao mira: a turma procurava o cursor e achava que o golpe saia errado (issue #110)
+    texto(_w / 2, _h * 0.76, "O mouse não mira: o golpe vai sozinho no inimigo mais perto de onde você anda. Só o clique importa.", _esc * 0.95, _esc * 0.95, 0);
+    texto(_w / 2, _h * 0.76 + 22 * _esc, "Saia da zona vermelha antes do golpe. Depois do golpe o inimigo fica apagado: é a hora de bater.", _esc * 0.95, _esc * 0.95, 0);
+    texto(_w / 2, _h * 0.76 + 44 * _esc, "Morrer recomeça a run sem as técnicas. O que fica é o que você aprendeu.", _esc * 0.95, _esc * 0.95, 0);
 } else {
     titulo(_w / 2, _h * 0.13, "Créditos", _esc * 2);
     var _cred = [
