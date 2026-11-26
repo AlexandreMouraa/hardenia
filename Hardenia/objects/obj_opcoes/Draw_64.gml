@@ -20,7 +20,7 @@ if (modo == "opcoes") {
         if (_foco) {
             draw_set_alpha(0.75);
             draw_set_color(make_colour_rgb(90, 14, 20));
-            draw_rectangle(_r[0], _r[1], _r[2], _r[3], false);
+            ret_redondo(_r[0], _r[1], _r[2], _r[3], 10 * _esc, make_colour_rgb(90, 14, 20));
             draw_set_alpha(1);
         }
         draw_set_color(_foco ? c_white : c_ltgray);

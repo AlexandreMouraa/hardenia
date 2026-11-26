@@ -147,10 +147,10 @@ function dica_desenhar() {
     var _y = _h * 0.74;
     draw_set_alpha(0.72 * _alfa);
     draw_set_color(make_colour_rgb(20, 12, 12));
-    draw_rectangle(_w / 2 - _lg, _y - 16 * _esc, _w / 2 + _lg, _y + 16 * _esc, false);
+    ret_redondo(_w / 2 - _lg, _y - 16 * _esc, _w / 2 + _lg, _y + 16 * _esc, 16 * _esc, make_colour_rgb(20, 12, 12));
     draw_set_alpha(_alfa);
     draw_set_color(make_colour_rgb(235, 120, 80));
-    draw_rectangle(_w / 2 - _lg, _y - 16 * _esc, _w / 2 - _lg + 3 * _esc, _y + 16 * _esc, false);
+    borda_redonda(_w / 2 - _lg, _y - 16 * _esc, _w / 2 + _lg, _y + 16 * _esc, 16 * _esc, max(1, 1.5 * _esc));
     draw_set_color(c_white);
     draw_set_halign(fa_center);
     draw_set_valign(fa_middle);

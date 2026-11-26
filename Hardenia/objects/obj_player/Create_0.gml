@@ -363,6 +363,18 @@ golpear = function(_carregado = false) {
     }
     is_attacking = true;
     attack_anim_timer = attack_anim_duration;
+    // golpe forte: imagem fantasma do guerreiro na cor da arma, que fica para tras e apaga (so
+    // desenho, como o rastro do dash). Pedido dos lideres: golpes com mais cara de Hades
+    if (_forte) {
+        with (instance_create_depth(x, y, depth + 1, obj_fx)) {
+            tipo = "rastro";
+            sprite_index = other.sprite_index;
+            image_index = other.image_index;
+            cor = merge_colour(arma_cor(), c_white, 0.3);
+            vida_max = 12;
+            vida = vida_max;
+        }
+    }
     // segundo golpe mais agudo, para o combo ter um ritmo de ouvido. Cada arma tem o seu tom
     sfx(_forte ? snd_golpe_forte : snd_attack, 1, false, 1, 0, (golpe_atual == 2 ? 1.12 : 1) * _arma.tom);
 };

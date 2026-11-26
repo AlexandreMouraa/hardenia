@@ -297,9 +297,9 @@ function toque_botao_ret(_r) {
     var _e = toque_escala();
     draw_set_alpha(0.75);
     draw_set_color(make_colour_rgb(90, 14, 20));
-    draw_rectangle(_r[0], _r[1], _r[2], _r[3], false);
+    ret_redondo(_r[0], _r[1], _r[2], _r[3], 12 * _e, make_colour_rgb(90, 14, 20));
     draw_set_alpha(1);
     draw_set_color(c_white);
-    draw_rectangle(_r[0], _r[1], _r[2], _r[3], true);
+    borda_redonda(_r[0], _r[1], _r[2], _r[3], 12 * _e, max(1, 1.5 * _e));
     texto((_r[0] + _r[2]) / 2, (_r[1] + _r[3]) / 2, _r[4], _e * 0.9, _e * 0.9, 0);
 }

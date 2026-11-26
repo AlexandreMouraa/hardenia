@@ -30,10 +30,10 @@ for (var _i = 0; _i < _n; _i++) {
                 if (global.tecnicas_lista[_j].chave != _chave) continue;
                 var _ini = arvore_posicao(_j);
                 var _foco = cursor == _i || cursor == _j;
-                draw_set_color(_foco ? make_colour_rgb(190, 165, 104) : make_colour_rgb(53, 66, 76));
-                draw_set_alpha(_foco ? 0.85 : 0.35);
-                draw_line_width(_u.x + (_ini[0] + 70) * _u.e, _u.y + (_ini[1] + 48) * _u.e,
-                    _u.x + (_fim[0] + 70) * _u.e, _u.y + _fim[1] * _u.e, _foco ? 2 * _u.e : _u.e);
+                // linha com um ponto de luz correndo (scr_interface_tecnicas)
+                ligacao_viva(_u.x + (_ini[0] + 70) * _u.e, _u.y + (_ini[1] + 48) * _u.e,
+                    _u.x + (_fim[0] + 70) * _u.e, _u.y + _fim[1] * _u.e,
+                    variable_struct_get(global.caidos, global.tecnicas_lista[_j].caido).cor, _foco, _u.e);
             }
         }
     }
@@ -47,18 +47,30 @@ for (var _i = 0; _i < _n; _i++) {
     var _estado = tecnica_estado(_def);
     var _cor = variable_struct_get(global.caidos, _def.caido).cor;
     var _ativa = tem_tecnica(_def.chave);
-    tecnica_painel(_u, _p[0], _p[1], 140, 48, _ativa ? make_colour_rgb(43, 52, 54) : make_colour_rgb(22, 29, 37));
-    tecnica_painel(_u, _p[0], _p[1], 3, 48, _cor);
-    tecnica_painel(_u, _p[0], _p[1], 140, 48, cursor == _i ? c_white : (_ativa ? _cor : make_colour_rgb(69, 82, 93)), true);
-    tecnica_icone(_def.chave, _u.x + (_p[0] + 17) * _u.e, _u.y + (_p[1] + 19) * _u.e, 9 * _u.e, _cor);
+    // no adquirido: painel premium com a cor do Caido; nao adquirido: apagado, cinza
+    var _rn = tecnica_ret(_u, _p[0], _p[1], 140, 48);
+    var _vida = premium_entrada(tempo, _i div 2);
+    painel_premium(_rn[0], _rn[1], _rn[2], _rn[3], _ativa ? _cor : make_colour_rgb(60, 66, 74), cursor == _i, _vida, _u.e * 0.6);
+    draw_set_alpha(_vida);
+    if (_ativa) {
+        gpu_set_blendmode(bm_add);
+        draw_set_alpha(0.3 * _vida);
+        draw_set_color(_cor);
+        draw_circle(_u.x + (_p[0] + 17) * _u.e, _u.y + (_p[1] + 19) * _u.e, 13 * _u.e, false);
+        gpu_set_blendmode(bm_normal);
+        draw_set_alpha(_vida);
+    }
+    tecnica_icone(_def.chave, _u.x + (_p[0] + 17) * _u.e, _u.y + (_p[1] + 19) * _u.e, 9 * _u.e, _ativa ? _cor : make_colour_rgb(150, 150, 160));
     draw_set_color(c_white);
     tecnica_texto(_u, _p[0] + 33, _p[1] + 5, _def.nome, 0.65, 102);
     draw_set_color(_ativa ? _cor : c_ltgray);
     var _legenda = _ativa ? "[OK] ADQUIRIDA" : (_estado == "REQUISITOS CUMPRIDOS" ? "PODE SER OFERECIDA" : _estado);
     tecnica_texto(_u, _p[0] + 9, _p[1] + 35, _legenda, 0.48);
 }
-tecnica_painel(_u, 664, 112, 264, 360, make_colour_rgb(23, 30, 39));
+draw_set_alpha(1);
 var _cor = variable_struct_get(global.caidos, _d.caido).cor;
+var _rp = tecnica_ret(_u, 664, 112, 264, 360);
+painel_premium(_rp[0], _rp[1], _rp[2], _rp[3], _cor, false, premium_entrada(tempo, 1), _u.e);
 tecnica_icone(_d.chave, _u.x + 691 * _u.e, _u.y + 142 * _u.e, 15 * _u.e, _cor);
 draw_set_color(_cor);
 tecnica_texto(_u, 716, 126, _d.nome, 0.87, 198);
