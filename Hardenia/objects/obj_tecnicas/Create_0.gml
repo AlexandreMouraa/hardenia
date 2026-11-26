@@ -22,7 +22,9 @@ escolher = function(_i) {
     }
     escolhido = _i;
     tecnica_ganhar(oferta[_i].chave);
-    sfx(snd_confirm, 1, false);
+    // o sino no tom do Caido que ensinou (scr_tecnicas, global.caidos)
+    var _caido = global.caidos[$ oferta[_i].caido];
+    sfx(snd_tecnica_ganha, 1, false, 0.8, 0, (_caido != undefined) ? _caido.tom : 1);
     // alguns frames para ver a escolha, e para o mesmo aperto nao virar um golpe no jogo
     saindo = 16;
 };

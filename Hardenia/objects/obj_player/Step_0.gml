@@ -141,6 +141,7 @@ if (!venceu && room == sala_final() && instance_number(obj_enemy) == 0) {
     }
     final_espera = 150;
     musica(snd_musica_final, 3000);
+    sfx(snd_vitoria, 3, false, 0.8);
     salvo_vitoria(global.tentativas, frames_para_ms(global.run_frames));
 }
 
@@ -179,6 +180,12 @@ if (!sala_limpa_enviada && instance_number(obj_enemy) == 0 && !onda_pendente() &
             instance_create_layer(_encosta ? x : global.morto_x, _encosta ? y : global.morto_y, "Instances", obj_bau);
         }
     }
+}
+
+// o portao abriu (sala limpa, Caido vencido e bau aberto): som de pedra arrastando (#97)
+if (sala_limpa_enviada && !portao_tocou && room != sala_final() && portao_aberto()) {
+    portao_tocou = true;
+    sfx(snd_portao_abrir, 1, false, 0.8);
 }
 
 var _h = (keyboard_check(vk_right) || keyboard_check(ord("D"))) - (keyboard_check(vk_left) || keyboard_check(ord("A")));
@@ -415,6 +422,7 @@ if (dash_buffer > 0 && !is_dashing && dash_charges > 0) {
         global.lento = max(global.lento, 36);
         fx_onda(x, y, 130, global.caidos.sentinela.cor);
         som(snd_escudo, 1.2);
+        sfx(snd_ultimo_instante, 2, false, 0.9);
         tecnica_contar("ultimo_instante");
     }
 }
@@ -502,6 +510,7 @@ if (is_dashing) {
                 _e.corte_dash = dash_contador;
                 golpe_acertar(_e, 1, 6, false, false);
                 tecnica_contar("passo_cortante");
+                som(snd_passo_cortante, 0.8);
             }
         }
         ds_list_destroy(_cortados);
