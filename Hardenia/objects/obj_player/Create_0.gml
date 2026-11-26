@@ -60,6 +60,21 @@ hud_dano = 0;
 hud_dano_max = 30;
 hud_cura = 0;
 hud_cura_max = 40;
+// a barra desenhada corre atras da vida de verdade, so no desenho (Draw_64)
+hud_vida_vis = hp;
+// levou golpe nesta sala? Limpar sem levar nenhum devolve 1 de vida (issue #111)
+dano_na_sala = false;
+// ganhar vida: nunca passa do maximo, pisca na barra e sobe um "+1" verde do guerreiro
+curar = function(_quanto) {
+    if (hp <= 0 || hp >= hp_max) {
+        return false;
+    }
+    hp = min(hp_max, hp + _quanto);
+    global.vida = hp;
+    hud_cura = hud_cura_max;
+    fx_numero(x, y, "+" + string(_quanto), make_colour_rgb(120, 230, 120));
+    return true;
+};
 // golpe que pegou. A morte fica no fim do Step
 // quem acertou o ultimo golpe e a frase da tela de morte (frase_de_morte, em scr_mapa)
 morto_por = "";
@@ -69,6 +84,7 @@ levar_dano = function(_dano) {
     global.vida = hp;
     invuln_timer = 45;
     hud_dano = hud_dano_max;
+    dano_na_sala = true;
     if (hp > 0) {
         impacto(5, 7);
     }

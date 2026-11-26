@@ -27,40 +27,51 @@ draw_set_valign(fa_top);
 draw_set_color(c_white);
 texto(16 * _esc, 12 * _esc, "TENTATIVA " + string(global.tentativas), _esc, _esc, 0);
 
-// barra de vida: um pedaco por golpe que aguenta. Ao levar golpe ela treme e o
-// pedaco perdido apaga do branco; com o ultimo, pulsa; ao ganhar vida, o pedaco pisca
-var _vl = 26 * _esc;
+// barra de vida continua, com um traco por ponto (issue #111: a turma pediu uma barra menos
+// "arcaica"). A barra desenhada corre atras da vida de verdade: ao levar golpe, o pedaco perdido
+// fica branco e encolhe; ao ganhar, a barra cresce e pisca. Com 1 de vida, pulsa. So desenho
+var _vw = hp_max * 28 * _esc;
 var _va = 12 * _esc;
 var _vy = 34 * _esc;
 var _vx0 = 16 * _esc;
 if (hud_dano > 0) {
     _vx0 += sin(hud_dano * 2.1) * 3 * _esc * hud_dano / hud_dano_max;
 }
-for (var _i = 0; _i < hp_max; _i++) {
-    var _vx = _vx0 + _i * (_vl + 2 * _esc);
-    draw_set_color(make_colour_rgb(50, 20, 20));
-    draw_rectangle(_vx, _vy, _vx + _vl, _vy + _va, false);
-    if (_i < hp) {
-        draw_set_alpha(hp == 1 ? _piscar : 1);
-        draw_set_color(make_colour_rgb(210, 30, 40));
-        draw_rectangle(_vx, _vy, _vx + _vl, _vy + _va, false);
-        draw_set_alpha(1);
-    }
-    if (hud_dano > 0 && _i == hp) {
-        draw_set_alpha(hud_dano / hud_dano_max);
-        draw_set_color(c_white);
-        draw_rectangle(_vx, _vy, _vx + _vl, _vy + _va, false);
-        draw_set_alpha(1);
-    }
-    if (hud_cura > 0 && _i == hp - 1) {
-        draw_set_alpha(((hud_cura div 6) mod 2 == 0) ? 0.9 : 0.2);
-        draw_set_color(c_white);
-        draw_rectangle(_vx, _vy, _vx + _vl, _vy + _va, false);
-        draw_set_alpha(1);
-    }
+hud_vida_vis += (hp - hud_vida_vis) * 0.18;
+if (abs(hud_vida_vis - hp) < 0.02) {
+    hud_vida_vis = hp;
 }
-draw_set_color(c_ltgray);
-texto(_vx0 + hp_max * (_vl + 2 * _esc) + 4 * _esc, 34 * _esc, "VIDA", _esc * 0.7, _esc * 0.7, 0);
+var _cheio = _vx0 + _vw * clamp(hp, 0, hp_max) / hp_max;
+var _vis = _vx0 + _vw * clamp(hud_vida_vis, 0, hp_max) / hp_max;
+// fundo e contorno
+draw_set_color(make_colour_rgb(50, 20, 20));
+draw_rectangle(_vx0, _vy, _vx0 + _vw, _vy + _va, false);
+// vida de verdade, em vermelho; mais claro em cima, como um brilho
+if (hp > 0) {
+    draw_set_alpha(hp == 1 ? _piscar : 1);
+    draw_rectangle_colour(_vx0, _vy, _cheio, _vy + _va, make_colour_rgb(235, 60, 60), make_colour_rgb(235, 60, 60), make_colour_rgb(160, 20, 30), make_colour_rgb(160, 20, 30), false);
+    draw_set_alpha(1);
+}
+// rastro: o que acabou de sair (branco, encolhendo) ou o que acabou de entrar (branco piscando)
+if (_vis > _cheio) {
+    draw_set_color(c_white);
+    draw_rectangle(_cheio, _vy, _vis, _vy + _va, false);
+} else if (hud_cura > 0 && hp > 0) {
+    draw_set_alpha(((hud_cura div 6) mod 2 == 0) ? 0.9 : 0.2);
+    draw_set_color(c_white);
+    draw_rectangle(max(_vx0, _cheio - _vw / hp_max), _vy, _cheio, _vy + _va, false);
+    draw_set_alpha(1);
+}
+// tracos entre os pontos e o contorno
+draw_set_color(make_colour_rgb(30, 10, 10));
+for (var _i = 1; _i < hp_max; _i++) {
+    var _tx = _vx0 + _vw * _i / hp_max;
+    draw_rectangle(_tx - _esc, _vy, _tx, _vy + _va, false);
+}
+draw_set_color(make_colour_rgb(120, 70, 70));
+draw_rectangle(_vx0, _vy, _vx0 + _vw, _vy + _va, true);
+draw_set_color(hp == 1 ? make_colour_rgb(255, 120, 120) : c_ltgray);
+texto(_vx0 + _vw + 6 * _esc, 34 * _esc, "VIDA " + string(max(0, hp)) + "/" + string(hp_max), _esc * 0.7, _esc * 0.7, 0);
 
 // a carga que esta voltando enche aos poucos; sem carga, treme vermelha; ao
 // voltar, pisca

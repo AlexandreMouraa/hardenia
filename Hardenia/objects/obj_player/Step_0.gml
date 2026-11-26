@@ -155,10 +155,13 @@ if (!sala_limpa_enviada && instance_number(obj_enemy) == 0 && !duelo_tentar()) {
     var _fase = mapa_indice(room);
     if (_fase > global.fase_curada) {
         global.fase_curada = _fase;
-        if (hp > 0 && hp < hp_max && !duelo_curou) {
-            hp += 1;
-            global.vida = hp;
-            hud_cura = hud_cura_max;
+        if (!duelo_curou) {
+            curar(1);
+        }
+        // limpar a sala sem levar golpe vale mais 1: premia quem joga bem, e a turma pediu mais
+        // vida ao longo da run (issue #111). So na primeira vez, como a cura de cima
+        if (!dano_na_sala) {
+            curar(1);
         }
         // o bau da proxima tecnica, onde o ultimo caiu. O chefe nao deixa: a run acabou
         if (room != sala_final() && tecnicas_restantes() > 0) {
