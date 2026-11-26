@@ -374,10 +374,12 @@ if (global.game_paused) {
     // onde voce esta no caminho ate o fim
     var _fase_mapa = mapa_indice(room);
     if (_fase_mapa >= 0) {
-        var _my = _h / 2 + 168 * _esc;
+        // Na mesma escala da interface do botao da arvore (y 354 a 386), para o painel comecar logo
+        // abaixo dele e nao cobri-lo (ideia do PR #122). Escala 0.7: painel de 393 a 533, cabe nos 540
+        var _my = _ui.y + 470 * _ui.e;
         draw_set_alpha(1);
         draw_set_color(c_white);
-        mapa_desenhar(_my, _esc * 0.8, _fase_mapa, 1, 14);
+        mapa_desenhar(_my, _ui.e * 0.7, _fase_mapa, 1, 14);
         draw_set_halign(fa_center);
         draw_set_valign(fa_middle);
     }
