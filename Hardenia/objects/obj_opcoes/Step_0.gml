@@ -1,4 +1,8 @@
 tempo += 1;
+// O robo abre, confere e fecha a tela; um clique real nao pode fecha-la antes (#136).
+if (instance_exists(obj_autotest)) {
+    exit;
+}
 // a pausa curta evita que o mesmo aperto que abriu a tela ja faca alguma coisa aqui
 if (tempo < 8) {
     exit;

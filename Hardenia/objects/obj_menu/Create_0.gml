@@ -33,7 +33,7 @@ musica(snd_menu_music);
 som_fundo(-1);
 coracao_atualizar(false);
 
-// o menu: o que cada item faz. O robo aperta Enter no primeiro
+// o menu: o que cada item faz. O robo chama comecar() diretamente
 cursor = 0;
 mouse_antes_x = -1;
 mouse_antes_y = -1;
@@ -78,7 +78,7 @@ item_ret = function(_i) {
     var _y = _h * 0.46 + _i * 34 * _esc;
     return [_w * 0.56, _y, _w * 0.8, _y + 32 * _esc];
 };
-// o primeiro item e sempre o Enter: o robo e quem ja sabe jogar comecam direto
+// o primeiro item e sempre o Enter: quem ja sabe jogar comeca direto
 
 // a abertura aparece so na primeira vez
 comecar = function() {

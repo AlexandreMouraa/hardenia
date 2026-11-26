@@ -198,7 +198,8 @@ if (room == Room_Menu) {
             } else if (other.usar_desafio) {
                 acionar("desafio");
             } else {
-                event_perform(ev_keypress, vk_enter);
+                // A mesma acao do Enter, sem aceitar entrada real durante o teste (#136).
+                comecar();
             }
         }
     }
