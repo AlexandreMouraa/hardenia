@@ -29,6 +29,8 @@ Voz dos inimigos (`snd_voz_*`, 20 arquivos): geradas em `tools/gerar_sons_vozes.
 | `snd_voz_caido_*`, `snd_voz_rei_morte` | `impactPlate_heavy_000.ogg`, `impactPlate_heavy_001.ogg`, `impactPlate_medium_002.ogg`, `impactMetal_heavy_001.ogg` | [Impact Sounds](https://kenney.nl/assets/impact-sounds) |
 | `snd_voz_caido_aviso`, `snd_voz_caido_morte` | `drawKnife3.ogg`, `metalPot2.ogg` | [RPG Audio](https://kenney.nl/assets/rpg-audio) |
 
+Eventos e técnicas (`snd_bau_abrir`, `snd_portao_abrir`, `snd_tecnica_ganha`, `snd_furia_cheia`, `snd_furia_solta`, `snd_rei_fase`, `snd_vitoria`, `snd_sangria`, `snd_execucao`, `snd_passo_cortante`, `snd_ultimo_instante` e `snd_retribuicao`): gerados em `tools/gerar_sons_eventos.py`, de senos e ruído filtrado, sem som de terceiros.
+
 Passos (`snd_passo_*`) e sino (`snd_sino`): [Impact Sounds](https://kenney.nl/assets/impact-sounds), de Kenney (CC0). Clique do menu (`snd_menu_mover`): [Interface Sounds](https://kenney.nl/assets/interface-sounds), de Kenney (CC0). Sons de fundo (`snd_amb_*`) e coração (`snd_coracao`): gerados em `tools/gerar_sons_ambiente.py`.
 
 ## Músicas

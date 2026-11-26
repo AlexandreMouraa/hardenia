@@ -9,6 +9,6 @@ if (aberto) {
     // sem outra tela aberta: a troca de arma (obj_arma_escolha, filha do obj_tecnicas) abre perto
     // dali, e as duas no mesmo frame ficavam uma em cima da outra
     aberto = true;
-    sfx(snd_confirm, 1, false);
+    sfx(snd_bau_abrir, 1, false, 0.9);
     instance_create_depth(0, 0, -2000, obj_tecnicas);
 }

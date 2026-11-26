@@ -5,27 +5,28 @@
 // Tecnica nova: acrescentar aqui e tratar o efeito (para ver onde, busque a chave no projeto).
 // Combinacao: tem "requer", e so aparece para quem ja tem uma de cada grupo. Vem na primeira
 // carta, porque e a recompensa por ter juntado duas tecnicas.
+// tom: o sino da tecnica ganha toca mais grave ou mais agudo para cada Caido (snd_tecnica_ganha, #97)
 global.caidos = {
     carrasco: {
-        nome: "O CARRASCO", titulo: "O Carrasco", cor: make_colour_rgb(225, 70, 70),
+        nome: "O CARRASCO", tom: 0.84, titulo: "O Carrasco", cor: make_colour_rgb(225, 70, 70),
         fala: "Cortei cem cabeças por este reino. A sua não faz diferença.",
         de_novo: "Você de novo. Ainda com a cabeça no lugar?",
         adeus: "Enfim, o machado pesa menos.",
     },
     batedor: {
-        nome: "O BATEDOR", titulo: "O Batedor", cor: make_colour_rgb(95, 205, 235),
+        nome: "O BATEDOR", tom: 1.12, titulo: "O Batedor", cor: make_colour_rgb(95, 205, 235),
         fala: "Fui o primeiro a chegar. Por isso fui o primeiro a cair.",
         de_novo: "De novo? Você é lento, mas é teimoso.",
         adeus: "Corre. Eu já não preciso.",
     },
     sapador: {
-        nome: "O SAPADOR", titulo: "O Sapador", cor: make_colour_rgb(255, 155, 55),
+        nome: "O SAPADOR", tom: 0.94, titulo: "O Sapador", cor: make_colour_rgb(255, 155, 55),
         fala: "Este castelo ia cair com uma mecha só. A mecha era eu.",
         de_novo: "Cuidado onde pisa. Da última vez você não teve.",
         adeus: "Não olhe para trás. Vai explodir.",
     },
     sentinela: {
-        nome: "A SENTINELA", titulo: "A Sentinela", cor: make_colour_rgb(240, 210, 110),
+        nome: "A SENTINELA", tom: 1.04, titulo: "A Sentinela", cor: make_colour_rgb(240, 210, 110),
         fala: "Jurei guardar este caminho. Ninguém me disse que era para sempre.",
         de_novo: "Ainda de pé. Eu também, infelizmente.",
         adeus: "Pode passar.",
@@ -54,7 +55,12 @@ global.tecnicas_lista = [
 // continuar segurando o especial solta o Giro Furioso, mesmo com o giro em recarga
 #macro FURIA_MAX 100
 function furia_ganhar(_quanto) {
+    var _antes = global.furia;
     global.furia = min(FURIA_MAX, global.furia + _quanto);
+    // a barra acabou de encher: o jogador ouve sem olhar para o HUD (#97)
+    if (_antes < FURIA_MAX && global.furia >= FURIA_MAX) {
+        sfx(snd_furia_cheia, 2, false, 0.8);
+    }
 }
 // giros furiosos nesta sessao (o robo registra)
 global.giros_furiosos = 0;
@@ -205,10 +211,12 @@ function tecnicas_no_golpe(_enemy, _dano, _forte) {
             if (_enemy.hp <= _enemy.hp_max / 4) {
                 _dano *= 2;
                 tecnica_contar("execucao");
+                som(snd_execucao, 0.9);
             }
         } else if (_enemy.hp - _dano <= 1) {
             _dano = _enemy.hp;
             tecnica_contar("execucao");
+            som(snd_execucao, 0.9);
         }
     }
     return _dano;

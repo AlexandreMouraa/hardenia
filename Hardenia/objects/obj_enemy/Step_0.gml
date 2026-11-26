@@ -13,6 +13,8 @@ if (sangra > 0) {
     if (sangra_timer <= 0) {
         sangra -= 1;
         sangra_timer = 60;
+        // gota baixa: com varios sangrando, som() junta os tiques do mesmo frame (#97)
+        som(snd_sangria, 0.6);
         if (sangria_tique()) {
             exit;
         }

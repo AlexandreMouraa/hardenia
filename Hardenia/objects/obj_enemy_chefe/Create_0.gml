@@ -90,6 +90,7 @@ mudar_fase = function(_fase) {
     impacto(8, 12);
     global.lento = max(global.lento, 30);
     som(snd_explosao);
+    sfx(snd_rei_fase, 3, false, 0.9);
     fx_onda(x, y, 240, make_colour_rgb(255, 60, 60));
     with (instance_create_depth(x, y, 50, obj_fx)) {
         tipo = "anel";

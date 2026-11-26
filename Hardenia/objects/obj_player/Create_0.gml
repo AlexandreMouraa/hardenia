@@ -90,6 +90,7 @@ levar_dano = function(_dano) {
     }
     if (tem_tecnica("retribuicao")) {
         fx_onda(x, y, 110, global.caidos.sentinela.cor);
+        som(snd_retribuicao, 0.9);
         tecnica_contar("retribuicao");
         golpe_em_volta(x, y, 110, 1, 30, true, false);
     }
@@ -597,6 +598,7 @@ giro_furioso = function() {
     is_attacking = true;
     sfx(snd_giro, 1, false, 1, 0, 0.75 * _arma.tom);
     som(snd_explosao, 0.7);
+    sfx(snd_furia_solta, 2, false, 0.8);
 };
 
 is_dead = false;
@@ -646,6 +648,7 @@ image_index = facing_dir * idle_frames;
 // vitoria_estado: "fim" (sem rede) ou "nome" -> "enviando" -> "enviado" / "falhou"
 // (nome recusado pela API volta de "enviando" para "nome")
 sala_limpa_enviada = false;
+portao_tocou = false; // o som do portao abrindo, uma vez por sala (#97)
 duelo_curou = false; // nas salas de duelo, a cura de limpar a sala ja veio antes dele
 vitoria_estado = "fim";
 vitoria_nome = "";
