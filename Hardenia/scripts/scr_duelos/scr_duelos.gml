@@ -135,11 +135,15 @@ function barra_chefe(_nome, _hp, _hp_max, _cor, _marcas, _fala, _fala_alfa) {
 }
 
 // ---------- duelos: quando a sala fica limpa, um Caido aparece ----------
-// Os dois da run saem do sorteio, sem repetir. vida e furia: para ajustar jogando. furia acima de 1
-// da mais aviso e mais recarga: o primeiro duelo vem na segunda sala, com poucas tecnicas. Com
-// tudo igual, o robo desatento (50%) morria 13 vezes ali
+// Um em cada mapa antes do Trono: os quatro da run saem do sorteio, sem repetir (issue #94). vida e
+// furia: para ajustar jogando. furia acima de 1 da mais aviso e mais recarga.
+// Ruinas: o mais facil, porque e onde se aprende e o jogador so tem a tecnica do comeco.
+// Catacumbas e Cemiterio: os valores de quando eram os dois unicos duelos (com tudo igual nas
+// Catacumbas, o robo desatento (50%) morria 13 vezes ali). Patio: no meio dos dois
 global.duelos = [
+    { sala: Room1, vida: 18, furia: 1.5 },
     { sala: Room_Tunel, vida: 26, furia: 1.25 },
+    { sala: Room2, vida: 32, furia: 1.1 },
     { sala: Room3, vida: 40, furia: 1 },
 ];
 global.caidos_chaves = ["carrasco", "batedor", "sapador", "sentinela"];
