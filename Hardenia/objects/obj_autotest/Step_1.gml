@@ -798,20 +798,13 @@ if (global.furia >= FURIA_MAX && furia_frames <= 0 && _alvo != noone && !_ameaca
 
 // ---------- ataque: vira para o alvo e bate quando ele esta no alcance ----------
 if (_alvo != noone && !_ameacado && !_quer_morrer) {
-    // mesma conta do golpe (obj_player, golpear): vira sozinho para o inimigo, com o alcance e o
-    // tamanho do golpe comum da arma na mao (scr_armas). Na espada, 32 nas retas e ate 45 nas
-    // diagonais, com 32 de meia area: os numeros de antes das armas. Sem isso o robo batia com a
-    // alabarda de perto, como se fosse espada, e com as adagas de longe demais, no vazio
+    // mesma conta do golpe (obj_player, golpear): vira sozinho para o inimigo, e bate quando o arco
+    // do golpe comum da arma na mao (scr_armas: raio e abertura, mais a folga do golpe) encosta no
+    // alvo. Sem a conta igual, o robo batia onde o golpe nao pegava, ou deixava de bater onde pegava
     var _arma_bot = arma_def();
-    var _meia = 32 * _arma_bot.escala;
     var _mira = _p.mira_alvo();
     var _ang = (_mira != noone) ? point_direction(_p.x, _p.y, _mira.x, _mira.y) : point_direction(0, 0, _p.face_h, _p.face_v);
-    var _cx = lengthdir_x(1, _ang);
-    var _cy = lengthdir_y(1, _ang);
-    var _k = _arma_bot.alcance / max(abs(_cx), abs(_cy));
-    var _ax = _p.x + _cx * _k;
-    var _ay = _p.y + _cy * _k;
-    if (rectangle_in_rectangle(_alvo.bbox_left, _alvo.bbox_top, _alvo.bbox_right, _alvo.bbox_bottom, _ax - _meia, _ay - _meia, _ax + _meia, _ay + _meia) > 0) {
+    if (setor_toca_retangulo(_p.x, _p.y, _arma_bot.raio + GOLPE_FOLGA, _arma_bot.arco, _ang, _alvo.bbox_left, _alvo.bbox_top, _alvo.bbox_right, _alvo.bbox_bottom)) {
         _mh = 0;
         _mv = 0;
         if (_p.attack_cooldown <= 0 && segurar_frames <= 0) {

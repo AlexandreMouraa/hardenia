@@ -227,6 +227,28 @@ function zona_toca_retangulo(_z, _l, _t, _r, _b) {
     return ponto_na_zona(_z, _l, _t);
 }
 
+// o setor (o arco do golpe do jogador: centro, raio, abertura em graus e direcao) encosta no
+// retangulo? Testa o centro, os cantos e o meio dos lados do retangulo: um deles a menos de _raio
+// e dentro da abertura basta. Com o retangulo em cima do centro, encosta sempre. E a mesma conta
+// para o golpe (obj_attack) e para o robo decidir quando bater (obj_autotest), senao um nao bate
+// onde o outro acerta (issue #108)
+// folga do golpe alem do arco desenhado (raio em scr_armas): a lamina pega quem esta na beira
+#macro GOLPE_FOLGA 6
+function setor_toca_retangulo(_ox, _oy, _raio, _abertura, _dir, _l, _t, _r, _b) {
+    if (_ox >= _l && _ox <= _r && _oy >= _t && _oy <= _b) return true;
+    var _mx = (_l + _r) / 2;
+    var _my = (_t + _b) / 2;
+    var _px = [_mx, _l, _r, _l, _r, _mx, _mx, _l, _r];
+    var _py = [_my, _t, _t, _b, _b, _t, _b, _my, _my];
+    for (var _i = 0; _i < 9; _i++) {
+        if (point_distance(_ox, _oy, _px[_i], _py[_i]) <= _raio
+            && abs(angle_difference(_dir, point_direction(_ox, _oy, _px[_i], _py[_i]))) <= _abertura / 2) {
+            return true;
+        }
+    }
+    return false;
+}
+
 // o golpe acerta o jogador? Parede entre o ponto de onde o golpe saiu e o jogador
 // protege, mesmo com a zona passando por cima dela
 function zona_acerta_jogador(_z) {

@@ -227,6 +227,14 @@ golpear = function(_carregado = false) {
     if (_tipo == "arco" || _tipo == "duplo") {
         var _golpe = instance_create_layer(_gx, _gy, "Instances", obj_attack);
         _golpe.quebra_escudo = _quebra;
+        // o golpe acerta no arco desenhado (centro no guerreiro, raio da arma mais a folga, abertura
+        // da arma), e nao no quadrado em volta de (_gx, _gy): o que se ve e o que pega (issue #108)
+        _golpe.setor = true;
+        _golpe.ox = x;
+        _golpe.oy = y;
+        _golpe.raio = (_forte ? _arma.raio_forte : _arma.raio) + GOLPE_FOLGA;
+        _golpe.abertura = _forte ? _arma.arco_forte : _arma.arco;
+        _golpe.dir = _dir;
         if (!_forte) {
             _golpe.damage = _arma.dano * _dobro;
             _golpe.knockback = _arma.empurra;
@@ -247,6 +255,14 @@ golpear = function(_carregado = false) {
         _g2.atraso = 6;
         _g2.forte = true;
         _g2.quebra_escudo = _quebra;
+        // o mesmo arco, saindo de onde o avanco deixa o guerreiro 6 quadros depois (8 px por quadro
+        // de impulso, pela metade)
+        _g2.setor = true;
+        _g2.ox = x + lengthdir_x(14, _dir);
+        _g2.oy = y + lengthdir_y(14, _dir);
+        _g2.raio = _arma.raio_forte + GOLPE_FOLGA;
+        _g2.abertura = _arma.arco_forte;
+        _g2.dir = _dir;
         _g2.damage = _arma.dano_forte * _dobro;
         _g2.knockback = _arma.empurra_forte;
         _g2.image_xscale = _arma.escala_forte;
