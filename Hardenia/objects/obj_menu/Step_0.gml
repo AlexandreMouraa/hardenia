@@ -5,6 +5,11 @@ if (instance_exists(obj_mapa) || instance_exists(obj_abertura) || instance_exist
     exit;
 }
 
+// com o robo, so ele mexe no menu: um clique ou tecla de verdade abria outra tela
+if (instance_exists(obj_autotest)) {
+    exit;
+}
+
 if (keyboard_check_pressed(ord("H"))) {
     horda_iniciar();
     exit;

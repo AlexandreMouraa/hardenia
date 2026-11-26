@@ -3,6 +3,11 @@ tempo += 1;
 if (tempo < 8) {
     exit;
 }
+// com o robo quem abre, mexe e fecha a tela e ele (obj_autotest): clique ou tecla de
+// verdade na janela fechava o Como jogar antes da conferencia (FALHA_menu)
+if (instance_exists(obj_autotest)) {
+    exit;
+}
 var _volta = keyboard_check_pressed(vk_escape) || pad_volta();
 if (modo != "opcoes") {
     var _toque = modo == "controles_iniciais" && global.toque_ativo
